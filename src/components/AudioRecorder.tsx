@@ -1,0 +1,282 @@
+import React, { useState, useRef, useEffect } from 'react';
+import { Mic, Square, Play, Sparkles, Volume2, Music, Check, AlertCircle } from 'lucide-react';
+import { recordMicAudio, loadAudioFromUrl } from '../services/audio';
+import { SAMPLE_AUDIO_LIST, SampleAudioItem } from '../data/sampleAudio';
+
+interface AudioRecorderProps {
+  onAudioCaptured: (audioData: Float32Array, wavBlob: Blob, source: 'live_mic' | 'sample_audio') => void;
+  isProcessing: boolean;
+  isSunlightMode: boolean;
+}
+
+export const AudioRecorder: React.FC<AudioRecorderProps> = ({
+  onAudioCaptured,
+  isProcessing,
+  isSunlightMode,
+}) => {
+  const [isRecording, setIsRecording] = useState(false);
+  const [countdown, setCountdown] = useState(3.0);
+  const [volume, setVolume] = useState(0);
+  const [recordedWavUrl, setRecordedWavUrl] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [selectedSample, setSelectedSample] = useState<SampleAudioItem | null>(null);
+  const [isPlayingPreview, setIsPlayingPreview] = useState(false);
+
+  const audioPreviewRef = useRef<HTMLAudioElement | null>(null);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+      if (recordedWavUrl) URL.revokeObjectURL(recordedWavUrl);
+    };
+  }, [recordedWavUrl]);
+
+  // Handle 3-second live microphone capture
+  const handleStartRecording = async () => {
+    if (isRecording || isProcessing) return;
+
+    setErrorMessage(null);
+    setRecordedWavUrl(null);
+    setSelectedSample(null);
+    setIsRecording(true);
+    setCountdown(3.0);
+    setVolume(0.1);
+
+    const startTime = Date.now();
+    intervalRef.current = setInterval(() => {
+      const elapsed = (Date.now() - startTime) / 1000;
+      const remaining = Math.max(0, 3.0 - elapsed);
+      setCountdown(Number(remaining.toFixed(1)));
+      if (remaining <= 0) {
+        if (intervalRef.current) clearInterval(intervalRef.current);
+      }
+    }, 100);
+
+    try {
+      const { rawAudio, wavBlob } = await recordMicAudio(3.0, (vol) => {
+        setVolume(vol);
+      });
+
+      if (intervalRef.current) clearInterval(intervalRef.current);
+      setIsRecording(false);
+      setVolume(0);
+
+      const blobUrl = URL.createObjectURL(wavBlob);
+      setRecordedWavUrl(blobUrl);
+
+      onAudioCaptured(rawAudio, wavBlob, 'live_mic');
+    } catch (err: unknown) {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+      setIsRecording(false);
+      setVolume(0);
+      const msg = err instanceof Error ? err.message : String(err);
+      setErrorMessage(msg);
+    }
+  };
+
+  // Handle loading and classifying pre-bundled sample birdsong
+  const handleSelectSample = async (sample: SampleAudioItem) => {
+    if (isRecording || isProcessing) return;
+
+    setSelectedSample(sample);
+    setErrorMessage(null);
+
+    try {
+      const { rawAudio, wavBlob } = await loadAudioFromUrl(sample.url);
+      if (recordedWavUrl) URL.revokeObjectURL(recordedWavUrl);
+      const blobUrl = URL.createObjectURL(wavBlob);
+      setRecordedWavUrl(blobUrl);
+
+      onAudioCaptured(rawAudio, wavBlob, 'sample_audio');
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      setErrorMessage(`Sample load error: ${msg}`);
+    }
+  };
+
+  const handleTogglePreview = () => {
+    if (!audioPreviewRef.current || !recordedWavUrl) return;
+
+    if (isPlayingPreview) {
+      audioPreviewRef.current.pause();
+      setIsPlayingPreview(false);
+    } else {
+      audioPreviewRef.current.currentTime = 0;
+      audioPreviewRef.current.play().catch(() => {});
+      setIsPlayingPreview(true);
+    }
+  };
+
+  return (
+    <div className={`p-5 rounded-2xl border transition-all ${
+      isSunlightMode 
+        ? 'bg-white border-black text-black shadow-md' 
+        : 'bg-forest-900/60 border-forest-800 text-earth-50 shadow-lg'
+    }`}>
+      {/* Capture Section */}
+      <div className="flex flex-col items-center justify-center text-center">
+        <h2 className="text-lg font-bold tracking-tight mb-1">
+          {isRecording 
+            ? 'Listening to Nature...' 
+            : isProcessing 
+              ? 'Classifying Avian Acoustics...' 
+              : 'Record 3 Seconds of Birdsong'}
+        </h2>
+        <p className={`text-xs mb-6 max-w-sm ${isSunlightMode ? 'text-gray-700' : 'text-forest-300'}`}>
+          Hold your phone towards the canopy or brush. Three seconds is all the on-device transformer needs.
+        </p>
+
+        {/* Big Tap Target Record Button */}
+        <div className="relative mb-6 flex items-center justify-center">
+          {/* Animated pulse rings when recording */}
+          {isRecording && (
+            <div
+              className="absolute w-36 h-36 rounded-full border-4 border-feather-accent animate-ping opacity-60"
+              style={{ transform: `scale(${1 + volume * 0.4})` }}
+            />
+          )}
+
+          <button
+            type="button"
+            onClick={handleStartRecording}
+            disabled={isRecording || isProcessing}
+            aria-label={isRecording ? 'Recording in progress' : 'Record 3 seconds of bird call'}
+            className={`w-28 h-28 min-w-[112px] min-h-[112px] rounded-full flex flex-col items-center justify-center transition-all transform active:scale-95 shadow-xl select-none relative z-10 ${
+              isRecording
+                ? 'bg-red-600 text-white ring-8 ring-red-400/30'
+                : isProcessing
+                  ? 'bg-forest-800 text-gray-300 cursor-not-allowed opacity-80'
+                  : isSunlightMode
+                    ? 'bg-black text-white hover:bg-gray-800 border-4 border-black'
+                    : 'bg-gradient-to-br from-forest-600 to-forest-800 hover:from-forest-500 hover:to-forest-700 text-white border-2 border-forest-400/40'
+            }`}
+          >
+            {isRecording ? (
+              <>
+                <Square className="w-8 h-8 fill-current mb-1" />
+                <span className="font-mono font-bold text-xs">{countdown.toFixed(1)}s</span>
+              </>
+            ) : isProcessing ? (
+              <>
+                <Sparkles className="w-8 h-8 animate-pulse text-feather-yellow mb-1" />
+                <span className="text-[10px] font-bold uppercase tracking-wider">Inferring</span>
+              </>
+            ) : (
+              <>
+                <Mic className="w-9 h-9 mb-1" />
+                <span className="text-xs font-bold uppercase tracking-wide">Record</span>
+              </>
+            )}
+          </button>
+        </div>
+
+        {/* Live Audio Visualizer / Volume meter */}
+        {isRecording && (
+          <div className="w-48 mb-4">
+            <div className="flex items-center justify-between text-[11px] mb-1 font-mono">
+              <span className="flex items-center gap-1">
+                <Volume2 className="w-3.5 h-3.5 text-feather-accent" />
+                Input Level
+              </span>
+              <span>{Math.round(volume * 100)}%</span>
+            </div>
+            <div className={`w-full h-2 rounded-full overflow-hidden ${isSunlightMode ? 'bg-gray-300' : 'bg-forest-950'}`}>
+              <div
+                className={`h-full transition-all duration-75 ${isSunlightMode ? 'bg-black' : 'bg-feather-accent'}`}
+                style={{ width: `${Math.min(100, Math.max(5, volume * 100))}%` }}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Playback preview for last captured audio */}
+        {recordedWavUrl && !isRecording && (
+          <div className="mb-4 flex items-center gap-2">
+            <audio
+              ref={audioPreviewRef}
+              src={recordedWavUrl}
+              onEnded={() => setIsPlayingPreview(false)}
+              className="hidden"
+            />
+            <button
+              type="button"
+              onClick={handleTogglePreview}
+              className={`px-3 py-1.5 min-h-[40px] rounded-lg text-xs font-semibold flex items-center gap-2 transition-all ${
+                isSunlightMode
+                  ? 'bg-gray-100 hover:bg-gray-200 border border-black text-black'
+                  : 'bg-forest-800 hover:bg-forest-700 text-forest-100 border border-forest-600'
+              }`}
+            >
+              <Play className={`w-3.5 h-3.5 ${isPlayingPreview ? 'fill-current' : ''}`} />
+              <span>{isPlayingPreview ? 'Playing Captured Audio...' : 'Replay 3s Clip'}</span>
+            </button>
+          </div>
+        )}
+
+        {/* Error message */}
+        {errorMessage && (
+          <div className={`p-3 rounded-lg text-xs flex items-center gap-2 mb-4 w-full text-left ${
+            isSunlightMode ? 'bg-red-50 border border-red-500 text-red-900' : 'bg-red-950/80 border border-red-700 text-red-200'
+          }`}>
+            <AlertCircle className="w-4 h-4 shrink-0 text-red-500" />
+            <span>{errorMessage}</span>
+          </div>
+        )}
+
+        {/* Or Test with Sample Audio */}
+        <div className="w-full pt-4 border-t border-forest-800/60 mt-2">
+          <div className="flex items-center justify-between mb-2.5">
+            <span className={`text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 ${
+              isSunlightMode ? 'text-gray-800' : 'text-forest-300'
+            }`}>
+              <Music className="w-3.5 h-3.5" />
+              Desktop / Trailhead Demo Clips
+            </span>
+            <span className={`text-[10px] ${isSunlightMode ? 'text-gray-600' : 'text-forest-400'}`}>
+              One-click testing
+            </span>
+          </div>
+
+          <div className="grid grid-cols-2 gap-2 text-left">
+            {SAMPLE_AUDIO_LIST.map((sample) => (
+              <button
+                key={sample.id}
+                type="button"
+                onClick={() => handleSelectSample(sample)}
+                disabled={isRecording || isProcessing}
+                className={`p-2.5 rounded-xl border text-xs min-h-[52px] flex items-center justify-between transition-all ${
+                  selectedSample?.id === sample.id
+                    ? isSunlightMode
+                      ? 'bg-black text-white border-black font-bold'
+                      : 'bg-forest-700 border-feather-accent text-white font-bold'
+                    : isSunlightMode
+                      ? 'bg-gray-50 border-gray-300 hover:border-black text-black'
+                      : 'bg-forest-950/60 border-forest-800/80 hover:bg-forest-800/60 text-earth-100'
+                }`}
+              >
+                <div>
+                  <div className="font-semibold">{sample.speciesName}</div>
+                  <div className={`text-[10px] line-clamp-1 ${
+                    selectedSample?.id === sample.id
+                      ? 'text-gray-200'
+                      : isSunlightMode
+                        ? 'text-gray-600'
+                        : 'text-forest-300'
+                  }`}>
+                    {sample.scientificName}
+                  </div>
+                </div>
+                {selectedSample?.id === sample.id ? (
+                  <Check className="w-4 h-4 shrink-0 text-feather-yellow" />
+                ) : (
+                  <Play className="w-3.5 h-3.5 shrink-0 opacity-70" />
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
