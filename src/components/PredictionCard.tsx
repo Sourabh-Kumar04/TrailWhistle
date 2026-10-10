@@ -22,75 +22,79 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({
   const runnersUp = isUnknown ? [] : predictions.slice(1, 3);
 
   return (
-    <div className="space-y-3 mt-4 animate-fade-in">
+    <div className="space-y-3.5 mt-4 animate-fade-in">
       {/* Top Prediction Banner */}
-      <div className={`p-5 rounded-2xl border transition-all ${
+      <div className={`p-5 sm:p-6 rounded-2xl border transition-all ${
         isSunlightMode
-          ? 'bg-white border-2 border-black text-black shadow-lg'
+          ? 'bg-white border border-neutral-300 text-neutral-900 shadow-md'
           : isUnknown
-            ? 'bg-forest-950/90 border-amber-500/60 text-earth-50 shadow-xl ring-1 ring-amber-500/30'
-            : 'bg-canopy-900/95 border-forest-600/80 text-earth-50 shadow-xl ring-1 ring-forest-500/30'
+            ? 'bg-[#180e05] border border-amber-600/50 text-amber-50 shadow-xl ring-1 ring-amber-500/20'
+            : 'bg-[#06140b] border border-emerald-700/60 text-white shadow-xl ring-1 ring-emerald-500/20'
       }`}>
-        <div className="flex items-center justify-between mb-2">
-          <span className={`text-[11px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full flex items-center gap-1 ${
+        <div className="flex items-center justify-between mb-3">
+          <span className={`text-[11px] uppercase font-bold tracking-wider px-2.5 py-1 rounded-full flex items-center gap-1.5 ${
             isSunlightMode
-              ? 'bg-black text-white'
+              ? 'bg-emerald-100 text-emerald-950 border border-emerald-300'
               : isUnknown
-                ? 'bg-amber-950/80 text-amber-300 border border-amber-500/40'
-                : 'bg-forest-800 text-feather-yellow border border-feather-accent/40'
+                ? 'bg-amber-950/90 text-amber-300 border border-amber-600/50'
+                : 'bg-emerald-950/90 text-feather-yellow border border-emerald-700/60'
           }`}>
             {isUnknown ? (
               <>
-                <HelpCircle className="w-3 h-3 text-amber-400" />
-                Inconclusive Audio (&lt;25%)
+                <HelpCircle className="w-3.5 h-3.5 text-amber-400" />
+                <span>Inconclusive Audio (&lt;25%)</span>
               </>
             ) : (
               <>
-                <Sparkles className="w-3 h-3" />
-                Top Match
+                <Sparkles className="w-3.5 h-3.5 text-feather-yellow" />
+                <span>Top Bioacoustic Match</span>
               </>
             )}
           </span>
 
-          <span className="font-mono text-sm font-bold">
+          <span className={`font-mono text-xs sm:text-sm font-extrabold ${
+            isSunlightMode
+              ? 'text-neutral-900'
+              : isUnknown ? 'text-amber-400' : 'text-feather-yellow'
+          }`}>
             {Math.round(topPrediction.confidence * 100)}% Confidence
           </span>
         </div>
 
-        {/* Confidence Bar */}
-        <div className={`w-full h-2 rounded-full overflow-hidden mb-3 ${
-          isSunlightMode ? 'bg-neutral-300' : 'bg-forest-950'
+        {/* Confidence Gauge Bar */}
+        <div className={`w-full h-2 rounded-full overflow-hidden mb-4 ${
+          isSunlightMode ? 'bg-neutral-200' : 'bg-black/60 border border-emerald-950'
         }`}>
           <div
-            className={`h-full transition-all duration-500 ${
+            className={`h-full transition-all duration-500 rounded-full ${
               isSunlightMode
-                ? 'bg-black'
+                ? 'bg-emerald-700'
                 : isUnknown
                   ? 'bg-amber-500'
-                  : 'bg-gradient-to-r from-moss-500 to-feather-yellow'
+                  : 'bg-gradient-to-r from-emerald-500 via-teal-400 to-feather-yellow'
             }`}
             style={{ width: `${Math.max(8, Math.round(topPrediction.confidence * 100))}%` }}
           />
         </div>
 
-        <div className="mb-3">
-          <div className="flex items-center gap-2 flex-wrap mb-1">
-            <h3 className="text-2xl font-black tracking-tight">{topPrediction.commonName}</h3>
+        <div className="mb-4">
+          <div className="flex items-center gap-2.5 flex-wrap mb-1">
+            <h3 className="text-2xl sm:text-3xl font-black tracking-tight">{topPrediction.commonName}</h3>
             {topPrediction.iucnStatus && !isUnknown && (
               <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 ${
                 isSunlightMode
-                  ? 'bg-neutral-100 border border-black text-black'
-                  : 'bg-moss-900/90 text-moss-200 border border-moss-700/60'
+                  ? 'bg-neutral-100 border border-neutral-300 text-neutral-800'
+                  : 'bg-emerald-950/80 text-emerald-300 border border-emerald-800/80'
               }`}>
-                <ShieldCheck className="w-3 h-3 text-moss-400" />
+                <ShieldCheck className="w-3 h-3 text-emerald-400" />
                 <span>{topPrediction.iucnStatus}</span>
               </span>
             )}
           </div>
-          <p className={`text-xs italic font-serif ${isSunlightMode ? 'text-neutral-900 font-bold' : 'text-moss-200'}`}>
+          <p className={`text-xs italic ${isSunlightMode ? 'text-neutral-600 font-semibold' : 'text-emerald-300/80'}`}>
             {topPrediction.scientificName}
             {topPrediction.family && (
-              <span className="not-italic font-sans opacity-80 ml-2 text-[11px] font-medium">
+              <span className="not-italic font-sans opacity-90 ml-2 text-[11px] font-medium">
                 • {topPrediction.family}
               </span>
             )}
@@ -98,36 +102,36 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({
         </div>
 
         {/* Habitat & Acoustic Details */}
-        <div className={`p-3 rounded-xl text-xs mb-4 space-y-2 ${
+        <div className={`p-3.5 rounded-xl text-xs mb-4 space-y-2 border ${
           isSunlightMode
-            ? 'bg-neutral-100 border-2 border-black text-black font-medium'
+            ? 'bg-neutral-50 border-neutral-200 text-neutral-800'
             : isUnknown
-              ? 'bg-amber-950/40 border border-amber-900/60 text-amber-100'
-              : 'bg-canopy-950/90 border border-forest-800 text-earth-100'
+              ? 'bg-[#1a0e05]/60 border-amber-900/40 text-amber-100'
+              : 'bg-[#040e07] border-emerald-900/80 text-emerald-100'
         }`}>
           {isUnknown ? (
-            <div className="flex items-start gap-1.5">
-              <Info className="w-3.5 h-3.5 text-amber-400 shrink-0 mt-0.5" />
-              <span>
-                <strong>Honest Detection:</strong> Signal confidence is below the 25% threshold. We never invent fake species. Try recording closer to the bird or during a louder call.
+            <div className="flex items-start gap-2">
+              <Info className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+              <span className="leading-relaxed">
+                <strong className="font-bold text-amber-300">Honest Detection:</strong> Signal confidence is below the 25% threshold. We never invent fake species. Try recording closer to the bird or during a louder call.
               </span>
             </div>
           ) : (
             <>
-              <div className="flex items-start gap-1.5">
-                <MapPin className="w-3.5 h-3.5 text-moss-400 shrink-0 mt-0.5" />
-                <span><strong className="font-bold">Habitat:</strong> {topPrediction.habitat}</span>
+              <div className="flex items-start gap-2">
+                <MapPin className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" />
+                <span><strong className={`font-bold ${isSunlightMode ? 'text-neutral-900' : 'text-white'}`}>Habitat:</strong> {topPrediction.habitat}</span>
               </div>
               {topPrediction.callType && (
-                <div className="flex items-start gap-1.5">
+                <div className="flex items-start gap-2">
                   <Music className="w-3.5 h-3.5 text-feather-yellow shrink-0 mt-0.5" />
-                  <span><strong className="font-bold">Acoustic Vocalization:</strong> {topPrediction.callType}</span>
+                  <span><strong className={`font-bold ${isSunlightMode ? 'text-neutral-900' : 'text-white'}`}>Acoustic Vocalization:</strong> {topPrediction.callType}</span>
                 </div>
               )}
               {topPrediction.frequencyBandHz && (
-                <div className="flex items-start gap-1.5">
-                  <Activity className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
-                  <span><strong className="font-bold">Bioacoustic Frequency:</strong> {topPrediction.frequencyBandHz}</span>
+                <div className="flex items-start gap-2">
+                  <Activity className="w-3.5 h-3.5 text-teal-400 shrink-0 mt-0.5" />
+                  <span><strong className={`font-bold ${isSunlightMode ? 'text-neutral-900' : 'text-white'}`}>Bioacoustic Frequency:</strong> {topPrediction.frequencyBandHz}</span>
                 </div>
               )}
             </>
@@ -139,12 +143,12 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({
           <button
             type="button"
             onClick={() => onConfirm(topPrediction)}
-            className={`py-3 min-h-[48px] px-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 shadow-md transition-all active:scale-98 ${
+            className={`py-3 min-h-[48px] px-3.5 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md transition-all active:scale-98 cursor-pointer ${
               isSunlightMode
-                ? 'bg-black text-white hover:bg-neutral-800 border-2 border-black'
+                ? 'bg-emerald-900 text-white hover:bg-emerald-800'
                 : isUnknown
-                  ? 'bg-amber-800 hover:bg-amber-700 text-white border border-amber-600'
-                  : 'bg-moss-700 hover:bg-moss-600 text-white border border-moss-500'
+                  ? 'bg-amber-800 hover:bg-amber-700 text-white border border-amber-600/80 shadow-amber-950/50'
+                  : 'bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white border border-emerald-400/40 shadow-emerald-950/50'
             }`}
           >
             <Check className="w-4 h-4" />
@@ -154,13 +158,13 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({
           <button
             type="button"
             onClick={() => onOpenEditModal(topPrediction)}
-            className={`py-3 min-h-[48px] px-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition-all active:scale-98 ${
+            className={`py-3 min-h-[48px] px-3.5 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all active:scale-98 cursor-pointer ${
               isSunlightMode
-                ? 'bg-neutral-100 text-black border-2 border-black hover:bg-neutral-200 font-extrabold'
-                : 'bg-forest-800/80 hover:bg-forest-800 text-earth-100 border border-forest-700'
+                ? 'bg-neutral-100 text-neutral-900 border border-neutral-300 hover:bg-neutral-200'
+                : 'bg-emerald-950/80 hover:bg-emerald-900 text-emerald-200 border border-emerald-800/80'
             }`}
           >
-            <Edit3 className="w-4 h-4" />
+            <Edit3 className="w-4 h-4 text-emerald-400" />
             <span>Add Notes / GPS</span>
           </button>
         </div>
@@ -168,47 +172,57 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({
 
       {/* Runner-up Candidates (Only shown for valid real matches >= 25%, never padded) */}
       {runnersUp.length > 0 && (
-        <div className={`p-4 rounded-xl border ${
-          isSunlightMode ? 'bg-gray-50 border-black' : 'bg-forest-950/80 border-forest-800'
+        <div className={`p-4 rounded-2xl border transition-all ${
+          isSunlightMode ? 'bg-white border-neutral-300 shadow-sm' : 'bg-[#06140b] border-emerald-900/70 shadow-lg'
         }`}>
-          <div className="text-[11px] font-bold uppercase tracking-wider mb-2 flex items-center gap-1 text-forest-300">
-            <Bird className="w-3.5 h-3.5" />
-            Alternate Probable Matches:
+          <div className={`text-[11px] font-bold uppercase tracking-wider mb-2.5 flex items-center gap-1.5 ${
+            isSunlightMode ? 'text-neutral-700' : 'text-emerald-400/80'
+          }`}>
+            <Bird className="w-3.5 h-3.5 text-feather-yellow" />
+            <span>Alternate Probable Taxa:</span>
           </div>
 
           <div className="space-y-2">
             {runnersUp.map((candidate, idx) => (
               <div
                 key={candidate.speciesId || idx}
-                className={`p-3 rounded-lg border flex items-center justify-between transition-all ${
+                className={`p-3 rounded-xl border flex items-center justify-between transition-all ${
                   isSunlightMode
-                    ? 'bg-white border-gray-300 text-black'
-                    : 'bg-forest-900/60 border-forest-800 text-earth-100'
+                    ? 'bg-neutral-50 border-neutral-200 text-neutral-900'
+                    : 'bg-[#040e07] border-emerald-900/80 text-white'
                 }`}
               >
-                <div className="flex-1 pr-2">
-                  <div className="font-semibold text-xs">{candidate.commonName}</div>
-                  <div className="text-[10px] opacity-75 italic">{candidate.scientificName}</div>
+                <div className="flex-1 pr-3">
+                  <div className="font-bold text-xs sm:text-sm">{candidate.commonName}</div>
+                  <div className={`text-[10px] italic ${isSunlightMode ? 'text-neutral-600' : 'text-emerald-400/70'}`}>
+                    {candidate.scientificName}
+                  </div>
                   {/* Miniature confidence bar */}
-                  <div className={`w-28 h-1 rounded-full mt-1.5 overflow-hidden ${isSunlightMode ? 'bg-gray-200' : 'bg-forest-950'}`}>
+                  <div className={`w-32 h-1.5 rounded-full mt-2 overflow-hidden ${
+                    isSunlightMode ? 'bg-neutral-200' : 'bg-black/60 border border-emerald-950'
+                  }`}>
                     <div
-                      className={`h-full ${isSunlightMode ? 'bg-black' : 'bg-feather-yellow'}`}
+                      className={`h-full rounded-full ${
+                        isSunlightMode ? 'bg-emerald-700' : 'bg-gradient-to-r from-emerald-500 to-feather-yellow'
+                      }`}
                       style={{ width: `${Math.round(candidate.confidence * 100)}%` }}
                     />
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <span className="font-mono text-xs font-bold">
+                <div className="flex items-center gap-2.5">
+                  <span className={`font-mono text-xs font-bold ${
+                    isSunlightMode ? 'text-neutral-900' : 'text-feather-yellow'
+                  }`}>
                     {Math.round(candidate.confidence * 100)}%
                   </span>
                   <button
                     type="button"
                     onClick={() => onOpenEditModal(candidate)}
-                    className={`p-2 min-w-[40px] min-h-[40px] rounded-lg text-xs font-bold flex items-center justify-center transition-all ${
+                    className={`py-1.5 px-3 min-h-[38px] rounded-lg text-xs font-bold flex items-center justify-center transition-all cursor-pointer ${
                       isSunlightMode
-                        ? 'bg-gray-100 border border-black hover:bg-black hover:text-white'
-                        : 'bg-forest-800 border border-forest-700 hover:bg-forest-700 text-forest-100'
+                        ? 'bg-white border border-neutral-300 text-neutral-900 hover:bg-neutral-100 shadow-2xs'
+                        : 'bg-emerald-950 hover:bg-emerald-900 text-emerald-200 border border-emerald-800'
                     }`}
                     title="Select this candidate instead"
                   >

@@ -33,6 +33,90 @@ import {
 } from './services/journal';
 import { CheckCircle2 } from 'lucide-react';
 
+const DEMO_PREDICTIONS: PredictionResult[] = [
+  {
+    speciesId: 'amerob',
+    commonName: 'American Robin',
+    scientificName: 'Turdus migratorius',
+    matchedClass: 'Turdus migratorius_American Robin',
+    confidence: 0.94,
+    family: 'Turdidae (Thrushes)',
+    habitat: 'Open woodlands, residential lawns, forest edges',
+    callType: 'Cheerily carol, clear liquid whistles',
+    frequencyBandHz: '1.5 - 3.5 kHz',
+    iucnStatus: 'Least Concern (LC)',
+  },
+  {
+    speciesId: 'sonspa',
+    commonName: 'Song Sparrow',
+    scientificName: 'Melospiza melodia',
+    matchedClass: 'Melospiza melodia_Song Sparrow',
+    confidence: 0.38,
+    family: 'Passerellidae (New World Sparrows)',
+    habitat: 'Shrubby wetlands, hedgerows, forest borders',
+    callType: 'Crisp introductory notes followed by musical trill',
+    frequencyBandHz: '2.0 - 5.0 kHz',
+    iucnStatus: 'Least Concern (LC)',
+  },
+  {
+    speciesId: 'tytalb',
+    commonName: 'Barn Owl',
+    scientificName: 'Tyto alba',
+    matchedClass: 'Tyto alba_Barn Owl',
+    confidence: 0.28,
+    family: 'Tytonidae (Barn Owls)',
+    habitat: 'Open grasslands, agricultural fields, woodland edges',
+    callType: 'Harsh raspy screech',
+    frequencyBandHz: '0.8 - 2.8 kHz',
+    iucnStatus: 'Least Concern (LC)',
+  },
+];
+
+const DEMO_JOURNAL_ENTRIES: JournalEntry[] = [
+  {
+    id: 'demo-1',
+    surveyId: 'survey-pine-ridge',
+    commonName: 'American Robin',
+    scientificName: 'Turdus migratorius',
+    confidence: 0.94,
+    timestamp: new Date(Date.now() - 1000 * 60 * 18).toISOString(),
+    locationName: 'Pine Ridge Trailhead',
+    location: { latitude: 37.7749, longitude: -122.4194, accuracy: 4.2 },
+    notes: 'Singing from high pine bough, territorial dawn display.',
+    source: 'live_mic',
+    audioDurationSeconds: 3.0,
+    confirmedByUser: true,
+  },
+  {
+    id: 'demo-2',
+    surveyId: 'survey-pine-ridge',
+    commonName: 'Song Sparrow',
+    scientificName: 'Melospiza melodia',
+    confidence: 0.88,
+    timestamp: new Date(Date.now() - 1000 * 60 * 42).toISOString(),
+    locationName: 'Pine Ridge Trailhead',
+    location: { latitude: 37.7753, longitude: -122.4187, accuracy: 5.1 },
+    notes: 'Two distinct individuals duetting near riparian willow brush.',
+    source: 'sample_audio',
+    audioDurationSeconds: 3.0,
+    confirmedByUser: true,
+  },
+  {
+    id: 'demo-3',
+    surveyId: 'survey-valley-creek',
+    commonName: 'Mourning Dove',
+    scientificName: 'Zenaida macroura',
+    confidence: 0.91,
+    timestamp: new Date(Date.now() - 1000 * 60 * 120).toISOString(),
+    locationName: 'Valley Creek Overlook',
+    location: { latitude: 37.7812, longitude: -122.4121, accuracy: 3.8 },
+    notes: 'Gentle cooing call, perched on telegraph line wire.',
+    source: 'live_mic',
+    audioDurationSeconds: 3.0,
+    confirmedByUser: false,
+  },
+];
+
 export const App: React.FC = () => {
   const searchParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
   const [activeTab, setActiveTab] = useState<'identify' | 'journal'>(() => {
@@ -51,11 +135,19 @@ export const App: React.FC = () => {
   });
 
   const [isProcessing, setIsProcessing] = useState(false);
-  const [predictions, setPredictions] = useState<PredictionResult[] | null>(null);
+  const [predictions, setPredictions] = useState<PredictionResult[] | null>(() => {
+    if (searchParams?.get('demo') === 'prediction') return DEMO_PREDICTIONS;
+    return null;
+  });
   const [capturedAudioDuration, setCapturedAudioDuration] = useState(3.0);
   const [capturedSource, setCapturedSource] = useState<'live_mic' | 'sample_audio'>('live_mic');
   const [modalPrediction, setModalPrediction] = useState<PredictionResult | null>(null);
-  const [journalEntries, setJournalEntries] = useState<JournalEntry[]>(() => getJournalEntries());
+  const [journalEntries, setJournalEntries] = useState<JournalEntry[]>(() => {
+    if (searchParams?.get('demo') === 'journal' || searchParams?.get('demo') === 'populated') {
+      return DEMO_JOURNAL_ENTRIES;
+    }
+    return getJournalEntries();
+  });
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   // Area Biodiversity Survey Session State
