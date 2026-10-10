@@ -43,36 +43,36 @@ You don't need a cell tower. You don't need an account. You don't need an intern
    - Classifies across **6,522 real avian species** with scientific and common name mapping.
    - Honest acoustic calibration: requires 25% minimum confidence, showing an honest Unknown state when calls are ambiguous—never inventing fake species.
 
-3. **Field Survey Log with Location Grouping (Journal)**
-   - Group observations hierarchically by Survey Site / Transect.
-   - Per-site summary cards showing species tally, total detections, date span, and representative GPS coordinates.
-   - Per-site CSV export and master journal CSV export.
-   - Overall biodiversity overview: survey sites explored, lifetime species list, total acoustic detections, and GPS waypoints.
+3. **Live 4-Band Bioacoustic Frequency Spectrum**
+   - Real-time bioacoustic spectrum visualizer actively computing frequency energy across four avian vocalization bands during recording:
+     - **Low Band (0.5 – 1.5 kHz)**: Owl hoots, grouse booms, deep coos.
+     - **Mid Band (1.5 – 3.0 kHz)**: Dove coos, thrush melodies, robin carols.
+     - **High Band (3.0 – 6.0 kHz)**: Warbler trills, finch chirps, sparrow whistles.
+     - **Ultra Band (6.0+ kHz)**: High-pitched kinglet and hummingbird sibilance.
 
-4. **3-Second Avian Audio Capture**
-   - High-contrast, glove-friendly 112px record button with tactile haptic and visual countdown.
-   - Real-time RMS volume audio visualizer verifying incoming acoustic signal level.
+4. **IUCN Red List Status & Avian Family Taxa**
+   - Integrated conservation status badges (Least Concern, Vulnerable, Endangered) with IUCN shield indicators.
+   - Avian family taxonomy classification (Turdidae, Passerellidae, Columbidae, Tytonidae) displayed on prediction cards for ecological context.
+
+5. **3-Second Avian Audio Capture**
+   - High-contrast, glove-friendly 112px record button with tactile visual countdown and volume meter.
    - Resilient Web Audio API pipeline with AudioWorklet recording and linear interpolation resampling to 48 kHz mono float arrays matching BirdNET's exact input tensor requirements [1, 144000].
 
-5. **Transparent Model Hydration & Graceful Degradation**
-   - Explicit first-load download progress bar showing downloaded MB, percentage, and current ONNX chunk.
-   - Aggressive Service Worker + Cache API persistence (`CacheFirst` strategy) keeping model weights stored locally for 90 days.
-   - Graceful offline fallback with clear retry mechanics and diagnostic guidance.
+6. **Sunlight Contrast Mode & Outdoor Accessibility**
+   - Dedicated "Sunlight Mode" toggle that converts the UI to high-contrast monochrome with bold borders, preventing glare washout under direct outdoor midday sun.
+   - Minimum 48px tap targets optimized for one-handed operation while hiking or wearing outdoor trail gloves.
 
-6. **RFC 4180 CSV Export**
+7. **Backcountry Offline Diagnostics & Cache Inspector**
+   - Built-in diagnostic modal accessible anytime by tapping the offline status indicator.
+   - Inspects offline connectivity, BirdNET v2.4 ONNX model cache (~47MB), 6,522 species taxonomy cache, WASM SIMD capability, and browser storage quota.
+
+8. **RFC 4180 CSV Export & Full JSON Backup/Restore**
    - Single-click CSV export with complete observation metadata (`id`, `timestamp_utc`, `survey_location`, `species_common_name`, `species_scientific_name`, `confidence_pct`, `notes`, `latitude`, `longitude`, `gps_accuracy_m`, `audio_duration_sec`, `source`, `confirmed_by_user`).
-   - Rich Area Biodiversity Survey reports containing survey headers, species checklist summaries, and raw observation logs ready for conservation databases.
+   - Area survey reports containing survey headers, species checklist summaries, and raw observation logs ready for conservation databases.
+   - Complete JSON backup export and restore mechanism for field ecologists ensuring 100% data sovereignty.
 
-7. **Sunlight Contrast Mode & Outdoor Accessibility**
-   - Dedicated "Sunlight Mode" toggle that converts the UI to high-contrast monochrome with bold borders, preventing glare washout under direct outdoor midday sun.
-   - Minimum 48px tap targets optimized for one-handed operation while hiking or wearing outdoor trail gloves.
-
-7. **Trailhead Demo Mode**
-   - Built-in synthesized 16kHz WAV bird call samples (American Robin, Song Sparrow, Mourning Dove, Barn Owl) for rapid evaluation, desktop testing, and trailside calibration.
-
-8. **Sunlight Contrast Mode & Outdoor Accessibility**
-   - Dedicated "Sunlight Mode" toggle that converts the UI to high-contrast monochrome with bold borders, preventing glare washout under direct outdoor midday sun.
-   - Minimum 48px tap targets optimized for one-handed operation while hiking or wearing outdoor trail gloves.
+9. **Trailhead Demo Mode with Real 48kHz Field Recordings**
+   - Built-in high-fidelity xeno-canto 48kHz birdsong recordings (American Robin, Song Sparrow, Mourning Dove, Barn Owl) for rapid evaluation, desktop testing, and trailside calibration.
 
 ---
 
@@ -88,21 +88,21 @@ TrailWhistle is architected as a lean, zero-backend Progressive Web Application:
 │  - React 19 + TypeScript     │  - BirdNET v2.4 ONNX (~47MB) │
 │  - Tailwind CSS              │  - ONNX Runtime Web (WASM)   │
 │  - High-Contrast Sunlight UX │  - 6,522 Avian Species       │
-│  - Touch-friendly 48px+ tap  │  - Honest 25% Threshold      │
+│  - 4-Band Bioacoustic Meter  │  - Honest 25% Threshold      │
 ├──────────────────────────────┼──────────────────────────────┤
 │       Web Audio Engine       │       Offline Persistence    │
 │  - AudioWorklet Node Capture │  - Workbox Service Worker    │
 │  - ScriptProcessor Fallback  │  - Browser Cache API         │
-│  - 48kHz Linear Resampling   │  - localStorage Journal      │
+│  - 48kHz Linear Resampling   │  - JSON Backup & Restore     │
 │  - Float32 to WAV Generator  │  - Hardware Satellite GPS    │
 └──────────────────────────────┴──────────────────────────────┘
 ```
 
 - **Frontend & Bundling:** Vite + React 19 + TypeScript.
-- **Styling:** Tailwind CSS with custom earth/forest palettes and high-contrast outdoor monochrome overrides.
-- **PWA & Offline Service Worker:** `vite-plugin-pwa` with Workbox caching strategies (`CacheFirst` for static assets and model weights from Hugging Face).
-- **ML Runtime:** `@xenova/transformers` running the quantized `Xenova/ast-finetuned-audioset-10-10-0.4593` ONNX model in WebAssembly.
-- **Testing:** Vitest + `@testing-library/react` + `jsdom`. Comprehensive unit test coverage for audio resampling, normalization, WAV encoding, journal storage, CSV escaping, and component state transitions. (Model pipeline tested with a verified mock stub to avoid redundant network hits during CI).
+- **Styling:** Tailwind CSS with custom earth/forest/canopy/moss palettes and high-contrast outdoor monochrome overrides.
+- **PWA & Offline Service Worker:** `vite-plugin-pwa` with Workbox caching strategies (`CacheFirst` for static assets and model weights).
+- **ML Runtime:** `onnxruntime-web` running the quantized `tphakala/BirdNET-v2.4` ONNX model (~47MB INT8) directly in WebAssembly with WASM SIMD support.
+- **Testing:** Vitest + `@testing-library/react` + `jsdom`. Comprehensive unit test coverage for audio resampling, normalization, WAV encoding, journal storage, CSV escaping, JSON backup/restore, bioacoustic classifiers, and component state transitions.
 
 ---
 

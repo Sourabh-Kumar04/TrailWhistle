@@ -194,6 +194,8 @@ describe('UI Components', () => {
     expect(screen.getByText('Barn Owl')).toBeInTheDocument();
     expect(screen.getByText('Tyto alba')).toBeInTheDocument();
     expect(screen.getByText('Export CSV')).toBeInTheDocument();
+    expect(screen.getByText('Backup JSON')).toBeInTheDocument();
+    expect(screen.getByText('Restore')).toBeInTheDocument();
 
     const deleteBtn = screen.getByLabelText(/Delete observation for Barn Owl/i);
     fireEvent.click(deleteBtn);

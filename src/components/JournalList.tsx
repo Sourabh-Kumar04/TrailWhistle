@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import {
   Search,
   Download,
@@ -8,6 +8,8 @@ import {
   CheckCircle2,
   Feather,
   FileSpreadsheet,
+  FileJson,
+  Upload,
   Trees,
   Bird,
   ChevronDown,
@@ -20,6 +22,8 @@ import {
   filterJournalEntries,
   exportJournalToCsvFile,
   exportAreaSurveyCsvFile,
+  exportJournalToJsonFile,
+  importJournalFromJson,
   groupEntriesByLocation,
 } from '../services/journal';
 
@@ -29,6 +33,7 @@ interface JournalListProps {
   onClearJournal: () => void;
   isSunlightMode: boolean;
   onGoToIdentify: () => void;
+  onJournalImported?: (count: number) => void;
 }
 
 export const JournalList: React.FC<JournalListProps> = ({
@@ -37,6 +42,7 @@ export const JournalList: React.FC<JournalListProps> = ({
   onClearJournal,
   isSunlightMode,
   onGoToIdentify,
+  onJournalImported,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterDate, setFilterDate] = useState('');
@@ -80,12 +86,47 @@ export const JournalList: React.FC<JournalListProps> = ({
     return entries.filter((e) => e.location !== null && e.location !== undefined).length;
   }, [entries]);
 
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const handleExportCsv = () => {
     if (entries.length === 0) {
       alert('Your field journal is empty. Make an observation first!');
       return;
     }
     exportJournalToCsvFile(filteredEntries.length > 0 ? filteredEntries : entries);
+  };
+
+  const handleExportJson = () => {
+    if (entries.length === 0) {
+      alert('Your field journal is empty. Make an observation first!');
+      return;
+    }
+    exportJournalToJsonFile(entries);
+  };
+
+  const handleTriggerImport = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const text = await file.text();
+      const result = importJournalFromJson(text);
+      if (onJournalImported) {
+        onJournalImported(result.importedCount);
+      }
+      alert(`Successfully restored ${result.importedCount} observation(s) from ${file.name}!`);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      alert(`Failed to import backup file: ${msg}`);
+    } finally {
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
   };
 
   const handleExportLocationCsv = (locationName: string, groupEntries: JournalEntry[]) => {
@@ -133,13 +174,22 @@ export const JournalList: React.FC<JournalListProps> = ({
             </div>
           </div>
 
-          {/* Top Actions: Export CSV & Clear */}
-          <div className="flex items-center gap-2">
+          {/* Top Actions: Export CSV, Backup JSON, Restore JSON, Clear */}
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <input
+              type="file"
+              ref={fileInputRef}
+              accept=".json,application/json"
+              onChange={handleFileChange}
+              className="hidden"
+              aria-label="Upload backup JSON file"
+            />
+
             <button
               type="button"
               onClick={handleExportCsv}
               disabled={entries.length === 0}
-              className={`flex-1 sm:flex-none py-2.5 px-4 min-h-[44px] rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow-md transition-all ${
+              className={`py-2 px-3 min-h-[44px] rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm transition-all ${
                 entries.length === 0
                   ? 'opacity-40 cursor-not-allowed bg-gray-500 text-white'
                   : isSunlightMode
@@ -148,8 +198,39 @@ export const JournalList: React.FC<JournalListProps> = ({
               }`}
               title="Export all observations as standard CSV file"
             >
-              <FileSpreadsheet className="w-4 h-4" />
+              <FileSpreadsheet className="w-3.5 h-3.5" />
               <span>Export CSV</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={handleExportJson}
+              disabled={entries.length === 0}
+              className={`py-2 px-3 min-h-[44px] rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm transition-all ${
+                entries.length === 0
+                  ? 'opacity-40 cursor-not-allowed bg-gray-500 text-white'
+                  : isSunlightMode
+                    ? 'bg-white text-black hover:bg-gray-100 border-2 border-black'
+                    : 'bg-forest-800 hover:bg-forest-700 text-forest-100 border border-forest-600'
+              }`}
+              title="Download raw JSON backup file"
+            >
+              <FileJson className="w-3.5 h-3.5" />
+              <span>Backup JSON</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={handleTriggerImport}
+              className={`py-2 px-3 min-h-[44px] rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm transition-all ${
+                isSunlightMode
+                  ? 'bg-white text-black hover:bg-gray-100 border-2 border-black'
+                  : 'bg-forest-800 hover:bg-forest-700 text-forest-100 border border-forest-600'
+              }`}
+              title="Restore observations from a JSON backup file"
+            >
+              <Upload className="w-3.5 h-3.5" />
+              <span>Restore</span>
             </button>
 
             {entries.length > 0 && (

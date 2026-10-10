@@ -30,14 +30,17 @@ Rather than isolated single-bird identification, TrailWhistle supports the core 
 
 - 🌲 **Area Biodiversity Survey Mode:** Side-by-side field dashboard with active survey site management, live species checklist, and survey stats strip.
 - 🎙️ **3-Second Avian Audio Capture:** Tactile, glove-friendly touch button with AudioWorklet processing, real-time volume meter, and countdown timer.
+- 🌈 **4-Band Bioacoustic Spectrum:** Live frequency visualizer tracking energy across 4 vocalization bands (0.5-1.5kHz, 1.5-3.0kHz, 3.0-6.0kHz, 6.0kHz+).
 - 🧠 **BirdNET v2.4 On-Device Neural Inference:** Powered by open weights (`BirdNET_v2.4_int8_arm.onnx`, ~47MB INT8 quantized) via `onnxruntime-web` in WebAssembly across 6,522 real species.
+- 🛡️ **IUCN Conservation Status & Family Taxa:** Live IUCN Red List status pill and avian family badges on every prediction card.
 - 🎯 **Honest Acoustic Calibration:** Displays honest Unknown state when confidence is below 25%—zero fake confidence padding or invented species.
 - 📊 **Top-3 Species Confidence Bars:** Clear probability ranking with acoustic signature details and habitat bio.
 - 📋 **Live Area Species Checklist:** Real-time running checklist tracking species detection counts, peak confidence percentages, and timestamps.
 - ⏱️ **Recording History Timeline:** Chronological feed of acoustic captures with confidence indicators and audio sources.
 - 📓 **Field Survey Log with Location Grouping (Journal):** Observations grouped by survey site with site-level checklist chips, overview biodiversity metrics, and location-specific CSV exports.
+- 🔍 **Backcountry Offline Diagnostics:** Interactive modal verifying PWA offline connectivity, BirdNET ONNX cache (~47MB), species taxonomy cache, WASM SIMD, and storage quota.
 - 📍 **Hardware Satellite GPS:** Captures precise latitude, longitude, and accuracy offline without requiring cellular cell-tower triangulation.
-- 💾 **RFC 4180 CSV Export:** Instant one-click CSV file export compatible with eBird, iNaturalist, QGIS, and spreadsheets.
+- 💾 **RFC 4180 CSV Export & JSON Backup/Restore:** Instant one-click CSV export plus complete offline JSON backup and archive restoration.
 - ☀️ **Sunlight Outdoor Mode:** High-contrast monochrome mode built specifically for direct midday sunlight glare.
 - 📦 **Installable PWA:** Full Service Worker caching via `vite-plugin-pwa` with 90-day offline cache retention for model weights.
 - 🎶 **Pre-Bundled Demo Audio:** Includes built-in 48kHz birdsong clips (American Robin, Song Sparrow, Mourning Dove, Barn Owl) for immediate testing without a live microphone.

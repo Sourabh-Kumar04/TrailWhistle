@@ -347,6 +347,10 @@ export const App: React.FC = () => {
             onClearJournal={handleClearJournal}
             isSunlightMode={isSunlightMode}
             onGoToIdentify={() => setActiveTab('identify')}
+            onJournalImported={(count) => {
+              setJournalEntries(getJournalEntries());
+              showToast(`Restored ${count} observation(s) to Field Journal!`);
+            }}
           />
         )}
       </main>
