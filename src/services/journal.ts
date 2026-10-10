@@ -478,6 +478,51 @@ export function exportAreaSurveyCsvFile(
   downloadBlobAsFile(csvContent, `trailwhistle_survey_${cleanLoc}_${dateStr}.csv`);
 }
 
+export function exportJournalToJsonFile(entries: JournalEntry[], session?: SurveySession): void {
+  const data = {
+    app: 'TrailWhistle',
+    version: '0.1.0',
+    exportedAt: new Date().toISOString(),
+    session,
+    entries,
+  };
+  const jsonContent = JSON.stringify(data, null, 2);
+  const blob = new Blob([jsonContent], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.setAttribute('href', url);
+  link.setAttribute('download', `trailwhistle_backup_${new Date().toISOString().slice(0, 10)}.json`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
+
+export function importJournalFromJson(jsonString: string): { importedCount: number } {
+  const parsed = JSON.parse(jsonString);
+  const rawList = Array.isArray(parsed) ? parsed : parsed.entries || parsed.journalEntries;
+  if (!Array.isArray(rawList)) {
+    throw new Error('Invalid backup file: no entries array found');
+  }
+
+  const existing = getJournalEntries();
+  const existingIds = new Set(existing.map((e) => e.id));
+  let importedCount = 0;
+
+  for (const item of rawList) {
+    if (item.commonName && item.scientificName) {
+      if (!existingIds.has(item.id)) {
+        existing.push(item);
+        existingIds.add(item.id);
+        importedCount++;
+      }
+    }
+  }
+
+  saveJournalEntries(existing);
+  return { importedCount };
+}
+
 function downloadBlobAsFile(content: string, filename: string): void {
   const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
@@ -489,3 +534,4 @@ function downloadBlobAsFile(content: string, filename: string): void {
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
 }
+

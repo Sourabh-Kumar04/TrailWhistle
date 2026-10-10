@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Compass, Feather, BookOpen, Sun, Moon, WifiOff, Trees, Download, X } from 'lucide-react';
+import { OfflineDiagnosticModal } from './OfflineDiagnosticModal';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -23,6 +24,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 }) => {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [isInstallDismissed, setIsInstallDismissed] = useState<boolean>(false);
+  const [isDiagnosticOpen, setIsDiagnosticOpen] = useState<boolean>(false);
 
   useEffect(() => {
     const handler = (e: Event) => {
@@ -63,14 +65,19 @@ export const Navbar: React.FC<NavbarProps> = ({
           <div>
             <div className="flex items-center space-x-2">
               <span className="font-black text-lg sm:text-xl tracking-tight font-sans">TrailWhistle</span>
-              <span className={`text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full flex items-center gap-1 ${
-                isSunlightMode 
-                  ? 'bg-black text-white' 
-                  : 'bg-forest-800/90 text-forest-200 border border-forest-700/60'
-              }`}>
+              <button
+                type="button"
+                onClick={() => setIsDiagnosticOpen(true)}
+                title="Inspect on-device offline cache & field readiness"
+                className={`text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full flex items-center gap-1 cursor-pointer transition-all hover:scale-105 active:scale-95 ${
+                  isSunlightMode 
+                    ? 'bg-black text-white hover:bg-neutral-800' 
+                    : 'bg-forest-800/90 text-forest-200 border border-forest-700/60 hover:text-white hover:border-forest-500'
+                }`}
+              >
                 <WifiOff className="w-2.5 h-2.5" />
-                Offline
-              </span>
+                <span>Offline</span>
+              </button>
               <span className={`hidden sm:inline-flex text-[10px] font-bold px-2 py-0.5 rounded-full ${
                 isSunlightMode 
                   ? 'bg-gray-200 text-black border border-black' 
@@ -181,6 +188,13 @@ export const Navbar: React.FC<NavbarProps> = ({
           </button>
         </div>
       </div>
+
+      {/* Offline Field Readiness & Diagnostic Modal */}
+      <OfflineDiagnosticModal
+        isOpen={isDiagnosticOpen}
+        onClose={() => setIsDiagnosticOpen(false)}
+        isSunlightMode={isSunlightMode}
+      />
     </header>
   );
 };

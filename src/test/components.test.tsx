@@ -11,6 +11,7 @@ import { SurveyStatsBar } from '../components/SurveyStatsBar';
 import { AreaSpeciesChecklist } from '../components/AreaSpeciesChecklist';
 import { TestingSection } from '../components/TestingSection';
 import { SurveyOnboardingHint } from '../components/SurveyOnboardingHint';
+import { OfflineDiagnosticModal } from '../components/OfflineDiagnosticModal';
 import { PredictionResult, JournalEntry, SurveyChecklistItem } from '../types/journal';
 
 describe('UI Components', () => {
@@ -360,6 +361,26 @@ describe('UI Components', () => {
     expect(screen.getByText('Turdus migratorius')).toBeInTheDocument();
     expect(screen.getByText('3x heard')).toBeInTheDocument();
     expect(screen.getByText('92% peak')).toBeInTheDocument();
+  });
+
+  it('OfflineDiagnosticModal renders readiness checks and storage info', () => {
+    const onClose = vi.fn();
+    render(
+      <OfflineDiagnosticModal
+        isOpen={true}
+        onClose={onClose}
+        isSunlightMode={false}
+      />
+    );
+
+    expect(screen.getByText('Field Readiness & Offline Diagnostic')).toBeInTheDocument();
+    expect(screen.getByText(/6,522 Species Global Taxonomy/i)).toBeInTheDocument();
+    expect(screen.getByText(/48kHz AudioWorklet \+ WebAssembly SIMD/i)).toBeInTheDocument();
+    expect(screen.getByText('Export Raw JSON Backup')).toBeInTheDocument();
+
+    const closeBtn = screen.getByText('Close Diagnostic');
+    fireEvent.click(closeBtn);
+    expect(onClose).toHaveBeenCalled();
   });
 });
 

@@ -10,6 +10,7 @@ import {
   buildSurveyChecklist,
   groupEntriesByLocation,
   generateAreaSurveyCsv,
+  importJournalFromJson,
 } from '../services/journal';
 import { JournalEntry } from '../types/journal';
 
@@ -295,6 +296,36 @@ describe('Field Journal Service', () => {
     expect(csv).toContain('Turdus migratorius');
     expect(csv).toContain('89.0%');
     expect(csv).toContain('DETAILED ACOUSTIC OBSERVATIONS');
+  });
+
+  it('imports journal entries from valid JSON backup string', () => {
+    const backupJson = JSON.stringify({
+      app: 'TrailWhistle',
+      entries: [
+        {
+          id: 'imported-1',
+          timestamp: '2026-10-10T12:00:00Z',
+          commonName: 'Barn Owl',
+          scientificName: 'Tyto alba',
+          confidence: 0.95,
+          notes: 'Restored from expedition archive',
+          audioDurationSeconds: 3,
+          source: 'live_mic',
+          confirmedByUser: true,
+        },
+      ],
+    });
+
+    const result = importJournalFromJson(backupJson);
+    expect(result.importedCount).toBe(1);
+
+    const stored = getJournalEntries();
+    expect(stored).toHaveLength(1);
+    expect(stored[0].commonName).toBe('Barn Owl');
+
+    // Duplicate import should be idempotent
+    const rerun = importJournalFromJson(backupJson);
+    expect(rerun.importedCount).toBe(0);
   });
 });
 
