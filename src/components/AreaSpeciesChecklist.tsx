@@ -24,10 +24,12 @@ export const AreaSpeciesChecklist: React.FC<AreaSpeciesChecklistProps> = ({
     <div className={`p-4 sm:p-5 rounded-2xl border flex flex-col h-full transition-all ${
       isSunlightMode
         ? 'bg-white border-2 border-black text-black shadow-md'
-        : 'bg-forest-900/60 border-forest-800 text-earth-50 shadow-lg'
+        : 'bg-canopy-900/95 border-forest-700/60 text-earth-50 shadow-lg'
     }`}>
       {/* Header */}
-      <div className="flex items-center justify-between gap-2 pb-3 mb-3 border-b border-forest-800/40">
+      <div className={`flex items-center justify-between gap-2 pb-3 mb-3 border-b ${
+        isSunlightMode ? 'border-neutral-900' : 'border-forest-800/60'
+      }`}>
         <div>
           <div className="flex items-center gap-2">
             <h2 className="text-base sm:text-lg font-bold tracking-tight flex items-center gap-2">
@@ -37,11 +39,11 @@ export const AreaSpeciesChecklist: React.FC<AreaSpeciesChecklistProps> = ({
             <span className={`text-xs font-mono font-bold px-2 py-0.5 rounded-full ${
               isSunlightMode ? 'bg-black text-white' : 'bg-forest-800 text-feather-yellow border border-forest-700'
             }`}>
-              {checklist.length} {checklist.length === 1 ? 'species' : 'species'}
+              {checklist.length} species
             </span>
           </div>
-          <p className={`text-xs mt-0.5 ${isSunlightMode ? 'text-gray-700' : 'text-forest-300'}`}>
-            Running acoustic census for <span className="font-semibold underline decoration-forest-500">{locationName}</span>
+          <p className={`text-xs mt-0.5 ${isSunlightMode ? 'text-black font-medium' : 'text-forest-200'}`}>
+            Running acoustic census for <span className="font-bold underline decoration-moss-500">{locationName}</span>
           </p>
         </div>
 
@@ -55,8 +57,8 @@ export const AreaSpeciesChecklist: React.FC<AreaSpeciesChecklistProps> = ({
               onChange={(e) => setSearchQuery(e.target.value)}
               className={`w-full pl-7 pr-2 py-1.5 text-xs rounded-lg border ${
                 isSunlightMode
-                  ? 'bg-gray-50 border-gray-300 text-black'
-                  : 'bg-forest-950 border-forest-700 text-white placeholder-forest-500'
+                  ? 'bg-white border-2 border-black text-black font-semibold'
+                  : 'bg-canopy-950 border-forest-700 text-white placeholder-forest-500'
               }`}
             />
           </div>
@@ -66,16 +68,16 @@ export const AreaSpeciesChecklist: React.FC<AreaSpeciesChecklistProps> = ({
       {/* Checklist Content */}
       {checklist.length === 0 ? (
         <div className={`flex-1 flex flex-col items-center justify-center p-6 text-center rounded-xl border border-dashed ${
-          isSunlightMode ? 'bg-gray-50 border-gray-400' : 'bg-forest-950/40 border-forest-800/80'
+          isSunlightMode ? 'bg-neutral-50 border-2 border-black' : 'bg-canopy-950/60 border-forest-800/80'
         }`}>
           <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-3 shadow-inner ${
-            isSunlightMode ? 'bg-gray-200 text-black' : 'bg-forest-800/80 text-feather-yellow'
+            isSunlightMode ? 'bg-black text-white' : 'bg-forest-800/80 text-feather-yellow'
           }`}>
             <Sparkles className="w-6 h-6" />
           </div>
           <h3 className="font-bold text-sm mb-1">Checklist Empty — Ready for Survey</h3>
           <p className={`text-xs max-w-sm mb-4 leading-relaxed ${
-            isSunlightMode ? 'text-gray-700' : 'text-forest-300'
+            isSunlightMode ? 'text-black font-medium' : 'text-forest-200'
           }`}>
             Arrive at your site, point your phone toward the canopy or scrub, and record multiple 3-second audio clips to populate this live area checklist.
           </p>
@@ -83,39 +85,39 @@ export const AreaSpeciesChecklist: React.FC<AreaSpeciesChecklistProps> = ({
           {/* 4-Step Field Workflow Infographic */}
           <div className="grid grid-cols-2 gap-2 text-left w-full max-w-sm">
             <div className={`p-2.5 rounded-lg border text-[11px] ${
-              isSunlightMode ? 'bg-white border-gray-300' : 'bg-forest-900/60 border-forest-800 text-forest-200'
+              isSunlightMode ? 'bg-white border-2 border-black text-black' : 'bg-canopy-900 border-forest-800 text-forest-200'
             }`}>
-              <div className="font-bold text-feather-yellow mb-0.5 flex items-center gap-1">
+              <div className="font-bold text-feather-accent mb-0.5 flex items-center gap-1">
                 <span>1. Arrive</span>
               </div>
-              <div className="opacity-80">Set current site name or GPS coordinates.</div>
+              <div className="opacity-90">Set current site name or GPS coordinates.</div>
             </div>
 
             <div className={`p-2.5 rounded-lg border text-[11px] ${
-              isSunlightMode ? 'bg-white border-gray-300' : 'bg-forest-900/60 border-forest-800 text-forest-200'
+              isSunlightMode ? 'bg-white border-2 border-black text-black' : 'bg-canopy-900 border-forest-800 text-forest-200'
             }`}>
-              <div className="font-bold text-feather-yellow mb-0.5 flex items-center gap-1">
+              <div className="font-bold text-feather-accent mb-0.5 flex items-center gap-1">
                 <span>2. Record</span>
               </div>
-              <div className="opacity-80">Take 3-second rapid captures as you walk.</div>
+              <div className="opacity-90">Take 3-second rapid captures as you walk.</div>
             </div>
 
             <div className={`p-2.5 rounded-lg border text-[11px] ${
-              isSunlightMode ? 'bg-white border-gray-300' : 'bg-forest-900/60 border-forest-800 text-forest-200'
+              isSunlightMode ? 'bg-white border-2 border-black text-black' : 'bg-canopy-900 border-forest-800 text-forest-200'
             }`}>
-              <div className="font-bold text-feather-yellow mb-0.5 flex items-center gap-1">
+              <div className="font-bold text-feather-accent mb-0.5 flex items-center gap-1">
                 <span>3. Build</span>
               </div>
-              <div className="opacity-80">BirdNET v2.4 aggregates distinct species.</div>
+              <div className="opacity-90">BirdNET v2.4 aggregates distinct species.</div>
             </div>
 
             <div className={`p-2.5 rounded-lg border text-[11px] ${
-              isSunlightMode ? 'bg-white border-gray-300' : 'bg-forest-900/60 border-forest-800 text-forest-200'
+              isSunlightMode ? 'bg-white border-2 border-black text-black' : 'bg-canopy-900 border-forest-800 text-forest-200'
             }`}>
-              <div className="font-bold text-feather-yellow mb-0.5 flex items-center gap-1">
+              <div className="font-bold text-feather-accent mb-0.5 flex items-center gap-1">
                 <span>4. Export</span>
               </div>
-              <div className="opacity-80">Single-click export to CSV survey file.</div>
+              <div className="opacity-90">Single-click export to CSV survey file.</div>
             </div>
           </div>
         </div>
@@ -132,8 +134,8 @@ export const AreaSpeciesChecklist: React.FC<AreaSpeciesChecklistProps> = ({
                 key={item.speciesId}
                 className={`p-3 sm:p-3.5 rounded-xl border transition-all ${
                   isSunlightMode
-                    ? 'bg-gray-50 border-gray-300 text-black hover:border-black'
-                    : 'bg-forest-950/70 border-forest-800/90 text-earth-50 hover:border-forest-700'
+                    ? 'bg-neutral-50 border-2 border-black text-black hover:bg-white'
+                    : 'bg-canopy-950/80 border-forest-800/90 text-earth-50 hover:border-forest-700'
                 }`}
               >
                 <div className="flex items-start justify-between gap-2 mb-1.5">
@@ -148,16 +150,16 @@ export const AreaSpeciesChecklist: React.FC<AreaSpeciesChecklistProps> = ({
                         {item.detectionCount}x heard
                       </span>
                     </div>
-                    <div className={`text-xs italic font-serif ${isSunlightMode ? 'text-gray-700' : 'text-forest-300'}`}>
+                    <div className={`text-xs italic font-serif ${isSunlightMode ? 'text-neutral-900 font-bold' : 'text-moss-200'}`}>
                       {item.scientificName}
                     </div>
                   </div>
 
                   <div className="text-right shrink-0">
-                    <span className="font-mono text-xs font-bold text-emerald-400">
+                    <span className={`font-mono text-xs font-bold ${isSunlightMode ? 'text-emerald-700 font-extrabold' : 'text-emerald-400'}`}>
                       {Math.round(item.maxConfidence * 100)}% peak
                     </span>
-                    <div className={`text-[10px] ${isSunlightMode ? 'text-gray-600' : 'text-forest-400'}`}>
+                    <div className={`text-[10px] ${isSunlightMode ? 'text-black font-medium' : 'text-forest-300'}`}>
                       last: {lastTime}
                     </div>
                   </div>
@@ -165,7 +167,7 @@ export const AreaSpeciesChecklist: React.FC<AreaSpeciesChecklistProps> = ({
 
                 {/* Progress bar of peak confidence */}
                 <div className={`w-full h-1.5 rounded-full overflow-hidden mb-2 ${
-                  isSunlightMode ? 'bg-gray-200' : 'bg-forest-900'
+                  isSunlightMode ? 'bg-neutral-300' : 'bg-forest-900'
                 }`}>
                   <div
                     className={`h-full ${
@@ -176,12 +178,14 @@ export const AreaSpeciesChecklist: React.FC<AreaSpeciesChecklistProps> = ({
                 </div>
 
                 {/* Habitat tag */}
-                <div className="flex items-center justify-between text-[11px] pt-1 border-t border-forest-800/30">
-                  <span className={`flex items-center gap-1 ${isSunlightMode ? 'text-gray-700' : 'text-forest-400'}`}>
-                    <MapPin className="w-3 h-3 text-forest-500 shrink-0" />
+                <div className={`flex items-center justify-between text-[11px] pt-1 border-t ${
+                  isSunlightMode ? 'border-neutral-300' : 'border-forest-800/30'
+                }`}>
+                  <span className={`flex items-center gap-1 ${isSunlightMode ? 'text-black font-semibold' : 'text-forest-300'}`}>
+                    <MapPin className="w-3 h-3 text-moss-500 shrink-0" />
                     <span>{item.habitat}</span>
                   </span>
-                  <span className={`text-[10px] ${isSunlightMode ? 'text-gray-600' : 'text-forest-400'}`}>
+                  <span className={`text-[10px] ${isSunlightMode ? 'text-neutral-800 font-medium' : 'text-forest-300'}`}>
                     Confirmed in survey
                   </span>
                 </div>

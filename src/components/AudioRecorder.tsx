@@ -89,16 +89,18 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
     <div className={`p-4 sm:p-5 rounded-2xl border transition-all ${
       isSunlightMode 
         ? 'bg-white border-2 border-black text-black shadow-md' 
-        : 'bg-forest-900/60 border-forest-800 text-earth-50 shadow-lg'
+        : 'bg-canopy-900/95 border-forest-700/60 text-earth-50 shadow-lg'
     }`}>
       {/* Header Badge */}
-      <div className="flex items-center justify-between pb-3 mb-4 border-b border-forest-800/40">
+      <div className={`flex items-center justify-between pb-3 mb-4 border-b ${
+        isSunlightMode ? 'border-neutral-900' : 'border-forest-800/60'
+      }`}>
         <div className="flex items-center gap-2">
           <Radio className="w-4 h-4 text-emerald-400" />
           <h2 className="text-sm font-bold uppercase tracking-wider">Acoustic Field Recorder</h2>
         </div>
         <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded ${
-          isSunlightMode ? 'bg-gray-100 text-black border border-black' : 'bg-forest-950 text-forest-300 border border-forest-800'
+          isSunlightMode ? 'bg-black text-white' : 'bg-canopy-950 text-forest-200 border border-forest-700'
         }`}>
           48kHz Worklet
         </span>
@@ -113,7 +115,7 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
               ? 'Classifying Avian Acoustics...' 
               : 'Record 3 Seconds of Birdsong'}
         </h3>
-        <p className={`text-xs mb-5 max-w-sm ${isSunlightMode ? 'text-gray-700' : 'text-forest-300'}`}>
+        <p className={`text-xs mb-5 max-w-sm ${isSunlightMode ? 'text-black font-medium' : 'text-forest-200'}`}>
           Hold your device towards the canopy or brush. Three seconds is all BirdNET v2.4 needs for on-device inference.
         </p>
 
@@ -138,8 +140,8 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
                 : isProcessing
                   ? 'bg-forest-800 text-gray-300 cursor-not-allowed opacity-80'
                   : isSunlightMode
-                    ? 'bg-black text-white hover:bg-gray-800 border-4 border-black'
-                    : 'bg-gradient-to-br from-forest-600 via-forest-700 to-forest-800 hover:from-forest-500 hover:to-forest-700 text-white border-2 border-forest-400/40'
+                    ? 'bg-black text-white hover:bg-neutral-800 border-4 border-black font-bold'
+                    : 'bg-gradient-to-br from-moss-500 via-forest-600 to-forest-700 hover:from-moss-400 hover:to-forest-600 text-white border-2 border-moss-300/50 shadow-lg'
             }`}
           >
             {isRecording ? (

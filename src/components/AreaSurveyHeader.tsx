@@ -52,11 +52,11 @@ export const AreaSurveyHeader: React.FC<AreaSurveyHeaderProps> = ({
     <div className={`p-4 sm:p-5 rounded-2xl border transition-all mb-5 ${
       isSunlightMode
         ? 'bg-white border-2 border-black text-black shadow-md'
-        : 'bg-gradient-to-br from-forest-900/90 via-forest-950/95 to-forest-950 border-forest-700/80 text-earth-50 shadow-xl'
+        : 'bg-gradient-to-br from-canopy-900 via-canopy-950 to-canopy-950 border-moss-700/60 text-earth-50 shadow-xl'
     }`}>
       {/* Headline Feature: BirdNET v2.4 6,522 Species Headline */}
       <div className={`flex flex-wrap items-center justify-between gap-2 pb-3 mb-3 border-b ${
-        isSunlightMode ? 'border-gray-300' : 'border-forest-800/80'
+        isSunlightMode ? 'border-neutral-900' : 'border-forest-800/80'
       }`}>
         <div className="flex items-center gap-2">
           <span className={`text-[11px] font-black uppercase tracking-wider px-2.5 py-1 rounded-md flex items-center gap-1.5 shadow-sm ${
@@ -68,7 +68,7 @@ export const AreaSurveyHeader: React.FC<AreaSurveyHeaderProps> = ({
             Area Biodiversity Survey Mode
           </span>
           <span className={`text-xs font-semibold hidden md:inline-flex items-center gap-1.5 ${
-            isSunlightMode ? 'text-gray-800' : 'text-forest-200'
+            isSunlightMode ? 'text-black font-bold' : 'text-forest-100'
           }`}>
             <Database className="w-3.5 h-3.5 text-feather-yellow" />
             <strong>BirdNET v2.4 Neural Core</strong> • 6,522 Species Global Taxonomy
@@ -79,8 +79,8 @@ export const AreaSurveyHeader: React.FC<AreaSurveyHeaderProps> = ({
           {/* Active Survey Pulse indicator */}
           <span className={`inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-full ${
             isSunlightMode
-              ? 'bg-gray-100 text-black border border-black'
-              : 'bg-forest-800/80 text-forest-200 border border-forest-600/60'
+              ? 'bg-neutral-100 text-black border-2 border-black'
+              : 'bg-forest-800/90 text-forest-100 border border-forest-600/70'
           }`}>
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
             <Clock className="w-3 h-3" />
@@ -93,7 +93,7 @@ export const AreaSurveyHeader: React.FC<AreaSurveyHeaderProps> = ({
             onClick={onNewSurvey}
             className={`px-2.5 py-1 min-h-[36px] text-xs font-bold rounded-lg flex items-center gap-1 transition-all ${
               isSunlightMode
-                ? 'bg-gray-200 text-black border border-black hover:bg-gray-300'
+                ? 'bg-neutral-100 text-black border-2 border-black hover:bg-neutral-200'
                 : 'bg-forest-800 hover:bg-forest-700 text-forest-100 border border-forest-600'
             }`}
             title="Start a new area survey session at another site"
@@ -155,10 +155,10 @@ export const AreaSurveyHeader: React.FC<AreaSurveyHeaderProps> = ({
             <select
               value={DEFAULT_SURVEY_LOCATIONS.includes(survey.locationName) ? survey.locationName : ''}
               onChange={handleSelectPreset}
-              className={`text-[11px] font-medium py-1 px-2 rounded-lg border cursor-pointer ${
+              className={`text-[11px] font-bold py-1.5 px-2.5 rounded-lg border cursor-pointer ${
                 isSunlightMode
-                  ? 'bg-gray-100 border-black text-black'
-                  : 'bg-forest-950/80 border-forest-800 text-forest-200'
+                  ? 'bg-white border-2 border-black text-black'
+                  : 'bg-canopy-900 border-forest-700 text-forest-100'
               }`}
             >
               <option value="" disabled>Trail Presets...</option>
@@ -173,10 +173,10 @@ export const AreaSurveyHeader: React.FC<AreaSurveyHeaderProps> = ({
               <select
                 value={survey.habitatTag || 'Mixed Woodland'}
                 onChange={handleSelectHabitat}
-                className={`text-[11px] font-medium py-1 px-2 rounded-lg border cursor-pointer ${
+                className={`text-[11px] font-bold py-1.5 px-2.5 rounded-lg border cursor-pointer ${
                   isSunlightMode
-                    ? 'bg-gray-100 border-black text-black'
-                    : 'bg-forest-950/80 border-forest-800 text-forest-200'
+                    ? 'bg-white border-2 border-black text-black'
+                    : 'bg-canopy-900 border-forest-700 text-forest-100'
                 }`}
               >
                 {HABITAT_TAGS.map((tag) => (

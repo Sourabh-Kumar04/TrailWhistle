@@ -79,8 +79,8 @@ export const Navbar: React.FC<NavbarProps> = ({
                 BirdNET v2.4 • 6,522 Species
               </span>
             </div>
-            <p className={`text-xs font-medium flex items-center gap-1.5 ${isSunlightMode ? 'text-gray-700' : 'text-forest-300'}`}>
-              <Trees className="w-3 h-3 text-forest-400" />
+            <p className={`text-xs font-medium flex items-center gap-1.5 ${isSunlightMode ? 'text-black font-semibold' : 'text-forest-200'}`}>
+              <Trees className="w-3 h-3 text-moss-400" />
               <span>Area Biodiversity Survey & Acoustic Census</span>
             </p>
           </div>
@@ -136,7 +136,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
       {/* Primary Tab Navigation (2 Core Tabs: Identify & Journal) */}
       <div className={`border-t text-sm font-medium ${
-        isSunlightMode ? 'border-black bg-gray-50' : 'border-forest-800/60 bg-forest-950/60'
+        isSunlightMode ? 'border-black bg-neutral-100' : 'border-forest-800/60 bg-forest-950/60'
       }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-2">
           <button
@@ -145,10 +145,10 @@ export const Navbar: React.FC<NavbarProps> = ({
             className={`py-3 min-h-[48px] flex items-center justify-center gap-2 border-b-2 transition-all font-semibold ${
               activeTab === 'identify'
                 ? isSunlightMode
-                  ? 'border-black text-black bg-white shadow-sm font-bold'
+                  ? 'border-black text-black bg-white shadow-sm font-black'
                   : 'border-feather-yellow text-feather-yellow bg-forest-900/60 font-bold'
                 : isSunlightMode
-                  ? 'border-transparent text-gray-700 hover:text-black'
+                  ? 'border-transparent text-neutral-800 hover:text-black font-bold'
                   : 'border-transparent text-forest-300 hover:text-earth-100'
             }`}
           >
@@ -162,10 +162,10 @@ export const Navbar: React.FC<NavbarProps> = ({
             className={`py-3 min-h-[48px] flex items-center justify-center gap-2 border-b-2 transition-all font-semibold relative ${
               activeTab === 'journal'
                 ? isSunlightMode
-                  ? 'border-black text-black bg-white shadow-sm font-bold'
+                  ? 'border-black text-black bg-white shadow-sm font-black'
                   : 'border-feather-yellow text-feather-yellow bg-forest-900/60 font-bold'
                 : isSunlightMode
-                  ? 'border-transparent text-gray-700 hover:text-black'
+                  ? 'border-transparent text-neutral-800 hover:text-black font-bold'
                   : 'border-transparent text-forest-300 hover:text-earth-100'
             }`}
           >

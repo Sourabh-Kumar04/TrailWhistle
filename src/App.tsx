@@ -232,7 +232,7 @@ export const App: React.FC = () => {
 
   return (
     <div className={`min-h-screen flex flex-col font-sans transition-colors ${
-      isSunlightMode ? 'bg-[#f8f9fa] text-black' : 'bg-[#0b1710] text-[#f7faf8]'
+      isSunlightMode ? 'bg-white text-black' : 'bg-[#07130b] text-[#f7faf8]'
     }`}>
       {/* Top Navigation */}
       <Navbar
@@ -364,8 +364,8 @@ export const App: React.FC = () => {
       {/* Outdoor Trail Footer */}
       <footer className={`border-t py-4 text-center text-xs transition-colors ${
         isSunlightMode 
-          ? 'border-black text-gray-700 bg-white' 
-          : 'border-forest-900 text-forest-400 bg-forest-950/80'
+          ? 'border-black text-black bg-white font-semibold' 
+          : 'border-forest-900/80 text-forest-300 bg-canopy-950/95'
       }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-1">
           <span>TrailWhistle • Area Biodiversity Survey Tool • BirdNET v2.4 (6,522 Species)</span>

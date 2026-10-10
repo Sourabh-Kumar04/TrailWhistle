@@ -75,7 +75,7 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({
 
         <div className="mb-3">
           <h3 className="text-2xl font-black tracking-tight">{topPrediction.commonName}</h3>
-          <p className={`text-xs italic font-serif ${isSunlightMode ? 'text-gray-700' : 'text-forest-200'}`}>
+          <p className={`text-xs italic font-serif ${isSunlightMode ? 'text-neutral-900 font-bold' : 'text-moss-200'}`}>
             {topPrediction.scientificName}
           </p>
         </div>
@@ -83,10 +83,10 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({
         {/* Habitat & Acoustic Details */}
         <div className={`p-3 rounded-xl text-xs mb-4 space-y-1.5 ${
           isSunlightMode
-            ? 'bg-gray-100 border border-gray-300'
+            ? 'bg-neutral-100 border-2 border-black text-black font-medium'
             : isUnknown
               ? 'bg-amber-950/40 border border-amber-900/60 text-amber-100'
-              : 'bg-forest-950/70 border border-forest-800'
+              : 'bg-canopy-950/90 border border-forest-800 text-earth-100'
         }`}>
           {isUnknown ? (
             <div className="flex items-start gap-1.5">
@@ -98,12 +98,12 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({
           ) : (
             <>
               <div className="flex items-start gap-1.5">
-                <MapPin className="w-3.5 h-3.5 text-forest-400 shrink-0 mt-0.5" />
-                <span><strong className="font-semibold">Habitat:</strong> {topPrediction.habitat}</span>
+                <MapPin className="w-3.5 h-3.5 text-moss-400 shrink-0 mt-0.5" />
+                <span><strong className="font-bold">Habitat:</strong> {topPrediction.habitat}</span>
               </div>
               <div className="flex items-start gap-1.5">
                 <Info className="w-3.5 h-3.5 text-feather-yellow shrink-0 mt-0.5" />
-                <span><strong className="font-semibold">Signature:</strong> {topPrediction.matchedClass}</span>
+                <span><strong className="font-bold">Signature:</strong> {topPrediction.matchedClass}</span>
               </div>
             </>
           )}
@@ -116,10 +116,10 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({
             onClick={() => onConfirm(topPrediction)}
             className={`py-3 min-h-[48px] px-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 shadow-md transition-all active:scale-98 ${
               isSunlightMode
-                ? 'bg-black text-white hover:bg-gray-800 border-2 border-black'
+                ? 'bg-black text-white hover:bg-neutral-800 border-2 border-black'
                 : isUnknown
                   ? 'bg-amber-800 hover:bg-amber-700 text-white border border-amber-600'
-                  : 'bg-forest-700 hover:bg-forest-600 text-white border border-forest-500'
+                  : 'bg-moss-700 hover:bg-moss-600 text-white border border-moss-500'
             }`}
           >
             <Check className="w-4 h-4" />
@@ -131,7 +131,7 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({
             onClick={() => onOpenEditModal(topPrediction)}
             className={`py-3 min-h-[48px] px-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition-all active:scale-98 ${
               isSunlightMode
-                ? 'bg-gray-200 text-black border border-black hover:bg-gray-300'
+                ? 'bg-neutral-100 text-black border-2 border-black hover:bg-neutral-200 font-extrabold'
                 : 'bg-forest-800/80 hover:bg-forest-800 text-earth-100 border border-forest-700'
             }`}
           >
