@@ -5,14 +5,16 @@ import { AudioRecorder } from './components/AudioRecorder';
 import { PredictionCard } from './components/PredictionCard';
 import { ConfirmModal } from './components/ConfirmModal';
 import { JournalList } from './components/JournalList';
-import { FieldGuide } from './components/FieldGuide';
-import { PwaInstallBanner } from './components/PwaInstallBanner';
+import { SurveyOnboardingHint } from './components/SurveyOnboardingHint';
+import { TestingSection } from './components/TestingSection';
 import { AreaSurveyHeader } from './components/AreaSurveyHeader';
 import { SurveyStatsBar } from './components/SurveyStatsBar';
 import { AreaSpeciesChecklist } from './components/AreaSpeciesChecklist';
 import { RecordingTimeline } from './components/RecordingTimeline';
 import { PredictionResult, JournalEntry, SurveySession, SurveyRecordingEvent } from './types/journal';
 import { ModelProgressInfo } from './types/model';
+import { SampleAudioItem } from './data/sampleAudio';
+import { loadAudioFromUrl } from './services/audio';
 import { classifyBirdAudio, resetClassifierCache } from './services/classifier';
 import {
   getJournalEntries,
@@ -32,7 +34,7 @@ import {
 import { CheckCircle2 } from 'lucide-react';
 
 export const App: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'identify' | 'journal' | 'guide'>('identify');
+  const [activeTab, setActiveTab] = useState<'identify' | 'journal'>('identify');
   const [isSunlightMode, setIsSunlightMode] = useState<boolean>(() => {
     return localStorage.getItem('trailwhistle_sunlight_mode') === 'true';
   });
@@ -118,6 +120,21 @@ export const App: React.FC = () => {
       console.error('Classification error:', err);
     } finally {
       setIsProcessing(false);
+    }
+  };
+
+  const [selectedSample, setSelectedSample] = useState<SampleAudioItem | null>(null);
+
+  // Handle testing with pre-bundled sample audio clips
+  const handleSelectSample = async (sample: SampleAudioItem) => {
+    if (isProcessing) return;
+    setSelectedSample(sample);
+    try {
+      const { rawAudio, wavBlob } = await loadAudioFromUrl(sample.url);
+      await handleAudioCaptured(rawAudio, wavBlob, 'sample_audio');
+    } catch (err: unknown) {
+      console.error('Sample load error:', err);
+      showToast(`Could not load test clip: ${sample.speciesName}`);
     }
   };
 
@@ -228,8 +245,6 @@ export const App: React.FC = () => {
 
       {/* Main Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 pb-20">
-        <PwaInstallBanner isSunlightMode={isSunlightMode} />
-
         {/* Global Toast */}
         {toastMessage && (
           <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 animate-bounce">
@@ -255,6 +270,9 @@ export const App: React.FC = () => {
               totalRecordings={currentSurveyRecordingsCount}
               isSunlightMode={isSunlightMode}
             />
+
+            {/* Compact 4-Step Survey Workflow Onboarding Hint */}
+            <SurveyOnboardingHint isSunlightMode={isSunlightMode} />
 
             {/* Model Download & Cache Banner */}
             <ModelDownloadBanner
@@ -306,6 +324,14 @@ export const App: React.FC = () => {
                 />
               </div>
             </div>
+
+            {/* Demoted Collapsible Testing Section at Bottom */}
+            <TestingSection
+              onSelectSample={handleSelectSample}
+              selectedSample={selectedSample}
+              isProcessing={isProcessing}
+              isSunlightMode={isSunlightMode}
+            />
           </div>
         )}
 
@@ -318,11 +344,6 @@ export const App: React.FC = () => {
             isSunlightMode={isSunlightMode}
             onGoToIdentify={() => setActiveTab('identify')}
           />
-        )}
-
-        {/* Tab 3: Touch Grass Field Guide */}
-        {activeTab === 'guide' && (
-          <FieldGuide isSunlightMode={isSunlightMode} />
         )}
       </main>
 

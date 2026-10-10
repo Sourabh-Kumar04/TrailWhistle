@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Mic, Square, Play, Sparkles, Volume2, Music, Check, AlertCircle, Radio, Activity } from 'lucide-react';
-import { recordMicAudio, loadAudioFromUrl } from '../services/audio';
-import { SAMPLE_AUDIO_LIST, SampleAudioItem } from '../data/sampleAudio';
+import { Mic, Square, Play, Sparkles, Volume2, AlertCircle, Radio } from 'lucide-react';
+import { recordMicAudio } from '../services/audio';
 
 interface AudioRecorderProps {
   onAudioCaptured: (audioData: Float32Array, wavBlob: Blob, source: 'live_mic' | 'sample_audio') => void;
@@ -19,7 +18,6 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
   const [volume, setVolume] = useState(0);
   const [recordedWavUrl, setRecordedWavUrl] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [selectedSample, setSelectedSample] = useState<SampleAudioItem | null>(null);
   const [isPlayingPreview, setIsPlayingPreview] = useState(false);
 
   const audioPreviewRef = useRef<HTMLAudioElement | null>(null);
@@ -38,7 +36,6 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
 
     setErrorMessage(null);
     setRecordedWavUrl(null);
-    setSelectedSample(null);
     setIsRecording(true);
     setCountdown(3.0);
     setVolume(0.1);
@@ -72,26 +69,6 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
       setVolume(0);
       const msg = err instanceof Error ? err.message : String(err);
       setErrorMessage(msg);
-    }
-  };
-
-  // Handle loading and classifying pre-bundled sample birdsong
-  const handleSelectSample = async (sample: SampleAudioItem) => {
-    if (isRecording || isProcessing) return;
-
-    setSelectedSample(sample);
-    setErrorMessage(null);
-
-    try {
-      const { rawAudio, wavBlob } = await loadAudioFromUrl(sample.url);
-      if (recordedWavUrl) URL.revokeObjectURL(recordedWavUrl);
-      const blobUrl = URL.createObjectURL(wavBlob);
-      setRecordedWavUrl(blobUrl);
-
-      onAudioCaptured(rawAudio, wavBlob, 'sample_audio');
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : String(err);
-      setErrorMessage(`Sample load error: ${msg}`);
     }
   };
 
@@ -236,59 +213,6 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
             <span>{errorMessage}</span>
           </div>
         )}
-
-        {/* Desktop / Trailhead Demo Clips */}
-        <div className="w-full pt-4 border-t border-forest-800/60 mt-2">
-          <div className="flex items-center justify-between mb-2.5">
-            <span className={`text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 ${
-              isSunlightMode ? 'text-gray-800' : 'text-forest-300'
-            }`}>
-              <Music className="w-3.5 h-3.5" />
-              Desktop / Trailhead Demo Clips
-            </span>
-            <span className={`text-[10px] ${isSunlightMode ? 'text-gray-600' : 'text-forest-400'}`}>
-              One-click testing
-            </span>
-          </div>
-
-          <div className="grid grid-cols-2 gap-2 text-left">
-            {SAMPLE_AUDIO_LIST.map((sample) => (
-              <button
-                key={sample.id}
-                type="button"
-                onClick={() => handleSelectSample(sample)}
-                disabled={isRecording || isProcessing}
-                className={`p-2.5 rounded-xl border text-xs min-h-[52px] flex items-center justify-between transition-all ${
-                  selectedSample?.id === sample.id
-                    ? isSunlightMode
-                      ? 'bg-black text-white border-black font-bold'
-                      : 'bg-forest-700 border-feather-accent text-white font-bold'
-                    : isSunlightMode
-                      ? 'bg-gray-50 border-gray-300 hover:border-black text-black'
-                      : 'bg-forest-950/60 border-forest-800/80 hover:bg-forest-800/60 text-earth-100'
-                }`}
-              >
-                <div>
-                  <div className="font-semibold">{sample.speciesName}</div>
-                  <div className={`text-[10px] line-clamp-1 ${
-                    selectedSample?.id === sample.id
-                      ? 'text-gray-200'
-                      : isSunlightMode
-                        ? 'text-gray-600'
-                        : 'text-forest-300'
-                  }`}>
-                    {sample.scientificName}
-                  </div>
-                </div>
-                {selectedSample?.id === sample.id ? (
-                  <Check className="w-4 h-4 shrink-0 text-feather-yellow" />
-                ) : (
-                  <Play className="w-3.5 h-3.5 shrink-0 opacity-70" />
-                )}
-              </button>
-            ))}
-          </div>
-        </div>
       </div>
     </div>
   );

@@ -9,6 +9,8 @@ import { AudioRecorder } from '../components/AudioRecorder';
 import { AreaSurveyHeader } from '../components/AreaSurveyHeader';
 import { SurveyStatsBar } from '../components/SurveyStatsBar';
 import { AreaSpeciesChecklist } from '../components/AreaSpeciesChecklist';
+import { TestingSection } from '../components/TestingSection';
+import { SurveyOnboardingHint } from '../components/SurveyOnboardingHint';
 import { PredictionResult, JournalEntry, SurveyChecklistItem } from '../types/journal';
 
 describe('UI Components', () => {
@@ -28,6 +30,9 @@ describe('UI Components', () => {
 
     expect(screen.getByText('TrailWhistle')).toBeInTheDocument();
     expect(screen.getByText('Offline')).toBeInTheDocument();
+    expect(screen.getByText('Identify')).toBeInTheDocument();
+    expect(screen.getByText('Journal')).toBeInTheDocument();
+    expect(screen.queryByText('Touch Grass')).not.toBeInTheDocument();
 
     const journalTab = screen.getByText('Journal');
     fireEvent.click(journalTab);
@@ -194,7 +199,7 @@ describe('UI Components', () => {
     expect(onDelete).toHaveBeenCalledWith('entry-1');
   });
 
-  it('AudioRecorder renders record button and sample presets', () => {
+  it('AudioRecorder renders field recorder controls without cluttering demo clips', () => {
     const onCapture = vi.fn();
     render(
       <AudioRecorder
@@ -205,9 +210,57 @@ describe('UI Components', () => {
     );
 
     expect(screen.getByLabelText(/Record 3 seconds of bird call/i)).toBeInTheDocument();
-    expect(screen.getByText(/Desktop \/ Trailhead Demo Clips/i)).toBeInTheDocument();
+    expect(screen.getByText('Acoustic Field Recorder')).toBeInTheDocument();
+    expect(screen.getByText('48kHz Worklet')).toBeInTheDocument();
+    // Demo clips are no longer in AudioRecorder prime screen space
+    expect(screen.queryByText(/Desktop \/ Trailhead Demo Clips/i)).not.toBeInTheDocument();
+  });
+
+  it('TestingSection renders collapsible test clips clearly labeled for testing', () => {
+    const onSelectSample = vi.fn();
+    render(
+      <TestingSection
+        onSelectSample={onSelectSample}
+        selectedSample={null}
+        isProcessing={false}
+        isSunlightMode={false}
+      />
+    );
+
+    expect(screen.getByText(/Field Testing & Audio Simulation/i)).toBeInTheDocument();
+    expect(screen.getByText(/For Testing Only/i)).toBeInTheDocument();
+
+    // Default collapsed
+    expect(screen.queryByText('American Robin')).not.toBeInTheDocument();
+
+    // Expand
+    const expandBtn = screen.getByRole('button', { name: /Field Testing & Audio Simulation/i });
+    fireEvent.click(expandBtn);
+
     expect(screen.getByText('American Robin')).toBeInTheDocument();
     expect(screen.getByText('Barn Owl')).toBeInTheDocument();
+    expect(screen.getByText(/Offline QA & Testing/i)).toBeInTheDocument();
+
+    // Trigger test sample
+    const robinBtn = screen.getByText('American Robin');
+    fireEvent.click(robinBtn);
+    expect(onSelectSample).toHaveBeenCalled();
+  });
+
+  it('SurveyOnboardingHint renders 4-step survey workflow and handles dismiss', () => {
+    render(<SurveyOnboardingHint isSunlightMode={false} />);
+
+    expect(screen.getByText(/Survey Protocol • 4-Step Avian Census Workflow/i)).toBeInTheDocument();
+    expect(screen.getByText('1. Arrive')).toBeInTheDocument();
+    expect(screen.getByText('2. Sample')).toBeInTheDocument();
+    expect(screen.getByText('3. Tally')).toBeInTheDocument();
+    expect(screen.getByText('4. Export')).toBeInTheDocument();
+
+    const dismissBtn = screen.getByLabelText(/Dismiss survey guide/i);
+    fireEvent.click(dismissBtn);
+
+    // After dismiss, shows compact re-open button
+    expect(screen.getByText('Survey Workflow Guide')).toBeInTheDocument();
   });
 
   it('AreaSurveyHeader renders survey location, BirdNET headline, and triggers new survey', () => {

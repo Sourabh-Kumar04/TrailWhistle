@@ -1,9 +1,14 @@
-import React from 'react';
-import { Compass, Feather, BookOpen, Sun, Moon, WifiOff, Trees } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Compass, Feather, BookOpen, Sun, Moon, WifiOff, Trees, Download, X } from 'lucide-react';
+
+interface BeforeInstallPromptEvent extends Event {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
+}
 
 interface NavbarProps {
-  activeTab: 'identify' | 'journal' | 'guide';
-  onTabChange: (tab: 'identify' | 'journal' | 'guide') => void;
+  activeTab: 'identify' | 'journal';
+  onTabChange: (tab: 'identify' | 'journal') => void;
   isSunlightMode: boolean;
   onToggleSunlightMode: () => void;
   journalCount: number;
@@ -16,6 +21,29 @@ export const Navbar: React.FC<NavbarProps> = ({
   onToggleSunlightMode,
   journalCount,
 }) => {
+  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+  const [isInstallDismissed, setIsInstallDismissed] = useState<boolean>(false);
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      e.preventDefault();
+      setDeferredPrompt(e as BeforeInstallPromptEvent);
+    };
+
+    window.addEventListener('beforeinstallprompt', handler);
+    return () => window.removeEventListener('beforeinstallprompt', handler);
+  }, []);
+
+  const handleInstallClick = async () => {
+    if (!deferredPrompt) return;
+    await deferredPrompt.prompt();
+    const choice = await deferredPrompt.userChoice;
+    if (choice.outcome === 'accepted') {
+      setIsInstallDismissed(true);
+    }
+    setDeferredPrompt(null);
+  };
+
   return (
     <header className={`sticky top-0 z-40 border-b backdrop-blur-md transition-colors ${
       isSunlightMode 
@@ -60,6 +88,35 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Action Controls */}
         <div className="flex items-center space-x-2">
+          {/* Tiny Dismissible PWA Install Chip */}
+          {deferredPrompt && !isInstallDismissed && (
+            <div
+              className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold border transition-all ${
+                isSunlightMode
+                  ? 'bg-black text-white border-black'
+                  : 'bg-forest-800 text-feather-yellow border-forest-600 hover:bg-forest-700'
+              }`}
+            >
+              <button
+                type="button"
+                onClick={handleInstallClick}
+                className="flex items-center gap-1 hover:underline"
+                title="Install TrailWhistle for offline field use"
+              >
+                <Download className="w-3.5 h-3.5" />
+                <span className="hidden xs:inline">Install App</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsInstallDismissed(true)}
+                className="p-0.5 ml-1 opacity-70 hover:opacity-100"
+                aria-label="Dismiss install chip"
+              >
+                <X className="w-3 h-3" />
+              </button>
+            </div>
+          )}
+
           {/* Sunlight Mode Toggle */}
           <button
             type="button"
@@ -77,11 +134,11 @@ export const Navbar: React.FC<NavbarProps> = ({
         </div>
       </div>
 
-      {/* Primary Tab Navigation (Large touch-friendly tabs) */}
+      {/* Primary Tab Navigation (2 Core Tabs: Identify & Journal) */}
       <div className={`border-t text-sm font-medium ${
         isSunlightMode ? 'border-black bg-gray-50' : 'border-forest-800/60 bg-forest-950/60'
       }`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-3">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-2">
           <button
             type="button"
             onClick={() => onTabChange('identify')}
@@ -121,23 +178,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                 {journalCount}
               </span>
             )}
-          </button>
-
-          <button
-            type="button"
-            onClick={() => onTabChange('guide')}
-            className={`py-3 min-h-[48px] flex items-center justify-center gap-2 border-b-2 transition-all font-semibold ${
-              activeTab === 'guide'
-                ? isSunlightMode
-                  ? 'border-black text-black bg-white shadow-sm font-bold'
-                  : 'border-feather-yellow text-feather-yellow bg-forest-900/60 font-bold'
-                : isSunlightMode
-                  ? 'border-transparent text-gray-700 hover:text-black'
-                  : 'border-transparent text-forest-300 hover:text-earth-100'
-            }`}
-          >
-            <Feather className="w-4 h-4" />
-            <span>Touch Grass</span>
           </button>
         </div>
       </div>

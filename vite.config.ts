@@ -2,7 +2,12 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 
+import path from 'path';
+
 export default defineConfig({
+  resolve: {
+    preserveSymlinks: true,
+  },
   plugins: [
     react(),
     VitePWA({
@@ -76,6 +81,6 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
-    setupFiles: ['./src/test/setup.ts'],
+    setupFiles: [path.resolve(process.cwd(), 'src/test/setup.ts')],
   },
 });
