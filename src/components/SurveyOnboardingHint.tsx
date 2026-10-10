@@ -57,15 +57,16 @@ export const SurveyOnboardingHint: React.FC<SurveyOnboardingHintProps> = ({ isSu
           <HelpCircle className="w-4 h-4 text-feather-yellow shrink-0" />
           <span>Survey Protocol • 4-Step Avian Census Workflow</span>
         </div>
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1.5">
           <button
             type="button"
             onClick={handleToggleExpand}
-            className={`p-1 rounded text-xs flex items-center gap-0.5 opacity-70 hover:opacity-100 ${
-              isSunlightMode ? 'text-black' : 'text-forest-300'
+            className={`px-2 py-0.5 rounded text-[11px] font-semibold flex items-center gap-1 transition-all ${
+              isSunlightMode ? 'text-emerald-950 hover:bg-emerald-100' : 'text-emerald-300 hover:text-white hover:bg-forest-800'
             }`}
-            title={isExpanded ? 'Collapse' : 'Expand'}
+            title={isExpanded ? 'Collapse guide' : 'Expand full 4-step details'}
           >
+            <span>{isExpanded ? 'Hide Steps' : 'View Protocol'}</span>
             {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
           </button>
           <button
@@ -82,63 +83,79 @@ export const SurveyOnboardingHint: React.FC<SurveyOnboardingHintProps> = ({ isSu
         </div>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px]">
-        <div
-          className={`p-2 rounded-lg border ${
-            isSunlightMode ? 'bg-white border-gray-300' : 'bg-forest-900/60 border-forest-800/70'
-          }`}
-        >
-          <div className="font-bold text-feather-yellow flex items-center gap-1 mb-0.5">
-            <MapPin className="w-3 h-3 shrink-0" />
-            <span>1. Arrive</span>
-          </div>
-          <div className="opacity-80 leading-tight">
-            Designate survey transect & acquire GPS fix.
-          </div>
+      {!isExpanded && (
+        <div className={`text-[11px] flex items-center gap-2 pl-5 ${
+          isSunlightMode ? 'text-neutral-700' : 'text-emerald-300/80'
+        }`}>
+          <span>1. Arrive</span>
+          <span className="opacity-40">→</span>
+          <span>2. Sample</span>
+          <span className="opacity-40">→</span>
+          <span>3. Tally</span>
+          <span className="opacity-40">→</span>
+          <span>4. Export</span>
         </div>
+      )}
 
-        <div
-          className={`p-2 rounded-lg border ${
-            isSunlightMode ? 'bg-white border-gray-300' : 'bg-forest-900/60 border-forest-800/70'
-          }`}
-        >
-          <div className="font-bold text-feather-yellow flex items-center gap-1 mb-0.5">
-            <Mic className="w-3 h-3 shrink-0" />
-            <span>2. Sample</span>
+      {isExpanded && (
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px] pt-1">
+          <div
+            className={`p-2.5 rounded-lg border transition-all ${
+              isSunlightMode ? 'bg-white border-neutral-300' : 'bg-[#09170e] border-emerald-900/60'
+            }`}
+          >
+            <div className="font-bold text-feather-yellow flex items-center gap-1 mb-0.5">
+              <MapPin className="w-3 h-3 shrink-0" />
+              <span>1. Arrive</span>
+            </div>
+            <div className="opacity-80 leading-tight">
+              Designate survey transect & acquire GPS fix.
+            </div>
           </div>
-          <div className="opacity-80 leading-tight">
-            Capture 3-second rapid acoustic calls across the site.
-          </div>
-        </div>
 
-        <div
-          className={`p-2 rounded-lg border ${
-            isSunlightMode ? 'bg-white border-gray-300' : 'bg-forest-900/60 border-forest-800/70'
-          }`}
-        >
-          <div className="font-bold text-feather-yellow flex items-center gap-1 mb-0.5">
-            <Bird className="w-3 h-3 shrink-0" />
-            <span>3. Tally</span>
+          <div
+            className={`p-2.5 rounded-lg border transition-all ${
+              isSunlightMode ? 'bg-white border-neutral-300' : 'bg-[#09170e] border-emerald-900/60'
+            }`}
+          >
+            <div className="font-bold text-feather-yellow flex items-center gap-1 mb-0.5">
+              <Mic className="w-3 h-3 shrink-0" />
+              <span>2. Sample</span>
+            </div>
+            <div className="opacity-80 leading-tight">
+              Capture 3-second rapid acoustic calls across the site.
+            </div>
           </div>
-          <div className="opacity-80 leading-tight">
-            BirdNET v2.4 tallies species frequency & peak confidence.
-          </div>
-        </div>
 
-        <div
-          className={`p-2 rounded-lg border ${
-            isSunlightMode ? 'bg-white border-gray-300' : 'bg-forest-900/60 border-forest-800/70'
-          }`}
-        >
-          <div className="font-bold text-feather-yellow flex items-center gap-1 mb-0.5">
-            <FileSpreadsheet className="w-3 h-3 shrink-0" />
-            <span>4. Export</span>
+          <div
+            className={`p-2.5 rounded-lg border transition-all ${
+              isSunlightMode ? 'bg-white border-neutral-300' : 'bg-[#09170e] border-emerald-900/60'
+            }`}
+          >
+            <div className="font-bold text-feather-yellow flex items-center gap-1 mb-0.5">
+              <Bird className="w-3 h-3 shrink-0" />
+              <span>3. Tally</span>
+            </div>
+            <div className="opacity-80 leading-tight">
+              BirdNET v2.4 tallies species frequency & peak confidence.
+            </div>
           </div>
-          <div className="opacity-80 leading-tight">
-            1-click RFC 4180 CSV export for scientific logs.
+
+          <div
+            className={`p-2.5 rounded-lg border transition-all ${
+              isSunlightMode ? 'bg-white border-neutral-300' : 'bg-[#09170e] border-emerald-900/60'
+            }`}
+          >
+            <div className="font-bold text-feather-yellow flex items-center gap-1 mb-0.5">
+              <FileSpreadsheet className="w-3 h-3 shrink-0" />
+              <span>4. Export</span>
+            </div>
+            <div className="opacity-80 leading-tight">
+              1-click RFC 4180 CSV export for scientific logs.
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

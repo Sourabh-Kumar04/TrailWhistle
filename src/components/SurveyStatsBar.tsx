@@ -58,33 +58,44 @@ export const SurveyStatsBar: React.FC<SurveyStatsBarProps> = ({
   ];
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-5">
+    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3 mb-4">
       {stats.map((stat, idx) => {
         const Icon = stat.icon;
         return (
           <div
             key={idx}
-            className={`p-3 sm:p-3.5 rounded-xl border transition-all ${
+            className={`p-3.5 sm:p-4 rounded-xl border transition-all duration-200 group relative overflow-hidden ${
               isSunlightMode
-                ? 'bg-white border-black text-black shadow-sm'
-                : 'bg-forest-900/60 border-forest-800/80 text-earth-50'
+                ? 'bg-white border-neutral-300 text-neutral-900 shadow-sm hover:shadow-md'
+                : 'bg-gradient-to-br from-[#0c1b12]/95 via-[#08150e]/95 to-[#050e08]/95 border-emerald-900/50 hover:border-emerald-600/60 text-white shadow-lg'
             }`}
           >
-            <div className="flex items-center justify-between mb-1">
+            {/* Subtle top indicator bar */}
+            <div className={`absolute top-0 left-0 right-0 h-0.5 opacity-60 ${
+              isSunlightMode
+                ? 'bg-emerald-800'
+                : stat.highlight ? 'bg-gradient-to-r from-emerald-400 to-feather-yellow' : 'bg-emerald-900/30'
+            }`} />
+
+            <div className="flex items-center justify-between mb-1.5">
               <span className={`text-[10px] font-bold uppercase tracking-wider ${
-                isSunlightMode ? 'text-gray-700' : 'text-forest-300'
+                isSunlightMode ? 'text-neutral-600' : 'text-emerald-400/80'
               }`}>
                 {stat.label}
               </span>
-              <Icon className={`w-3.5 h-3.5 ${isSunlightMode ? 'text-black' : stat.accent}`} />
+              <div className={`p-1 rounded-md ${
+                isSunlightMode ? 'bg-neutral-100 text-emerald-950' : 'bg-emerald-950/60 ' + stat.accent
+              }`}>
+                <Icon className="w-3.5 h-3.5" />
+              </div>
             </div>
 
-            <div className="text-base sm:text-lg font-black tracking-tight font-sans">
+            <div className="text-lg sm:text-xl font-black tracking-tight font-sans">
               {stat.value}
             </div>
 
-            <div className={`text-[10px] truncate ${
-              isSunlightMode ? 'text-gray-600' : 'text-forest-400'
+            <div className={`text-[11px] font-medium truncate mt-0.5 ${
+              isSunlightMode ? 'text-neutral-500' : 'text-emerald-300/60'
             }`}>
               {stat.subtext}
             </div>

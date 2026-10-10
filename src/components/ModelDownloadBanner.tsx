@@ -14,23 +14,7 @@ export const ModelDownloadBanner: React.FC<ModelDownloadBannerProps> = ({
   isSunlightMode,
 }) => {
   if (progressInfo.status === 'idle') {
-    return (
-      <div className={`p-3.5 rounded-xl border mb-4 text-xs flex items-center justify-between ${
-        isSunlightMode 
-          ? 'bg-gray-100 border-black text-black' 
-          : 'bg-forest-900/60 border-forest-800 text-forest-200'
-      }`}>
-        <div className="flex items-center gap-2.5">
-          <DownloadCloud className="w-4 h-4 text-feather-yellow shrink-0" />
-          <span>BirdNET v2.4 Neural Model (6,522 species) will warm up on first 3s recording or sample test.</span>
-        </div>
-        <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${
-          isSunlightMode ? 'bg-black text-white' : 'bg-forest-800 text-forest-300'
-        }`}>
-          On-Demand
-        </span>
-      </div>
-    );
+    return null;
   }
 
   if (progressInfo.status === 'ready') {

@@ -8,6 +8,12 @@ export default defineConfig({
   resolve: {
     preserveSymlinks: true,
   },
+  server: {
+    watch: {
+      usePolling: true,
+      interval: 100,
+    },
+  },
   plugins: [
     react(),
     VitePWA({

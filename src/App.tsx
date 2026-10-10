@@ -34,8 +34,14 @@ import {
 import { CheckCircle2 } from 'lucide-react';
 
 export const App: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'identify' | 'journal'>('identify');
+  const searchParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
+  const [activeTab, setActiveTab] = useState<'identify' | 'journal'>(() => {
+    const tabParam = searchParams?.get('tab');
+    if (tabParam === 'journal') return 'journal';
+    return 'identify';
+  });
   const [isSunlightMode, setIsSunlightMode] = useState<boolean>(() => {
+    if (searchParams?.get('mode') === 'sunlight') return true;
     return localStorage.getItem('trailwhistle_sunlight_mode') === 'true';
   });
 

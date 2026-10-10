@@ -31,11 +31,11 @@ describe('UI Components', () => {
 
     expect(screen.getByText('TrailWhistle')).toBeInTheDocument();
     expect(screen.getByText('Offline')).toBeInTheDocument();
-    expect(screen.getByText('Identify')).toBeInTheDocument();
-    expect(screen.getByText('Journal')).toBeInTheDocument();
+    expect(screen.getAllByText('Identify')[0]).toBeInTheDocument();
+    expect(screen.getAllByText('Journal')[0]).toBeInTheDocument();
     expect(screen.queryByText('Touch Grass')).not.toBeInTheDocument();
 
-    const journalTab = screen.getByText('Journal');
+    const journalTab = screen.getAllByText('Journal')[0];
     fireEvent.click(journalTab);
     expect(onTabChange).toHaveBeenCalledWith('journal');
 
