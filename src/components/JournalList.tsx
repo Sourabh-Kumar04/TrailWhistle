@@ -154,20 +154,22 @@ export const JournalList: React.FC<JournalListProps> = ({
   return (
     <div className="space-y-5">
       {/* Field Survey Log Header */}
-      <div className={`p-5 rounded-2xl border transition-all ${
-        isSunlightMode ? 'bg-white border-2 border-black text-black shadow-md' : 'bg-forest-900/60 border-forest-800 text-earth-50 shadow-lg'
+      <div className={`p-5 sm:p-6 rounded-2xl border transition-all ${
+        isSunlightMode 
+          ? 'bg-white border-neutral-300 text-neutral-900 shadow-sm' 
+          : 'bg-gradient-to-br from-[#0c1b12]/95 via-[#08150e]/95 to-[#040c07]/95 border-emerald-800/50 text-white shadow-xl'
       }`}>
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 mb-4">
           <div>
-            <div className="flex items-center gap-2">
-              <span className={`p-2 rounded-xl flex items-center justify-center ${
-                isSunlightMode ? 'bg-black text-white' : 'bg-forest-800 text-feather-yellow'
+            <div className="flex items-center gap-2.5">
+              <div className={`p-2 rounded-xl flex items-center justify-center shrink-0 shadow-sm ${
+                isSunlightMode ? 'bg-emerald-900 text-white' : 'bg-emerald-950/80 text-feather-yellow border border-emerald-700/50'
               }`}>
                 <Trees className="w-5 h-5" />
-              </span>
+              </div>
               <div>
-                <h2 className="text-xl font-black tracking-tight font-sans">Field Survey Log</h2>
-                <p className={`text-xs ${isSunlightMode ? 'text-gray-700' : 'text-forest-300'}`}>
+                <h2 className="text-xl sm:text-2xl font-black tracking-tight font-sans">Field Survey Log</h2>
+                <p className={`text-xs mt-0.5 ${isSunlightMode ? 'text-neutral-600 font-medium' : 'text-emerald-300/70'}`}>
                   {entries.length} {entries.length === 1 ? 'observation' : 'observations'} across {locationGroups.length} {locationGroups.length === 1 ? 'survey site' : 'survey sites'}
                 </p>
               </div>
@@ -189,12 +191,14 @@ export const JournalList: React.FC<JournalListProps> = ({
               type="button"
               onClick={handleExportCsv}
               disabled={entries.length === 0}
-              className={`py-2 px-3 min-h-[44px] rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm transition-all ${
+              className={`py-2 px-3.5 min-h-[42px] rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm transition-all cursor-pointer ${
                 entries.length === 0
-                  ? 'opacity-40 cursor-not-allowed bg-gray-500 text-white'
+                  ? isSunlightMode 
+                    ? 'opacity-40 cursor-not-allowed bg-neutral-200 text-neutral-500 border border-neutral-300' 
+                    : 'opacity-40 cursor-not-allowed bg-emerald-950/40 text-emerald-500/50 border border-emerald-900/40'
                   : isSunlightMode
-                    ? 'bg-black text-white hover:bg-gray-800 border-2 border-black'
-                    : 'bg-forest-700 hover:bg-forest-600 text-white border border-forest-500'
+                    ? 'bg-emerald-900 text-white hover:bg-emerald-800 shadow-sm'
+                    : 'bg-emerald-700 hover:bg-emerald-600 text-white border border-emerald-500/50 shadow-md'
               }`}
               title="Export all observations as standard CSV file"
             >
@@ -206,12 +210,14 @@ export const JournalList: React.FC<JournalListProps> = ({
               type="button"
               onClick={handleExportJson}
               disabled={entries.length === 0}
-              className={`py-2 px-3 min-h-[44px] rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm transition-all ${
+              className={`py-2 px-3.5 min-h-[42px] rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm transition-all cursor-pointer ${
                 entries.length === 0
-                  ? 'opacity-40 cursor-not-allowed bg-gray-500 text-white'
+                  ? isSunlightMode 
+                    ? 'opacity-40 cursor-not-allowed bg-neutral-200 text-neutral-500 border border-neutral-300' 
+                    : 'opacity-40 cursor-not-allowed bg-emerald-950/40 text-emerald-500/50 border border-emerald-900/40'
                   : isSunlightMode
-                    ? 'bg-white text-black hover:bg-gray-100 border-2 border-black'
-                    : 'bg-forest-800 hover:bg-forest-700 text-forest-100 border border-forest-600'
+                    ? 'bg-neutral-100 text-neutral-900 hover:bg-neutral-200 border border-neutral-300'
+                    : 'bg-[#06120a] hover:bg-[#0a1a0f] text-emerald-200 border border-emerald-800'
               }`}
               title="Download raw JSON backup file"
             >
@@ -222,10 +228,10 @@ export const JournalList: React.FC<JournalListProps> = ({
             <button
               type="button"
               onClick={handleTriggerImport}
-              className={`py-2 px-3 min-h-[44px] rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm transition-all ${
+              className={`py-2 px-3.5 min-h-[42px] rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm transition-all cursor-pointer ${
                 isSunlightMode
-                  ? 'bg-white text-black hover:bg-gray-100 border-2 border-black'
-                  : 'bg-forest-800 hover:bg-forest-700 text-forest-100 border border-forest-600'
+                  ? 'bg-neutral-100 text-neutral-900 hover:bg-neutral-200 border border-neutral-300'
+                  : 'bg-[#06120a] hover:bg-[#0a1a0f] text-emerald-200 border border-emerald-800'
               }`}
               title="Restore observations from a JSON backup file"
             >
@@ -237,10 +243,10 @@ export const JournalList: React.FC<JournalListProps> = ({
               <button
                 type="button"
                 onClick={handleClearAll}
-                className={`py-2 px-3 min-h-[44px] rounded-xl text-xs font-bold border transition-all ${
+                className={`py-2 px-3 min-h-[42px] rounded-xl text-xs font-bold border transition-all cursor-pointer ${
                   isSunlightMode
-                    ? 'border-red-600 text-red-700 hover:bg-red-50'
-                    : 'border-red-800 text-red-300 hover:bg-red-950/60'
+                    ? 'border-red-300 text-red-700 hover:bg-red-50'
+                    : 'border-red-900/60 text-red-400 hover:bg-red-950/60'
                 }`}
                 title="Clear all journal records"
               >
@@ -250,93 +256,112 @@ export const JournalList: React.FC<JournalListProps> = ({
           </div>
         </div>
 
-        {/* Survey Overview Stats Bar */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-3 border-t border-forest-800/40">
-          <div className={`p-2.5 rounded-xl border text-center ${
-            isSunlightMode ? 'bg-gray-50 border-gray-300' : 'bg-forest-950/60 border-forest-800/60'
+        {/* Survey Overview Stats Bar with Distinct Icons & Micro-Hierarchy */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-3.5 border-t border-forest-800/40">
+          <div className={`p-3 rounded-xl border relative overflow-hidden transition-all ${
+            isSunlightMode ? 'bg-neutral-50 border-neutral-200 text-neutral-900' : 'bg-[#06120a] border-emerald-900/60 text-white'
           }`}>
-            <div className={`text-[10px] font-bold uppercase tracking-wider ${isSunlightMode ? 'text-gray-600' : 'text-forest-400'}`}>
-              Survey Sites
+            <div className="flex items-center justify-between mb-1">
+              <span className={`text-[10px] font-bold uppercase tracking-wider ${isSunlightMode ? 'text-neutral-600' : 'text-emerald-400/80'}`}>
+                Survey Sites
+              </span>
+              <Trees className="w-3.5 h-3.5 opacity-60 text-emerald-500" />
             </div>
-            <div className="text-lg font-black">{locationGroups.length}</div>
+            <div className="text-xl font-black">{locationGroups.length}</div>
           </div>
 
-          <div className={`p-2.5 rounded-xl border text-center ${
-            isSunlightMode ? 'bg-gray-50 border-gray-300' : 'bg-forest-950/60 border-forest-800/60'
+          <div className={`p-3 rounded-xl border relative overflow-hidden transition-all ${
+            isSunlightMode ? 'bg-neutral-50 border-neutral-200 text-neutral-900' : 'bg-[#06120a] border-emerald-900/60 text-white'
           }`}>
-            <div className={`text-[10px] font-bold uppercase tracking-wider ${isSunlightMode ? 'text-gray-600' : 'text-forest-400'}`}>
-              Species Life List
+            <div className="flex items-center justify-between mb-1">
+              <span className={`text-[10px] font-bold uppercase tracking-wider ${isSunlightMode ? 'text-neutral-600' : 'text-emerald-400/80'}`}>
+                Species Life List
+              </span>
+              <Bird className="w-3.5 h-3.5 text-feather-yellow" />
             </div>
-            <div className="text-lg font-black text-feather-yellow">{totalUniqueSpecies}</div>
+            <div className={`text-xl font-black ${isSunlightMode ? 'text-neutral-900' : 'text-feather-yellow'}`}>
+              {totalUniqueSpecies}
+            </div>
           </div>
 
-          <div className={`p-2.5 rounded-xl border text-center ${
-            isSunlightMode ? 'bg-gray-50 border-gray-300' : 'bg-forest-950/60 border-forest-800/60'
+          <div className={`p-3 rounded-xl border relative overflow-hidden transition-all ${
+            isSunlightMode ? 'bg-neutral-50 border-neutral-200 text-neutral-900' : 'bg-[#06120a] border-emerald-900/60 text-white'
           }`}>
-            <div className={`text-[10px] font-bold uppercase tracking-wider ${isSunlightMode ? 'text-gray-600' : 'text-forest-400'}`}>
-              Total Detections
+            <div className="flex items-center justify-between mb-1">
+              <span className={`text-[10px] font-bold uppercase tracking-wider ${isSunlightMode ? 'text-neutral-600' : 'text-emerald-400/80'}`}>
+                Total Detections
+              </span>
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
             </div>
-            <div className="text-lg font-black text-emerald-400">{entries.length}</div>
+            <div className={`text-xl font-black ${isSunlightMode ? 'text-emerald-800' : 'text-emerald-400'}`}>
+              {entries.length}
+            </div>
           </div>
 
-          <div className={`p-2.5 rounded-xl border text-center ${
-            isSunlightMode ? 'bg-gray-50 border-gray-300' : 'bg-forest-950/60 border-forest-800/60'
+          <div className={`p-3 rounded-xl border relative overflow-hidden transition-all ${
+            isSunlightMode ? 'bg-neutral-50 border-neutral-200 text-neutral-900' : 'bg-[#06120a] border-emerald-900/60 text-white'
           }`}>
-            <div className={`text-[10px] font-bold uppercase tracking-wider ${isSunlightMode ? 'text-gray-600' : 'text-forest-400'}`}>
-              GPS Waypoints
+            <div className="flex items-center justify-between mb-1">
+              <span className={`text-[10px] font-bold uppercase tracking-wider ${isSunlightMode ? 'text-neutral-600' : 'text-emerald-400/80'}`}>
+                GPS Waypoints
+              </span>
+              <MapPin className="w-3.5 h-3.5 text-amber-500" />
             </div>
-            <div className="text-lg font-black text-sky-400">{totalGpsFixed}</div>
+            <div className={`text-xl font-black ${isSunlightMode ? 'text-amber-800' : 'text-sky-400'}`}>
+              {totalGpsFixed}
+            </div>
           </div>
         </div>
 
         {/* Filters */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-3 mt-3 border-t border-forest-800/40">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-3.5 mt-3 border-t border-forest-800/40">
           {/* Search Query */}
           <div className="relative">
-            <Search className="w-4 h-4 absolute left-3 top-3 text-gray-400" />
+            <Search className="w-4 h-4 absolute left-3 top-3.5 text-gray-400" />
             <input
               type="text"
               placeholder="Search species, notes, or site..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className={`w-full pl-9 pr-3 py-2 min-h-[44px] rounded-xl text-xs border ${
+              className={`w-full pl-9 pr-3 py-2 min-h-[44px] rounded-xl text-xs border outline-none ${
                 isSunlightMode
-                  ? 'bg-gray-50 border-gray-300 text-black'
-                  : 'bg-forest-950 border-forest-800 text-earth-100 placeholder-forest-500'
+                  ? 'bg-neutral-50 border-neutral-300 text-neutral-900 focus:border-black'
+                  : 'bg-[#06120a] border-emerald-900/80 text-white placeholder-emerald-600 focus:border-emerald-500'
               }`}
             />
           </div>
 
           {/* Location Group Filter */}
-          <div>
+          <div className="relative">
             <select
               value={locationFilter}
               onChange={(e) => setLocationFilter(e.target.value)}
-              className={`w-full px-3 py-2 min-h-[44px] rounded-xl text-xs border ${
+              className={`w-full px-3 py-2 min-h-[44px] rounded-xl text-xs border appearance-none pr-8 cursor-pointer ${
                 isSunlightMode
-                  ? 'bg-gray-50 border-gray-300 text-black'
-                  : 'bg-forest-950 border-forest-800 text-earth-100'
+                  ? 'bg-neutral-50 border-neutral-300 text-neutral-900'
+                  : 'bg-[#06120a] border-emerald-900/80 text-white'
               }`}
             >
-              <option value="all">All Survey Sites ({allLocations.length})</option>
+              <option value="all">All Survey Sites ({locationGroups.length})</option>
               {allLocations.map((loc) => (
                 <option key={loc} value={loc}>{loc}</option>
               ))}
             </select>
+            <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs opacity-60">▼</span>
           </div>
 
           {/* Date Filter */}
-          <div className="flex gap-2">
+          <div className="flex items-center gap-1.5">
             <div className="relative flex-1">
-              <Calendar className="w-4 h-4 absolute left-3 top-3 text-gray-400" />
+              <Calendar className="w-4 h-4 absolute left-3 top-3.5 text-gray-400 pointer-events-none" />
               <input
                 type="date"
                 value={filterDate}
                 onChange={(e) => setFilterDate(e.target.value)}
-                className={`w-full pl-9 pr-3 py-2 min-h-[44px] rounded-xl text-xs border ${
+                className={`w-full pl-9 pr-3 py-2 min-h-[44px] rounded-xl text-xs border outline-none ${
                   isSunlightMode
-                    ? 'bg-gray-50 border-gray-300 text-black'
-                    : 'bg-forest-950 border-forest-800 text-earth-100'
+                    ? 'bg-neutral-50 border-neutral-300 text-neutral-900 focus:border-black'
+                    : 'bg-[#06120a] border-emerald-900/80 text-white'
                 }`}
               />
             </div>
@@ -344,7 +369,7 @@ export const JournalList: React.FC<JournalListProps> = ({
               <button
                 type="button"
                 onClick={() => setFilterDate('')}
-                className="px-2 text-xs font-bold underline opacity-70"
+                className="px-2.5 py-1.5 text-xs font-bold underline opacity-70 cursor-pointer"
               >
                 Reset
               </button>
@@ -356,16 +381,22 @@ export const JournalList: React.FC<JournalListProps> = ({
       {/* Main Content: Location Grouped Survey Logs */}
       {filteredEntries.length === 0 ? (
         <div className={`p-8 sm:p-12 rounded-2xl border text-center transition-all ${
-          isSunlightMode ? 'bg-white border-2 border-black text-black' : 'bg-forest-900/40 border-forest-800 text-earth-100'
+          isSunlightMode
+            ? 'bg-white border border-neutral-200 shadow-sm text-neutral-900'
+            : 'bg-[#06140b]/80 border border-emerald-900/60 text-white backdrop-blur-md'
         }`}>
-          <div className="w-16 h-16 mx-auto mb-3 rounded-2xl bg-forest-800/40 flex items-center justify-center text-feather-yellow">
+          <div className={`w-16 h-16 mx-auto mb-4 rounded-2xl flex items-center justify-center transition-all ${
+            isSunlightMode
+              ? 'bg-emerald-50 border border-emerald-200/80 text-emerald-800'
+              : 'bg-emerald-950/70 border border-emerald-800/60 text-feather-yellow shadow-inner'
+          }`}>
             <Feather className="w-8 h-8" />
           </div>
-          <h3 className="text-base font-bold mb-1">
+          <h3 className="text-base font-bold mb-1 tracking-tight">
             {entries.length === 0 ? 'No Observations Yet' : 'No Matching Observations'}
           </h3>
-          <p className={`text-xs max-w-sm mx-auto mb-5 leading-relaxed ${
-            isSunlightMode ? 'text-gray-700' : 'text-forest-300'
+          <p className={`text-xs max-w-sm mx-auto mb-6 leading-relaxed ${
+            isSunlightMode ? 'text-neutral-600' : 'text-emerald-300/80'
           }`}>
             {entries.length === 0
               ? 'Arrive at your local trail or park. Tap Record to identify bird calls offline and build your first area biodiversity survey.'
@@ -375,12 +406,13 @@ export const JournalList: React.FC<JournalListProps> = ({
             <button
               type="button"
               onClick={onGoToIdentify}
-              className={`px-5 py-2.5 min-h-[48px] rounded-xl font-bold text-xs inline-flex items-center gap-2 shadow-md transition-all ${
+              className={`px-5 py-2.5 min-h-[46px] rounded-xl font-bold text-xs inline-flex items-center gap-2 transition-all cursor-pointer ${
                 isSunlightMode
-                  ? 'bg-black text-white hover:bg-gray-800 border-2 border-black'
-                  : 'bg-forest-600 hover:bg-forest-500 text-white border border-forest-400/40'
+                  ? 'bg-emerald-900 text-white hover:bg-emerald-800 shadow-sm'
+                  : 'bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white shadow-lg shadow-emerald-950/50 border border-emerald-400/30'
               }`}
             >
+              <Bird className="w-4 h-4 text-feather-yellow" />
               <span>Record a Bird Call</span>
             </button>
           )}
@@ -400,20 +432,22 @@ export const JournalList: React.FC<JournalListProps> = ({
                 key={group.locationName}
                 className={`rounded-2xl border overflow-hidden transition-all shadow-sm ${
                   isSunlightMode
-                    ? 'bg-white border-2 border-black text-black'
-                    : 'bg-forest-900/70 border-forest-800 text-earth-50'
+                    ? 'bg-white border border-neutral-300 text-neutral-900'
+                    : 'bg-[#06140b]/90 border border-emerald-900/70 text-white'
                 }`}
               >
                 {/* Location Group Header Banner */}
                 <div className={`p-4 sm:p-5 border-b transition-colors ${
                   isSunlightMode
-                    ? 'bg-gray-100 border-black'
-                    : 'bg-forest-950/80 border-forest-800'
+                    ? 'bg-neutral-50/90 border-neutral-200'
+                    : 'bg-[#040e07] border-emerald-900/60'
                 }`}>
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div className="flex items-start gap-3">
                       <div className={`p-2.5 rounded-xl shrink-0 ${
-                        isSunlightMode ? 'bg-black text-white' : 'bg-forest-800 text-feather-yellow'
+                        isSunlightMode
+                          ? 'bg-emerald-100 text-emerald-900 border border-emerald-200'
+                          : 'bg-emerald-950 border border-emerald-800/80 text-feather-yellow'
                       }`}>
                         <MapPin className="w-5 h-5" />
                       </div>
@@ -421,12 +455,16 @@ export const JournalList: React.FC<JournalListProps> = ({
                         <div className="flex items-center gap-2 flex-wrap">
                           <h3 className="text-lg font-black tracking-tight">{group.locationName}</h3>
                           <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-full ${
-                            isSunlightMode ? 'bg-black text-white' : 'bg-forest-800 text-feather-yellow'
+                            isSunlightMode
+                              ? 'bg-neutral-900 text-white'
+                              : 'bg-emerald-950 border border-emerald-800 text-feather-yellow'
                           }`}>
                             {group.speciesCount} {group.speciesCount === 1 ? 'Species' : 'Species'}
                           </span>
                           <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-full ${
-                            isSunlightMode ? 'bg-gray-300 text-black' : 'bg-forest-800/70 text-forest-200'
+                            isSunlightMode
+                              ? 'bg-neutral-200 text-neutral-800'
+                              : 'bg-emerald-900/50 border border-emerald-700/50 text-emerald-300'
                           }`}>
                             {group.totalDetections} {group.totalDetections === 1 ? 'Detection' : 'Detections'}
                           </span>
@@ -450,10 +488,10 @@ export const JournalList: React.FC<JournalListProps> = ({
                       <button
                         type="button"
                         onClick={() => handleExportLocationCsv(group.locationName, group.entries)}
-                        className={`py-1.5 px-3 min-h-[38px] rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all ${
+                        className={`py-1.5 px-3 min-h-[38px] rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
                           isSunlightMode
-                            ? 'bg-black text-white hover:bg-gray-800 border border-black'
-                            : 'bg-forest-800 hover:bg-forest-700 text-forest-100 border border-forest-600'
+                            ? 'bg-neutral-100 hover:bg-neutral-200 text-neutral-900 border border-neutral-300'
+                            : 'bg-emerald-950 hover:bg-emerald-900 text-emerald-200 border border-emerald-800'
                         }`}
                         title={`Export CSV survey report for ${group.locationName}`}
                       >
@@ -464,10 +502,10 @@ export const JournalList: React.FC<JournalListProps> = ({
                       <button
                         type="button"
                         onClick={() => toggleLocationExpand(group.locationName)}
-                        className={`p-2 min-w-[38px] min-h-[38px] rounded-lg border flex items-center justify-center transition-all ${
+                        className={`p-2 min-w-[38px] min-h-[38px] rounded-lg border flex items-center justify-center transition-all cursor-pointer ${
                           isSunlightMode
-                            ? 'bg-white border-black text-black hover:bg-gray-100'
-                            : 'bg-forest-900 border-forest-700 text-forest-200 hover:bg-forest-800'
+                            ? 'bg-white hover:bg-neutral-100 text-neutral-800 border border-neutral-300'
+                            : 'bg-emerald-950 hover:bg-emerald-900 text-emerald-300 border border-emerald-800'
                         }`}
                         aria-label={isExpanded ? 'Collapse location entries' : 'Expand location entries'}
                       >
@@ -483,8 +521,8 @@ export const JournalList: React.FC<JournalListProps> = ({
                         key={sp.commonName}
                         className={`text-[11px] font-medium px-2.5 py-1 rounded-lg border flex items-center gap-1.5 ${
                           isSunlightMode
-                            ? 'bg-white border-gray-400 text-black'
-                            : 'bg-forest-900/90 border-forest-700/70 text-forest-100'
+                            ? 'bg-white border-neutral-200 text-neutral-900 shadow-2xs'
+                            : 'bg-[#06120a] border-emerald-900/80 text-emerald-100'
                         }`}
                       >
                         <Bird className="w-3 h-3 text-feather-yellow" />
@@ -509,8 +547,8 @@ export const JournalList: React.FC<JournalListProps> = ({
                           key={entry.id}
                           className={`p-4 rounded-xl border transition-all ${
                             isSunlightMode
-                              ? 'bg-gray-50 border-gray-300 text-black shadow-sm'
-                              : 'bg-forest-950/70 border-forest-800/90 text-earth-100 hover:border-forest-700'
+                              ? 'bg-white border-neutral-200 text-neutral-900 shadow-sm hover:border-neutral-300'
+                              : 'bg-[#06120a] border-emerald-900/60 text-white hover:border-emerald-700/80'
                           }`}
                         >
                           <div className="flex items-start justify-between mb-2">
@@ -519,22 +557,24 @@ export const JournalList: React.FC<JournalListProps> = ({
                                 <h4 className="font-bold text-base">{entry.commonName}</h4>
                                 {entry.confirmedByUser && (
                                   <span title="Confirmed observation">
-                                    <CheckCircle2 className="w-4 h-4 text-forest-400" />
+                                    <CheckCircle2 className="w-4 h-4 text-emerald-500" />
                                   </span>
                                 )}
                               </div>
-                              <div className={`text-xs italic ${isSunlightMode ? 'text-gray-700' : 'text-forest-300'}`}>
+                              <div className={`text-xs italic ${isSunlightMode ? 'text-neutral-600' : 'text-emerald-400/70'}`}>
                                 {entry.scientificName}
                               </div>
                             </div>
 
                             <div className="text-right">
-                              <span className={`text-xs font-mono font-bold px-2 py-0.5 rounded ${
-                                isSunlightMode ? 'bg-black text-white' : 'bg-forest-800 text-feather-yellow'
+                              <span className={`text-xs font-mono font-bold px-2 py-0.5 rounded border ${
+                                isSunlightMode
+                                  ? 'bg-emerald-50 text-emerald-900 border-emerald-200'
+                                  : 'bg-emerald-950/80 text-feather-yellow border-emerald-800/80'
                               }`}>
                                 {Math.round(entry.confidence * 100)}%
                               </span>
-                              <div className={`text-[10px] mt-1 ${isSunlightMode ? 'text-gray-600' : 'text-forest-400'}`}>
+                              <div className={`text-[10px] mt-1 ${isSunlightMode ? 'text-neutral-500' : 'text-emerald-400/60'}`}>
                                 {formattedTime}
                               </div>
                             </div>
@@ -543,18 +583,24 @@ export const JournalList: React.FC<JournalListProps> = ({
                           {/* Notes */}
                           {entry.notes && (
                             <p className={`text-xs p-2.5 rounded-lg mb-2 ${
-                              isSunlightMode ? 'bg-white border border-gray-300 text-black' : 'bg-forest-900/80 text-earth-200'
+                              isSunlightMode
+                                ? 'bg-neutral-50 border border-neutral-200 text-neutral-800'
+                                : 'bg-[#040c06] border border-emerald-950 text-neutral-300'
                             }`}>
                               {entry.notes}
                             </p>
                           )}
 
                           {/* Footer details: GPS & Delete */}
-                          <div className="flex items-center justify-between text-[11px] pt-2 border-t border-forest-800/40">
+                          <div className={`flex items-center justify-between text-[11px] pt-2 border-t ${
+                            isSunlightMode ? 'border-neutral-200 text-neutral-600' : 'border-emerald-900/40 text-neutral-400'
+                          }`}>
                             <div className="flex items-center gap-3">
                               {entry.location ? (
-                                <span className="flex items-center gap-1 font-mono text-forest-400">
-                                  <MapPin className="w-3 h-3 shrink-0" />
+                                <span className={`flex items-center gap-1 font-mono ${
+                                  isSunlightMode ? 'text-emerald-800' : 'text-emerald-400'
+                                }`}>
+                                  <MapPin className="w-3 h-3 shrink-0 text-amber-500" />
                                   {entry.location.latitude.toFixed(4)}°, {entry.location.longitude.toFixed(4)}°
                                   {entry.location.accuracy && ` (±${entry.location.accuracy}m)`}
                                 </span>
@@ -569,7 +615,11 @@ export const JournalList: React.FC<JournalListProps> = ({
                             <button
                               type="button"
                               onClick={() => onDeleteEntry(entry.id)}
-                              className="p-1 min-w-[36px] min-h-[36px] flex items-center justify-center rounded text-red-400 hover:text-red-300 hover:bg-forest-800"
+                              className={`p-1 min-w-[36px] min-h-[36px] flex items-center justify-center rounded transition-colors cursor-pointer ${
+                                isSunlightMode
+                                  ? 'text-neutral-400 hover:text-red-700 hover:bg-red-50'
+                                  : 'text-neutral-500 hover:text-red-400 hover:bg-red-950/40'
+                              }`}
                               title="Delete entry"
                               aria-label={`Delete observation for ${entry.commonName}`}
                             >

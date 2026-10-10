@@ -238,7 +238,7 @@ export const App: React.FC = () => {
 
   return (
     <div className={`min-h-screen flex flex-col font-sans transition-colors ${
-      isSunlightMode ? 'bg-white text-black' : 'bg-[#07130b] text-[#f7faf8]'
+      isSunlightMode ? 'bg-[#f4f7f4] text-[#0a160d]' : 'bg-[#07130b] text-[#f7faf8]'
     }`}>
       {/* Top Navigation */}
       <Navbar
