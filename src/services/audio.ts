@@ -1,12 +1,18 @@
 /**
  * TrailWhistle Audio Service
  * Web Audio API capture, iOS Safari webkitAudioContext fallback,
- * 16kHz resampling for Transformers.js models, and WAV blob generation.
+ * AudioWorklet migration with ScriptProcessor fallback,
+ * 48kHz resampling for BirdNET v2.4 ONNX, 3-second chunking, and WAV blob generation.
  */
+
+export const BIRDNET_SAMPLE_RATE = 48000;
+export const BIRDNET_CHUNK_SAMPLES = 144000; // 3 seconds at 48kHz
 
 // Safe AudioContext getter with iOS Safari webkit fallback
 export function getAudioContextClass(): typeof AudioContext {
-  const ctx = (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext);
+  const ctx =
+    window.AudioContext ||
+    (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
   if (!ctx) {
     throw new Error('Web Audio API is not supported in this browser.');
   }
@@ -27,13 +33,13 @@ export function createAudioContext(sampleRate?: number): AudioContext {
 }
 
 /**
- * Resample a Float32Array from sourceSampleRate to targetSampleRate (e.g., 16000Hz)
- * Uses high-quality linear interpolation.
+ * Resample a Float32Array from sourceSampleRate to targetSampleRate
+ * High-quality linear interpolation.
  */
-export function resampleTo16kHz(
+export function resampleAudio(
   audioData: Float32Array,
   sourceSampleRate: number,
-  targetSampleRate: number = 16000
+  targetSampleRate: number = BIRDNET_SAMPLE_RATE
 ): Float32Array {
   if (sourceSampleRate === targetSampleRate) {
     return audioData;
@@ -53,6 +59,57 @@ export function resampleTo16kHz(
   }
 
   return result;
+}
+
+/**
+ * Backwards compatibility helper for 16kHz models / tests
+ */
+export function resampleTo16kHz(
+  audioData: Float32Array,
+  sourceSampleRate: number,
+  targetSampleRate: number = 16000
+): Float32Array {
+  return resampleAudio(audioData, sourceSampleRate, targetSampleRate);
+}
+
+/**
+ * Resample audio specifically to 48kHz as expected by BirdNET
+ */
+export function resampleTo48kHz(
+  audioData: Float32Array,
+  sourceSampleRate: number
+): Float32Array {
+  return resampleAudio(audioData, sourceSampleRate, BIRDNET_SAMPLE_RATE);
+}
+
+/**
+ * Splits an audio buffer into 3-second windows (144,000 samples at 48kHz)
+ */
+export function chunkAudio(
+  audioFloat32: Float32Array,
+  sampleRate: number = BIRDNET_SAMPLE_RATE,
+  overlapSeconds: number = 1.5
+): Float32Array[] {
+  const chunkSamples = sampleRate * 3;
+  const hopSamples = Math.max(1, Math.round(sampleRate * (3 - overlapSeconds)));
+  const chunks: Float32Array[] = [];
+
+  for (let start = 0; start < audioFloat32.length; start += hopSamples) {
+    let chunk = audioFloat32.slice(start, start + chunkSamples);
+    if (chunk.length < chunkSamples) {
+      const padded = new Float32Array(chunkSamples);
+      padded.set(chunk);
+      chunk = padded;
+    }
+    chunks.push(chunk);
+    if (start + chunkSamples >= audioFloat32.length) break;
+  }
+
+  if (chunks.length === 0) {
+    chunks.push(new Float32Array(chunkSamples));
+  }
+
+  return chunks;
 }
 
 /**
@@ -78,9 +135,12 @@ export function normalizeAudio(audio: Float32Array): Float32Array {
 }
 
 /**
- * Convert Float32Array (mono 16kHz) to a playable WAV Blob
+ * Convert Float32Array to a playable WAV Blob
  */
-export function float32ToWavBlob(samples: Float32Array, sampleRate: number = 16000): Blob {
+export function float32ToWavBlob(
+  samples: Float32Array,
+  sampleRate: number = BIRDNET_SAMPLE_RATE
+): Blob {
   const numSamples = samples.length;
   const buffer = new ArrayBuffer(44 + numSamples * 2);
   const view = new DataView(buffer);
@@ -119,27 +179,38 @@ export function float32ToWavBlob(samples: Float32Array, sampleRate: number = 160
   return new Blob([view], { type: 'audio/wav' });
 }
 
-export interface AudioCaptureController {
-  stop: () => Promise<Float32Array>;
-  cancel: () => void;
+// AudioWorklet processor definition
+const RECORDER_PROCESSOR_CODE = `
+class TrailWhistleRecorderProcessor extends AudioWorkletProcessor {
+  process(inputs) {
+    const input = inputs[0];
+    if (input && input.length > 0) {
+      const channelData = input[0];
+      if (channelData && channelData.length > 0) {
+        this.port.postMessage(channelData);
+      }
+    }
+    return true;
+  }
 }
+registerProcessor('trailwhistle-recorder', TrailWhistleRecorderProcessor);
+`;
 
 /**
- * Records audio from user microphone for durationSeconds (default 3.0s)
- * Handles iOS audio context suspension and microphone permission errors
+ * Records audio from user microphone for durationSeconds (default 3.0s).
+ * Uses AudioWorklet if supported, with graceful fallback to ScriptProcessor.
+ * Resamples to 48kHz for BirdNET v2.4.
  */
 export async function recordMicAudio(
   durationSeconds: number = 3.0,
   onVolumeChange?: (volume: number) => void
 ): Promise<{ rawAudio: Float32Array; wavBlob: Blob }> {
-  // Check navigator.mediaDevices support
   if (!navigator?.mediaDevices?.getUserMedia) {
     throw new Error('Microphone recording is not supported in this browser. Please use HTTPS or sample audio.');
   }
 
   const audioContext = createAudioContext();
 
-  // iOS Safari requires explicit resume upon user gesture
   if (audioContext.state === 'suspended') {
     await audioContext.resume();
   }
@@ -164,34 +235,63 @@ export async function recordMicAudio(
   }
 
   const source = audioContext.createMediaStreamSource(stream);
-  // ScriptProcessor or AudioWorklet for universal compatibility including mobile Safari
-  const bufferSize = 4096;
-  const scriptProcessor = audioContext.createScriptProcessor(bufferSize, 1, 1);
   const recordedChunks: Float32Array[] = [];
 
-  scriptProcessor.onaudioprocess = (e) => {
-    const inputData = e.inputBuffer.getChannelData(0);
+  const handleAudioChunk = (inputData: Float32Array) => {
     recordedChunks.push(new Float32Array(inputData));
-
     if (onVolumeChange) {
       let sum = 0;
       for (let i = 0; i < inputData.length; i++) {
         sum += inputData[i] * inputData[i];
       }
       const rms = Math.sqrt(sum / inputData.length);
-      onVolumeChange(Math.min(1.0, rms * 5)); // Scaled RMS volume
+      onVolumeChange(Math.min(1.0, rms * 5));
     }
   };
 
-  source.connect(scriptProcessor);
-  scriptProcessor.connect(audioContext.destination);
+  let workletNode: AudioWorkletNode | null = null;
+  let scriptProcessor: ScriptProcessorNode | null = null;
 
-  // Wait for durationSeconds
+  // Try AudioWorklet first
+  let useWorklet = false;
+  if (typeof audioContext.audioWorklet !== 'undefined' && typeof Blob !== 'undefined' && typeof URL !== 'undefined') {
+    try {
+      const blob = new Blob([RECORDER_PROCESSOR_CODE], { type: 'application/javascript' });
+      const workletUrl = URL.createObjectURL(blob);
+      await audioContext.audioWorklet.addModule(workletUrl);
+      URL.revokeObjectURL(workletUrl);
+
+      workletNode = new AudioWorkletNode(audioContext, 'trailwhistle-recorder');
+      workletNode.port.onmessage = (event: MessageEvent) => {
+        handleAudioChunk(event.data);
+      };
+
+      source.connect(workletNode);
+      workletNode.connect(audioContext.destination);
+      useWorklet = true;
+    } catch {
+      useWorklet = false;
+    }
+  }
+
+  // Graceful fallback to ScriptProcessorNode
+  if (!useWorklet) {
+    const bufferSize = 4096;
+    scriptProcessor = audioContext.createScriptProcessor(bufferSize, 1, 1);
+    scriptProcessor.onaudioprocess = (e) => {
+      handleAudioChunk(e.inputBuffer.getChannelData(0));
+    };
+    source.connect(scriptProcessor);
+    scriptProcessor.connect(audioContext.destination);
+  }
+
+  // Wait for recording duration
   await new Promise((resolve) => setTimeout(resolve, durationSeconds * 1000));
 
   // Disconnect & cleanup
   source.disconnect();
-  scriptProcessor.disconnect();
+  if (workletNode) workletNode.disconnect();
+  if (scriptProcessor) scriptProcessor.disconnect();
   stream.getTracks().forEach((track) => track.stop());
 
   const sourceSampleRate = audioContext.sampleRate;
@@ -206,18 +306,20 @@ export async function recordMicAudio(
     offset += chunk.length;
   }
 
-  // Resample to 16kHz
-  const resampled = resampleTo16kHz(combined, sourceSampleRate, 16000);
+  // Resample to 48kHz for BirdNET v2.4
+  const resampled = resampleTo48kHz(combined, sourceSampleRate);
   const normalized = normalizeAudio(resampled);
-  const wavBlob = float32ToWavBlob(normalized, 16000);
+  const wavBlob = float32ToWavBlob(normalized, BIRDNET_SAMPLE_RATE);
 
   return { rawAudio: normalized, wavBlob };
 }
 
 /**
- * Loads an audio file from URL, decodes it with Web Audio, and returns 16kHz Float32Array
+ * Loads an audio file from URL, decodes it with Web Audio, and returns 48kHz Float32Array
  */
-export async function loadAudioFromUrl(url: string): Promise<{ rawAudio: Float32Array; wavBlob: Blob }> {
+export async function loadAudioFromUrl(
+  url: string
+): Promise<{ rawAudio: Float32Array; wavBlob: Blob }> {
   const response = await fetch(url);
   if (!response.ok) {
     throw new Error(`Failed to load audio sample from ${url}: status ${response.status}`);
@@ -229,9 +331,9 @@ export async function loadAudioFromUrl(url: string): Promise<{ rawAudio: Float32
   try {
     const decodedBuffer = await audioContext.decodeAudioData(arrayBuffer);
     const channelData = decodedBuffer.getChannelData(0);
-    const resampled = resampleTo16kHz(channelData, decodedBuffer.sampleRate, 16000);
+    const resampled = resampleTo48kHz(channelData, decodedBuffer.sampleRate);
     const normalized = normalizeAudio(resampled);
-    const wavBlob = float32ToWavBlob(normalized, 16000);
+    const wavBlob = float32ToWavBlob(normalized, BIRDNET_SAMPLE_RATE);
     return { rawAudio: normalized, wavBlob };
   } finally {
     await audioContext.close().catch(() => {});

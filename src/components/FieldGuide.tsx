@@ -48,7 +48,7 @@ export const FieldGuide: React.FC<FieldGuideProps> = ({ isSunlightMode }) => {
           </div>
           <h3 className="font-bold text-sm mb-1">Open Weights, Zero Telemetry</h3>
           <p className="text-xs opacity-80 leading-relaxed">
-            No API keys. No monthly token billing. Your audio never leaves your device. Audio is classified by an on-device Audio Spectrogram Transformer.
+            No API keys. No monthly token billing. Your audio never leaves your device. Audio is classified 100% on-device by BirdNET v2.4 ONNX across 6,522 real bird species.
           </p>
         </div>
 

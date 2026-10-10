@@ -22,7 +22,7 @@ export const ModelDownloadBanner: React.FC<ModelDownloadBannerProps> = ({
       }`}>
         <div className="flex items-center gap-2.5">
           <DownloadCloud className="w-4 h-4 text-feather-yellow shrink-0" />
-          <span>AST Neural Model will warm up on first 3s recording or sample test.</span>
+          <span>BirdNET v2.4 Neural Model (6,522 species) will warm up on first 3s recording or sample test.</span>
         </div>
         <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${
           isSunlightMode ? 'bg-black text-white' : 'bg-forest-800 text-forest-300'
@@ -42,7 +42,7 @@ export const ModelDownloadBanner: React.FC<ModelDownloadBannerProps> = ({
       }`}>
         <div className="flex items-center gap-2">
           <CheckCircle2 className="w-4 h-4 text-forest-400 shrink-0" />
-          <span>Model cached locally. 100% offline audio identification ready.</span>
+          <span>BirdNET v2.4 cached locally. 100% offline audio identification ready (6,522 species).</span>
         </div>
         <span className="text-[10px] uppercase font-bold tracking-wider text-forest-400">Offline Active</span>
       </div>
@@ -62,7 +62,7 @@ export const ModelDownloadBanner: React.FC<ModelDownloadBannerProps> = ({
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2 text-sm font-bold">
             <RefreshCw className="w-4 h-4 animate-spin text-feather-yellow" />
-            <span>Downloading On-Device Audio Model...</span>
+            <span>Downloading On-Device BirdNET v2.4 Model (~47MB)...</span>
           </div>
           <span className="text-xs font-mono font-bold">{progressInfo.progress}%</span>
         </div>

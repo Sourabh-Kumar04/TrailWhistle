@@ -35,12 +35,12 @@ You don't need a cell tower. You don't need an account. You don't need an intern
    - High-contrast, glove-friendly 112px record button with tactile haptic and visual countdown.
    - Real-time RMS volume audio visualizer verifying incoming acoustic signal level.
    - Resilient Web Audio API pipeline with automatic fallback for iOS Safari (`webkitAudioContext` unlocking and suspended context recovery).
-   - High-quality linear interpolation resampling down to 16 kHz mono float arrays to match the model's exact acoustic feature space.
+   - AudioWorklet recording with high-quality linear interpolation resampling to 48 kHz mono float arrays matching BirdNET's exact input tensor requirements [1, 144000].
 
 2. **Real On-Device Open-Weight Audio Classification**
-   - Runs directly in the browser via **Transformers.js** (`@xenova/transformers`) and WebAssembly / ONNX Runtime Web.
-   - Powered by open weights from the **Audio Spectrogram Transformer (AST)** family (`Xenova/ast-finetuned-audioset-10-10-0.4593`), fine-tuned to classify 527 complex acoustic classes including avian vocalization signatures.
-   - Real-time classification mapping from raw spectrogram features to rich species profiles (common names, scientific names, typical habitats, and acoustic signatures).
+   - Runs directly in the browser via **BirdNET v2.4 ONNX** (`tphakala/BirdNET-v2.4`, INT8 quantized ~47MB) and **ONNX Runtime Web** (`onnxruntime-web` WASM).
+   - Classifies across **6,522 real avian species** with scientific and common name mapping.
+   - Honest acoustic calibration: requires 25% minimum confidence, showing an honest Unknown state when calls are ambiguous—never inventing fake species.
 
 3. **Transparent Model Hydration & Graceful Degradation**
    - Explicit first-load download progress bar showing downloaded MB, percentage, and current ONNX chunk.
@@ -79,15 +79,15 @@ TrailWhistle is architected as a lean, zero-backend Progressive Web Application:
 │                     TrailWhistle PWA                        │
 ├──────────────────────────────┬──────────────────────────────┤
 │       UI & Interactions      │       On-Device ML Engine     │
-│  - React 19 + TypeScript     │  - Transformers.js (v2)      │
+│  - React 19 + TypeScript     │  - BirdNET v2.4 ONNX (~47MB) │
 │  - Tailwind CSS              │  - ONNX Runtime Web (WASM)   │
-│  - High-Contrast Sunlight UX │  - AST Audio Spectrogram     │
-│  - Touch-friendly 48px+ tap  │  - 16 kHz Mel-Spectrogram    │
+│  - High-Contrast Sunlight UX │  - 6,522 Avian Species       │
+│  - Touch-friendly 48px+ tap  │  - Honest 25% Threshold      │
 ├──────────────────────────────┼──────────────────────────────┤
 │       Web Audio Engine       │       Offline Persistence    │
-│  - Web Audio API             │  - Workbox Service Worker    │
-│  - webkitAudioContext iOS    │  - Browser Cache API         │
-│  - 16kHz Linear Resampling   │  - localStorage Journal      │
+│  - AudioWorklet Node Capture │  - Workbox Service Worker    │
+│  - ScriptProcessor Fallback  │  - Browser Cache API         │
+│  - 48kHz Linear Resampling   │  - localStorage Journal      │
 │  - Float32 to WAV Generator  │  - Hardware Satellite GPS    │
 └──────────────────────────────┴──────────────────────────────┘
 ```

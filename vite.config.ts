@@ -36,13 +36,14 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,wasm}'],
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,wasm,mjs,txt}'],
+        maximumFileSizeToCacheInBytes: 60 * 1024 * 1024,
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/huggingface\.co\/.*/i,
             handler: 'CacheFirst',
             options: {
-              cacheName: 'transformers-cache',
+              cacheName: 'birdnet-cache',
               expiration: {
                 maxEntries: 50,
                 maxAgeSeconds: 60 * 60 * 24 * 90, // 90 days
@@ -56,7 +57,7 @@ export default defineConfig({
             urlPattern: /^https:\/\/cdn-lfs\.huggingface\.co\/.*/i,
             handler: 'CacheFirst',
             options: {
-              cacheName: 'transformers-lfs-cache',
+              cacheName: 'birdnet-lfs-cache',
               expiration: {
                 maxEntries: 50,
                 maxAgeSeconds: 60 * 60 * 24 * 90,

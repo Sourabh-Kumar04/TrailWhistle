@@ -1,9 +1,14 @@
 import { describe, it, expect } from 'vitest';
 import {
   resampleTo16kHz,
+  resampleTo48kHz,
+  resampleAudio,
+  chunkAudio,
   normalizeAudio,
   float32ToWavBlob,
   getAudioContextClass,
+  BIRDNET_SAMPLE_RATE,
+  BIRDNET_CHUNK_SAMPLES,
 } from '../services/audio';
 
 describe('Audio Processing Service', () => {
@@ -26,10 +31,31 @@ describe('Audio Processing Service', () => {
     expect(max).toBeGreaterThan(0.9);
   });
 
+  it('resampleTo48kHz correctly resamples 16kHz audio to 48kHz for BirdNET', () => {
+    const inputLength = 16000; // 1 second at 16kHz
+    const input = new Float32Array(inputLength);
+    for (let i = 0; i < inputLength; i++) {
+      input[i] = Math.sin((2 * Math.PI * 440 * i) / 16000);
+    }
+
+    const resampled = resampleTo48kHz(input, 16000);
+    expect(resampled.length).toBe(BIRDNET_SAMPLE_RATE);
+    expect(resampled).toBeInstanceOf(Float32Array);
+  });
+
   it('resampleTo16kHz returns the exact same buffer when sample rate matches', () => {
     const input = new Float32Array([0.1, 0.2, 0.3]);
     const resampled = resampleTo16kHz(input, 16000, 16000);
     expect(resampled).toBe(input);
+  });
+
+  it('chunkAudio splits audio into 3-second windows with padding', () => {
+    // 2 seconds of 48kHz audio (96,000 samples)
+    const shortAudio = new Float32Array(96000);
+    const chunks = chunkAudio(shortAudio, 48000);
+
+    expect(chunks.length).toBeGreaterThanOrEqual(1);
+    expect(chunks[0].length).toBe(BIRDNET_CHUNK_SAMPLES); // exactly 144,000
   });
 
   it('normalizeAudio scales signals to 0.95 peak amplitude', () => {

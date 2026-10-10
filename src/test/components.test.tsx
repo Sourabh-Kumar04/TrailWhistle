@@ -47,7 +47,7 @@ describe('UI Components', () => {
       />
     );
     expect(screen.getByText('42%')).toBeInTheDocument();
-    expect(screen.getByText(/Downloading On-Device Audio Model/i)).toBeInTheDocument();
+    expect(screen.getByText(/Downloading On-Device/i)).toBeInTheDocument();
 
     // Error state
     rerender(
@@ -74,7 +74,7 @@ describe('UI Components', () => {
         scientificName: 'Turdus migratorius',
         confidence: 0.89,
         habitat: 'Gardens and woodlands',
-        matchedClass: 'Bird vocalization, bird call, bird song',
+        matchedClass: 'Turdus migratorius_American Robin',
       },
       {
         speciesId: 'song-sparrow',
@@ -82,7 +82,7 @@ describe('UI Components', () => {
         scientificName: 'Melospiza melodia',
         confidence: 0.45,
         habitat: 'Edge thickets',
-        matchedClass: 'Chirp, tweet',
+        matchedClass: 'Melospiza melodia_Song Sparrow',
       },
     ];
 
@@ -106,6 +106,37 @@ describe('UI Components', () => {
     const editBtn = screen.getByText('Add Notes / GPS');
     fireEvent.click(editBtn);
     expect(onOpenEdit).toHaveBeenCalledWith(predictions[0]);
+  });
+
+  it('PredictionCard displays honest Unknown state when confidence is below 25%', () => {
+    const onConfirm = vi.fn();
+    const onOpenEdit = vi.fn();
+
+    const unknownPredictions: PredictionResult[] = [
+      {
+        speciesId: 'unknown',
+        commonName: 'Unknown Species',
+        scientificName: 'Confidence < 25% — Inconclusive',
+        confidence: 0.18,
+        habitat: 'Undetermined habitat',
+        matchedClass: 'Acoustic confidence below threshold (<25%)',
+      },
+    ];
+
+    render(
+      <PredictionCard
+        predictions={unknownPredictions}
+        onConfirm={onConfirm}
+        onOpenEditModal={onOpenEdit}
+        isSunlightMode={false}
+      />
+    );
+
+    expect(screen.getByText('Unknown Species')).toBeInTheDocument();
+    expect(screen.getByText('18% Confidence')).toBeInTheDocument();
+    expect(screen.getByText(/Inconclusive Audio/i)).toBeInTheDocument();
+    expect(screen.getByText(/never invent fake species/i)).toBeInTheDocument();
+    expect(screen.getByText('Log as Unknown')).toBeInTheDocument();
   });
 
   it('JournalList renders empty state and active observation entries', () => {

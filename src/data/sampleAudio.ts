@@ -14,7 +14,7 @@ export const SAMPLE_AUDIO_LIST: SampleAudioItem[] = [
     scientificName: 'Turdus migratorius',
     description: 'Field recording, xeno-canto XC131093 (3s)',
     url: '/samples/american-robin.wav',
-    expectedClass: 'Chirp, tweet',
+    expectedClass: 'Turdus migratorius_American Robin',
   },
   {
     id: 'sample-sparrow',
@@ -22,7 +22,7 @@ export const SAMPLE_AUDIO_LIST: SampleAudioItem[] = [
     scientificName: 'Melospiza melodia',
     description: 'Field recording, xeno-canto XC131649 (3s)',
     url: '/samples/song-sparrow.wav',
-    expectedClass: 'Chirp, tweet',
+    expectedClass: 'Melospiza melodia_Song Sparrow',
   },
   {
     id: 'sample-dove',
@@ -30,7 +30,7 @@ export const SAMPLE_AUDIO_LIST: SampleAudioItem[] = [
     scientificName: 'Zenaida macroura',
     description: 'Field recording, xeno-canto XC128006 (3s)',
     url: '/samples/mourning-dove.wav',
-    expectedClass: 'Pigeon, dove',
+    expectedClass: 'Zenaida macroura_Mourning Dove',
   },
   {
     id: 'sample-owl',
@@ -38,6 +38,6 @@ export const SAMPLE_AUDIO_LIST: SampleAudioItem[] = [
     scientificName: 'Tyto alba',
     description: 'Field recording, xeno-canto XC611957 (3s)',
     url: '/samples/barn-owl.wav',
-    expectedClass: 'Owl',
+    expectedClass: 'Tyto alba_Barn Owl',
   },
 ];
