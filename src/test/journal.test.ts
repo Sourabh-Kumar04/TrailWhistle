@@ -7,6 +7,9 @@ import {
   filterJournalEntries,
   generateJournalCsv,
   escapeCsvField,
+  buildSurveyChecklist,
+  groupEntriesByLocation,
+  generateAreaSurveyCsv,
 } from '../services/journal';
 import { JournalEntry } from '../types/journal';
 
@@ -154,4 +157,144 @@ describe('Field Journal Service', () => {
     expect(csv).toContain('-122.4194');
     expect(csv).toContain('live_mic');
   });
+
+  it('buildSurveyChecklist aggregates species tallies and tracks peak confidence', () => {
+    const entries: JournalEntry[] = [
+      {
+        id: '1',
+        timestamp: '2026-10-10T10:00:00Z',
+        commonName: 'American Robin',
+        scientificName: 'Turdus migratorius',
+        confidence: 0.85,
+        notes: '',
+        locationName: 'Pine Ridge Trail',
+        surveyId: 'survey-1',
+        audioDurationSeconds: 3,
+        source: 'live_mic',
+        confirmedByUser: true,
+      },
+      {
+        id: '2',
+        timestamp: '2026-10-10T10:05:00Z',
+        commonName: 'American Robin',
+        scientificName: 'Turdus migratorius',
+        confidence: 0.94,
+        notes: '',
+        locationName: 'Pine Ridge Trail',
+        surveyId: 'survey-1',
+        audioDurationSeconds: 3,
+        source: 'live_mic',
+        confirmedByUser: true,
+      },
+      {
+        id: '3',
+        timestamp: '2026-10-10T10:10:00Z',
+        commonName: 'Song Sparrow',
+        scientificName: 'Melospiza melodia',
+        confidence: 0.78,
+        notes: '',
+        locationName: 'Pine Ridge Trail',
+        surveyId: 'survey-1',
+        audioDurationSeconds: 3,
+        source: 'sample_audio',
+        confirmedByUser: true,
+      },
+    ];
+
+    const checklist = buildSurveyChecklist(entries, 'survey-1');
+    expect(checklist).toHaveLength(2);
+
+    // American Robin should have 2 detections and 94% peak confidence
+    const robin = checklist.find((c) => c.commonName === 'American Robin');
+    expect(robin).toBeDefined();
+    expect(robin?.detectionCount).toBe(2);
+    expect(robin?.maxConfidence).toBe(0.94);
+
+    // Song Sparrow should have 1 detection
+    const sparrow = checklist.find((c) => c.commonName === 'Song Sparrow');
+    expect(sparrow).toBeDefined();
+    expect(sparrow?.detectionCount).toBe(1);
+    expect(sparrow?.maxConfidence).toBe(0.78);
+  });
+
+  it('groupEntriesByLocation groups observations into field survey logs', () => {
+    const entries: JournalEntry[] = [
+      {
+        id: '1',
+        timestamp: '2026-10-10T11:00:00Z',
+        commonName: 'Barn Owl',
+        scientificName: 'Tyto alba',
+        confidence: 0.91,
+        notes: '',
+        locationName: 'Redwood Creek Basin',
+        audioDurationSeconds: 3,
+        source: 'live_mic',
+        confirmedByUser: true,
+      },
+      {
+        id: '2',
+        timestamp: '2026-10-10T09:00:00Z',
+        commonName: 'American Robin',
+        scientificName: 'Turdus migratorius',
+        confidence: 0.88,
+        notes: '',
+        locationName: 'Pine Ridge Trail',
+        audioDurationSeconds: 3,
+        source: 'live_mic',
+        confirmedByUser: true,
+      },
+      {
+        id: '3',
+        timestamp: '2026-10-10T09:15:00Z',
+        commonName: 'Song Sparrow',
+        scientificName: 'Melospiza melodia',
+        confidence: 0.82,
+        notes: '',
+        locationName: 'Pine Ridge Trail',
+        audioDurationSeconds: 3,
+        source: 'live_mic',
+        confirmedByUser: true,
+      },
+    ];
+
+    const groups = groupEntriesByLocation(entries);
+    expect(groups).toHaveLength(2);
+
+    const pineRidge = groups.find((g) => g.locationName === 'Pine Ridge Trail');
+    expect(pineRidge).toBeDefined();
+    expect(pineRidge?.entries).toHaveLength(2);
+    expect(pineRidge?.speciesCount).toBe(2);
+
+    const redwood = groups.find((g) => g.locationName === 'Redwood Creek Basin');
+    expect(redwood).toBeDefined();
+    expect(redwood?.entries).toHaveLength(1);
+    expect(redwood?.speciesCount).toBe(1);
+  });
+
+  it('generateAreaSurveyCsv generates complete area survey report with checklist summary', () => {
+    const entries: JournalEntry[] = [
+      {
+        id: 's1',
+        timestamp: '2026-10-10T14:00:00Z',
+        commonName: 'American Robin',
+        scientificName: 'Turdus migratorius',
+        confidence: 0.89,
+        notes: 'Singing in fir tree',
+        locationName: 'Highland Ridge',
+        audioDurationSeconds: 3,
+        source: 'live_mic',
+        confirmedByUser: true,
+      },
+    ];
+
+    const csv = generateAreaSurveyCsv('Highland Ridge', entries);
+    expect(csv).toContain('TRAILWHISTLE AREA BIODIVERSITY SURVEY REPORT');
+    expect(csv).toContain('Survey Location: Highland Ridge');
+    expect(csv).toContain('SPECIES CHECKLIST SUMMARY');
+    expect(csv).toContain('American Robin');
+    expect(csv).toContain('Turdus migratorius');
+    expect(csv).toContain('89.0%');
+    expect(csv).toContain('DETAILED ACOUSTIC OBSERVATIONS');
+  });
 });
+

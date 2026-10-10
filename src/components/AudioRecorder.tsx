@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Mic, Square, Play, Sparkles, Volume2, Music, Check, AlertCircle } from 'lucide-react';
+import { Mic, Square, Play, Sparkles, Volume2, Music, Check, AlertCircle, Radio, Activity } from 'lucide-react';
 import { recordMicAudio, loadAudioFromUrl } from '../services/audio';
 import { SAMPLE_AUDIO_LIST, SampleAudioItem } from '../data/sampleAudio';
 
@@ -109,26 +109,39 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
   };
 
   return (
-    <div className={`p-5 rounded-2xl border transition-all ${
+    <div className={`p-4 sm:p-5 rounded-2xl border transition-all ${
       isSunlightMode 
-        ? 'bg-white border-black text-black shadow-md' 
+        ? 'bg-white border-2 border-black text-black shadow-md' 
         : 'bg-forest-900/60 border-forest-800 text-earth-50 shadow-lg'
     }`}>
+      {/* Header Badge */}
+      <div className="flex items-center justify-between pb-3 mb-4 border-b border-forest-800/40">
+        <div className="flex items-center gap-2">
+          <Radio className="w-4 h-4 text-emerald-400" />
+          <h2 className="text-sm font-bold uppercase tracking-wider">Acoustic Field Recorder</h2>
+        </div>
+        <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded ${
+          isSunlightMode ? 'bg-gray-100 text-black border border-black' : 'bg-forest-950 text-forest-300 border border-forest-800'
+        }`}>
+          48kHz Worklet
+        </span>
+      </div>
+
       {/* Capture Section */}
       <div className="flex flex-col items-center justify-center text-center">
-        <h2 className="text-lg font-bold tracking-tight mb-1">
+        <h3 className="text-base sm:text-lg font-black tracking-tight mb-1 font-sans">
           {isRecording 
             ? 'Listening to Nature...' 
             : isProcessing 
               ? 'Classifying Avian Acoustics...' 
               : 'Record 3 Seconds of Birdsong'}
-        </h2>
-        <p className={`text-xs mb-6 max-w-sm ${isSunlightMode ? 'text-gray-700' : 'text-forest-300'}`}>
-          Hold your phone towards the canopy or brush. Three seconds is all the on-device transformer needs.
+        </h3>
+        <p className={`text-xs mb-5 max-w-sm ${isSunlightMode ? 'text-gray-700' : 'text-forest-300'}`}>
+          Hold your device towards the canopy or brush. Three seconds is all BirdNET v2.4 needs for on-device inference.
         </p>
 
         {/* Big Tap Target Record Button */}
-        <div className="relative mb-6 flex items-center justify-center">
+        <div className="relative mb-5 flex items-center justify-center">
           {/* Animated pulse rings when recording */}
           {isRecording && (
             <div
@@ -142,14 +155,14 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
             onClick={handleStartRecording}
             disabled={isRecording || isProcessing}
             aria-label={isRecording ? 'Recording in progress' : 'Record 3 seconds of bird call'}
-            className={`w-28 h-28 min-w-[112px] min-h-[112px] rounded-full flex flex-col items-center justify-center transition-all transform active:scale-95 shadow-xl select-none relative z-10 ${
+            className={`w-28 h-28 min-w-[112px] min-h-[112px] rounded-full flex flex-col items-center justify-center transition-all transform active:scale-95 shadow-2xl select-none relative z-10 ${
               isRecording
                 ? 'bg-red-600 text-white ring-8 ring-red-400/30'
                 : isProcessing
                   ? 'bg-forest-800 text-gray-300 cursor-not-allowed opacity-80'
                   : isSunlightMode
                     ? 'bg-black text-white hover:bg-gray-800 border-4 border-black'
-                    : 'bg-gradient-to-br from-forest-600 to-forest-800 hover:from-forest-500 hover:to-forest-700 text-white border-2 border-forest-400/40'
+                    : 'bg-gradient-to-br from-forest-600 via-forest-700 to-forest-800 hover:from-forest-500 hover:to-forest-700 text-white border-2 border-forest-400/40'
             }`}
           >
             {isRecording ? (
@@ -224,7 +237,7 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
           </div>
         )}
 
-        {/* Or Test with Sample Audio */}
+        {/* Desktop / Trailhead Demo Clips */}
         <div className="w-full pt-4 border-t border-forest-800/60 mt-2">
           <div className="flex items-center justify-between mb-2.5">
             <span className={`text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 ${

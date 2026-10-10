@@ -6,7 +6,10 @@ import { ModelDownloadBanner } from '../components/ModelDownloadBanner';
 import { PredictionCard } from '../components/PredictionCard';
 import { JournalList } from '../components/JournalList';
 import { AudioRecorder } from '../components/AudioRecorder';
-import { PredictionResult, JournalEntry } from '../types/journal';
+import { AreaSurveyHeader } from '../components/AreaSurveyHeader';
+import { SurveyStatsBar } from '../components/SurveyStatsBar';
+import { AreaSpeciesChecklist } from '../components/AreaSpeciesChecklist';
+import { PredictionResult, JournalEntry, SurveyChecklistItem } from '../types/journal';
 
 describe('UI Components', () => {
   it('Navbar renders brand and switches tabs', () => {
@@ -206,4 +209,101 @@ describe('UI Components', () => {
     expect(screen.getByText('American Robin')).toBeInTheDocument();
     expect(screen.getByText('Barn Owl')).toBeInTheDocument();
   });
+
+  it('AreaSurveyHeader renders survey location, BirdNET headline, and triggers new survey', () => {
+    const onNewSurvey = vi.fn();
+    const onExportCsv = vi.fn();
+    const onUpdateSurvey = vi.fn();
+
+    render(
+      <AreaSurveyHeader
+        survey={{
+          id: 's-1',
+          locationName: 'Pine Ridge Trailhead',
+          habitatTag: 'Mixed Woodland',
+          startTime: new Date().toISOString(),
+        }}
+        onUpdateSurvey={onUpdateSurvey}
+        onNewSurvey={onNewSurvey}
+        onExportCsv={onExportCsv}
+        speciesCount={3}
+        totalRecordings={5}
+        isSunlightMode={false}
+      />
+    );
+
+    expect(screen.getByRole('heading', { name: 'Pine Ridge Trailhead' })).toBeInTheDocument();
+    expect(screen.getByText(/Area Biodiversity Survey Mode/i)).toBeInTheDocument();
+    expect(screen.getByText(/6,522 Species Global Taxonomy/i)).toBeInTheDocument();
+
+    const newSiteBtn = screen.getByText('New Site');
+    fireEvent.click(newSiteBtn);
+    expect(onNewSurvey).toHaveBeenCalled();
+
+    const exportBtn = screen.getByText('Export Area Survey CSV');
+    fireEvent.click(exportBtn);
+    expect(onExportCsv).toHaveBeenCalled();
+  });
+
+  it('SurveyStatsBar renders species count, recordings, time span, and area coverage', () => {
+    render(
+      <SurveyStatsBar
+        speciesCount={4}
+        totalRecordings={9}
+        startTime={new Date(Date.now() - 15 * 60000).toISOString()}
+        location={{ latitude: 37.77, longitude: -122.42, accuracy: 8 }}
+        locationName="Pine Ridge Trailhead"
+        isSunlightMode={false}
+      />
+    );
+
+    expect(screen.getByText('Species Count')).toBeInTheDocument();
+    expect(screen.getByText('4 Species')).toBeInTheDocument();
+    expect(screen.getByText('Recordings')).toBeInTheDocument();
+    expect(screen.getByText('9 Captures')).toBeInTheDocument();
+    expect(screen.getByText('Time Span')).toBeInTheDocument();
+    expect(screen.getByText('Area Coverage')).toBeInTheDocument();
+    expect(screen.getByText('±8m GPS')).toBeInTheDocument();
+  });
+
+  it('AreaSpeciesChecklist renders live species tally and empty state workflow', () => {
+    const checklist: SurveyChecklistItem[] = [
+      {
+        speciesId: 'sp-1',
+        commonName: 'American Robin',
+        scientificName: 'Turdus migratorius',
+        habitat: 'Gardens & woodlands',
+        detectionCount: 3,
+        maxConfidence: 0.92,
+        firstDetectedTime: '2026-10-10T10:00:00Z',
+        lastDetectedTime: '2026-10-10T10:15:00Z',
+      },
+    ];
+
+    const { rerender } = render(
+      <AreaSpeciesChecklist
+        checklist={[]}
+        locationName="Pine Ridge Trailhead"
+        isSunlightMode={false}
+      />
+    );
+
+    expect(screen.getByText('Checklist Empty — Ready for Survey')).toBeInTheDocument();
+    expect(screen.getByText('1. Arrive')).toBeInTheDocument();
+    expect(screen.getByText('4. Export')).toBeInTheDocument();
+
+    rerender(
+      <AreaSpeciesChecklist
+        checklist={checklist}
+        locationName="Pine Ridge Trailhead"
+        isSunlightMode={false}
+      />
+    );
+
+    expect(screen.getByText('American Robin')).toBeInTheDocument();
+    expect(screen.getByText('Turdus migratorius')).toBeInTheDocument();
+    expect(screen.getByText('3x heard')).toBeInTheDocument();
+    expect(screen.getByText('92% peak')).toBeInTheDocument();
+  });
 });
+

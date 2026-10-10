@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Navbar } from './components/Navbar';
 import { ModelDownloadBanner } from './components/ModelDownloadBanner';
 import { AudioRecorder } from './components/AudioRecorder';
@@ -7,10 +7,28 @@ import { ConfirmModal } from './components/ConfirmModal';
 import { JournalList } from './components/JournalList';
 import { FieldGuide } from './components/FieldGuide';
 import { PwaInstallBanner } from './components/PwaInstallBanner';
-import { PredictionResult, JournalEntry } from './types/journal';
+import { AreaSurveyHeader } from './components/AreaSurveyHeader';
+import { SurveyStatsBar } from './components/SurveyStatsBar';
+import { AreaSpeciesChecklist } from './components/AreaSpeciesChecklist';
+import { RecordingTimeline } from './components/RecordingTimeline';
+import { PredictionResult, JournalEntry, SurveySession, SurveyRecordingEvent } from './types/journal';
 import { ModelProgressInfo } from './types/model';
 import { classifyBirdAudio, resetClassifierCache } from './services/classifier';
-import { getJournalEntries, addJournalEntry, deleteJournalEntry, clearJournal } from './services/journal';
+import {
+  getJournalEntries,
+  addJournalEntry,
+  deleteJournalEntry,
+  clearJournal,
+  getActiveSurvey,
+  saveActiveSurvey,
+  resetActiveSurvey,
+  getSurveyTimeline,
+  addSurveyTimelineEvent,
+  clearSurveyTimeline,
+  buildSurveyChecklist,
+  exportAreaSurveyCsvFile,
+  DEFAULT_SURVEY_LOCATIONS,
+} from './services/journal';
 import { CheckCircle2 } from 'lucide-react';
 
 export const App: React.FC = () => {
@@ -32,6 +50,10 @@ export const App: React.FC = () => {
   const [journalEntries, setJournalEntries] = useState<JournalEntry[]>(() => getJournalEntries());
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
+  // Area Biodiversity Survey Session State
+  const [activeSurvey, setActiveSurvey] = useState<SurveySession>(() => getActiveSurvey());
+  const [surveyTimeline, setSurveyTimeline] = useState<SurveyRecordingEvent[]>(() => getSurveyTimeline());
+
   // Toggle sunlight outdoor high-contrast mode
   const handleToggleSunlightMode = () => {
     setIsSunlightMode((prev) => {
@@ -48,6 +70,20 @@ export const App: React.FC = () => {
     }, 3500);
   }, []);
 
+  // Compute live survey checklist from journal entries matching this survey or location
+  const surveyChecklist = useMemo(() => {
+    return buildSurveyChecklist(journalEntries, activeSurvey.id, activeSurvey.locationName);
+  }, [journalEntries, activeSurvey.id, activeSurvey.locationName]);
+
+  // Compute total recordings made during active survey
+  const currentSurveyRecordingsCount = useMemo(() => {
+    const fromTimeline = surveyTimeline.length;
+    const fromJournal = journalEntries.filter(
+      (e) => e.surveyId === activeSurvey.id || (e.locationName && e.locationName === activeSurvey.locationName)
+    ).length;
+    return Math.max(fromTimeline, fromJournal);
+  }, [surveyTimeline.length, journalEntries, activeSurvey.id, activeSurvey.locationName]);
+
   // Handle incoming audio from live mic or sample
   const handleAudioCaptured = async (
     audioData: Float32Array,
@@ -63,6 +99,21 @@ export const App: React.FC = () => {
         setModelProgress(progress);
       });
       setPredictions(results);
+
+      // Record to survey timeline
+      if (results && results.length > 0) {
+        const top = results[0];
+        const isUnknown = top.speciesId === 'unknown' || top.confidence < 0.25;
+        addSurveyTimelineEvent({
+          speciesName: isUnknown ? 'Inconclusive Audio (<25%)' : top.commonName,
+          scientificName: isUnknown ? 'Background acoustics or distant call' : top.scientificName,
+          confidence: top.confidence,
+          source,
+          durationSeconds: 3.0,
+          isUnknown,
+        });
+        setSurveyTimeline(getSurveyTimeline());
+      }
     } catch (err: unknown) {
       console.error('Classification error:', err);
     } finally {
@@ -72,7 +123,7 @@ export const App: React.FC = () => {
 
   // Quick single-tap confirm
   const handleQuickConfirm = (prediction: PredictionResult) => {
-    const newEntry = addJournalEntry({
+    addJournalEntry({
       commonName: prediction.commonName,
       scientificName: prediction.scientificName,
       confidence: prediction.confidence,
@@ -80,20 +131,34 @@ export const App: React.FC = () => {
       audioDurationSeconds: capturedAudioDuration,
       source: capturedSource,
       confirmedByUser: true,
-      location: null,
+      location: activeSurvey.location || null,
+      locationName: activeSurvey.locationName,
+      surveyId: activeSurvey.id,
     });
 
     setJournalEntries(getJournalEntries());
     setPredictions(null);
-    showToast(`Logged "${prediction.commonName}" to Field Journal!`);
+    showToast(`Logged "${prediction.commonName}" to ${activeSurvey.locationName} checklist!`);
   };
 
   // Save from detailed confirmation modal
   const handleSaveFromModal = (entryData: Omit<JournalEntry, 'id' | 'timestamp'>) => {
-    addJournalEntry(entryData);
+    const saved = addJournalEntry({
+      ...entryData,
+      locationName: entryData.locationName || activeSurvey.locationName,
+      surveyId: entryData.surveyId || activeSurvey.id,
+    });
+
+    // If GPS was fixed in modal, attach it to active survey as well
+    if (entryData.location && !activeSurvey.location) {
+      const updatedSurvey = { ...activeSurvey, location: entryData.location };
+      saveActiveSurvey(updatedSurvey);
+      setActiveSurvey(updatedSurvey);
+    }
+
     setJournalEntries(getJournalEntries());
     setPredictions(null);
-    showToast(`Saved "${entryData.commonName}" to Field Journal!`);
+    showToast(`Saved "${saved.commonName}" to Field Journal!`);
   };
 
   // Delete journal entry
@@ -107,7 +172,39 @@ export const App: React.FC = () => {
   const handleClearJournal = () => {
     clearJournal();
     setJournalEntries([]);
+    clearSurveyTimeline();
+    setSurveyTimeline([]);
     showToast('Field journal cleared.');
+  };
+
+  // Update active survey metadata
+  const handleUpdateSurvey = (updated: SurveySession) => {
+    saveActiveSurvey(updated);
+    setActiveSurvey(updated);
+  };
+
+  // Start new survey session
+  const handleNewSurvey = () => {
+    const currentIndex = DEFAULT_SURVEY_LOCATIONS.indexOf(activeSurvey.locationName);
+    const nextLoc = DEFAULT_SURVEY_LOCATIONS[(currentIndex + 1) % DEFAULT_SURVEY_LOCATIONS.length];
+    const newSession = resetActiveSurvey(nextLoc);
+    setActiveSurvey(newSession);
+    setSurveyTimeline([]);
+    setPredictions(null);
+    showToast(`Started new Area Survey at "${newSession.locationName}"`);
+  };
+
+  // Export current area survey CSV
+  const handleExportCurrentSurveyCsv = () => {
+    const currentSurveyEntries = journalEntries.filter(
+      (e) => e.surveyId === activeSurvey.id || (e.locationName && e.locationName === activeSurvey.locationName)
+    );
+    exportAreaSurveyCsvFile(
+      activeSurvey.locationName,
+      currentSurveyEntries.length > 0 ? currentSurveyEntries : journalEntries,
+      activeSurvey
+    );
+    showToast(`Exported CSV survey report for ${activeSurvey.locationName}`);
   };
 
   // Retry model download
@@ -130,7 +227,7 @@ export const App: React.FC = () => {
       />
 
       {/* Main Container */}
-      <main className="flex-1 max-w-2xl w-full mx-auto p-4 sm:p-6 pb-20">
+      <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 pb-20">
         <PwaInstallBanner isSunlightMode={isSunlightMode} />
 
         {/* Global Toast */}
@@ -145,33 +242,74 @@ export const App: React.FC = () => {
           </div>
         )}
 
-        {/* Tab 1: Identify */}
+        {/* Tab 1: Identify & Area Biodiversity Survey Mode */}
         {activeTab === 'identify' && (
-          <div className="space-y-4">
+          <div className="space-y-5 animate-fade-in">
+            {/* Prominent Area Biodiversity Survey Header */}
+            <AreaSurveyHeader
+              survey={activeSurvey}
+              onUpdateSurvey={handleUpdateSurvey}
+              onNewSurvey={handleNewSurvey}
+              onExportCsv={handleExportCurrentSurveyCsv}
+              speciesCount={surveyChecklist.length}
+              totalRecordings={currentSurveyRecordingsCount}
+              isSunlightMode={isSunlightMode}
+            />
+
+            {/* Model Download & Cache Banner */}
             <ModelDownloadBanner
               progressInfo={modelProgress}
               onRetry={handleRetryModel}
               isSunlightMode={isSunlightMode}
             />
 
-            <AudioRecorder
-              onAudioCaptured={handleAudioCaptured}
-              isProcessing={isProcessing}
-              isSunlightMode={isSunlightMode}
-            />
+            {/* Two-Column Side-by-Side Survey Layout on Desktop/Tablet */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+              {/* Left Column: Acoustic Field Recorder & Latest Inference */}
+              <div className="lg:col-span-5 space-y-4">
+                <AudioRecorder
+                  onAudioCaptured={handleAudioCaptured}
+                  isProcessing={isProcessing}
+                  isSunlightMode={isSunlightMode}
+                />
 
-            {predictions && (
-              <PredictionCard
-                predictions={predictions}
-                onConfirm={handleQuickConfirm}
-                onOpenEditModal={(p) => setModalPrediction(p)}
-                isSunlightMode={isSunlightMode}
-              />
-            )}
+                {predictions && (
+                  <PredictionCard
+                    predictions={predictions}
+                    onConfirm={handleQuickConfirm}
+                    onOpenEditModal={(p) => setModalPrediction(p)}
+                    isSunlightMode={isSunlightMode}
+                  />
+                )}
+              </div>
+
+              {/* Right Column: Survey Stats, Live Species Checklist & Timeline */}
+              <div className="lg:col-span-7 space-y-4">
+                <SurveyStatsBar
+                  speciesCount={surveyChecklist.length}
+                  totalRecordings={currentSurveyRecordingsCount}
+                  startTime={activeSurvey.startTime}
+                  location={activeSurvey.location}
+                  locationName={activeSurvey.locationName}
+                  isSunlightMode={isSunlightMode}
+                />
+
+                <AreaSpeciesChecklist
+                  checklist={surveyChecklist}
+                  locationName={activeSurvey.locationName}
+                  isSunlightMode={isSunlightMode}
+                />
+
+                <RecordingTimeline
+                  events={surveyTimeline}
+                  isSunlightMode={isSunlightMode}
+                />
+              </div>
+            </div>
           </div>
         )}
 
-        {/* Tab 2: Field Journal */}
+        {/* Tab 2: Field Survey Log (Journal) */}
         {activeTab === 'journal' && (
           <JournalList
             entries={journalEntries}
@@ -206,11 +344,11 @@ export const App: React.FC = () => {
       <footer className={`border-t py-4 text-center text-xs transition-colors ${
         isSunlightMode 
           ? 'border-black text-gray-700 bg-white' 
-          : 'border-forest-900 text-forest-400 bg-forest-950/60'
+          : 'border-forest-900 text-forest-400 bg-forest-950/80'
       }`}>
-        <div className="max-w-2xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-1">
-          <span>TrailWhistle • 100% Offline On-Device AI</span>
-          <span>Zero Cloud Telemetry • MIT License</span>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-1">
+          <span>TrailWhistle • Area Biodiversity Survey Tool • BirdNET v2.4 (6,522 Species)</span>
+          <span>100% On-Device Offline AI • Zero Cloud Telemetry • MIT License</span>
         </div>
       </footer>
     </div>

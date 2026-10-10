@@ -1,4 +1,4 @@
-# TrailWhistle: Offline-First Avian Audio Classifier for the Deep Backcountry
+# TrailWhistle: On-Device Area Biodiversity Survey Tool for the Deep Backcountry
 
 **Submission for the Hacktoberfest Open-Source AI Challenge: Week 1**  
 **Theme:** *Touch Grass*  
@@ -9,7 +9,7 @@
 
 ## 🌲 The Elevator Pitch
 
-**TrailWhistle** is an offline-first bird call identification Progressive Web App (PWA) powered by real, on-device open-weight machine learning. Tap once to capture 3 seconds of birdsong, run inference in WebAssembly directly in your mobile browser, inspect the top-3 identified species with confidence ratings, and log observations into your field journal with GPS coordinates and CSV export—**all with zero cell reception, zero API keys, zero cloud telemetry, and zero backend servers.**
+**TrailWhistle** is an offline-first **Area Biodiversity Survey Tool** and acoustic avian census PWA powered by real, on-device BirdNET v2.4 machine learning. Designed for naturalists, ecologists, and backcountry hikers, TrailWhistle turns your smartphone into a rugged field survey station: arrive at a trail transect, take multiple rapid acoustic recordings across the habitat, build a real-time running species checklist with frequency and peak confidence metrics, inspect recording timelines, and export standard RFC 4180 CSV surveys—**all with zero cell reception, zero API keys, zero cloud telemetry, and zero backend servers.**
 
 ---
 
@@ -21,45 +21,51 @@ When you step into nature—deep into the backcountry, onto mountain switchbacks
 - Cloud-dependent APIs fail with network timeouts.
 - Proprietary platforms demand mandatory account sign-ins and phone verifications.
 - Fragile cloud models turn your phone into a useless brick right when a rare warbler or owl calls from the canopy.
+- Apps focus narrowly on single-bird identification rather than systematic habitat census.
 
 **TrailWhistle turns this dynamic completely upside down.** 
-The pitch is simple: **the screen is the shortest part of the experience.** You hear a bird call, tap a single high-contrast button for three seconds, review the instant acoustic classification, confirm the observation, and put your phone back in your pocket to keep walking.
+The pitch is simple: **the screen is the shortest part of the experience.** You arrive at an observation area, tap the tactile record button for three seconds as calls sound, let on-device BirdNET v2.4 log the acoustic signature into your live area checklist, and put your phone back in your pocket to keep hiking.
 
 You don't need a cell tower. You don't need an account. You don't need an internet connection after initial page load.
 
 ---
 
-## 🐦 What TrailWhistle Does
+## 🐦 What TrailWhistle Does: Area Biodiversity Survey Mode
 
-1. **3-Second Avian Audio Capture**
-   - High-contrast, glove-friendly 112px record button with tactile haptic and visual countdown.
-   - Real-time RMS volume audio visualizer verifying incoming acoustic signal level.
-   - Resilient Web Audio API pipeline with automatic fallback for iOS Safari (`webkitAudioContext` unlocking and suspended context recovery).
-   - AudioWorklet recording with high-quality linear interpolation resampling to 48 kHz mono float arrays matching BirdNET's exact input tensor requirements [1, 144000].
+1. **Systematic Area Biodiversity Surveying**
+   - **Survey Site Management**: Track transects by site name (e.g., Pine Ridge Trailhead, Redwood Creek Basin, Meadowbrook Wetlands) and habitat classifications (Mixed Woodland, Riparian, Conifer, Meadow).
+   - **Survey Stats Strip**: Live real-time dashboard displaying distinct species count, total recordings, survey duration timer, and hardware GPS coverage.
+   - **Live Species Checklist**: Real-time running checklist of all species detected in the active area, tallying detection frequency, peak confidence percentage, and timestamps.
+   - **Recording History Timeline**: Chronological feed of acoustic capture events with confidence indicators and audio sources.
 
 2. **Real On-Device Open-Weight Audio Classification**
    - Runs directly in the browser via **BirdNET v2.4 ONNX** (`tphakala/BirdNET-v2.4`, INT8 quantized ~47MB) and **ONNX Runtime Web** (`onnxruntime-web` WASM).
    - Classifies across **6,522 real avian species** with scientific and common name mapping.
    - Honest acoustic calibration: requires 25% minimum confidence, showing an honest Unknown state when calls are ambiguous—never inventing fake species.
 
-3. **Transparent Model Hydration & Graceful Degradation**
+3. **Field Survey Log with Location Grouping (Journal)**
+   - Group observations hierarchically by Survey Site / Transect.
+   - Per-site summary cards showing species tally, total detections, date span, and representative GPS coordinates.
+   - Per-site CSV export and master journal CSV export.
+   - Overall biodiversity overview: survey sites explored, lifetime species list, total acoustic detections, and GPS waypoints.
+
+4. **3-Second Avian Audio Capture**
+   - High-contrast, glove-friendly 112px record button with tactile haptic and visual countdown.
+   - Real-time RMS volume audio visualizer verifying incoming acoustic signal level.
+   - Resilient Web Audio API pipeline with AudioWorklet recording and linear interpolation resampling to 48 kHz mono float arrays matching BirdNET's exact input tensor requirements [1, 144000].
+
+5. **Transparent Model Hydration & Graceful Degradation**
    - Explicit first-load download progress bar showing downloaded MB, percentage, and current ONNX chunk.
    - Aggressive Service Worker + Cache API persistence (`CacheFirst` strategy) keeping model weights stored locally for 90 days.
    - Graceful offline fallback with clear retry mechanics and diagnostic guidance.
 
-4. **Confirm / Correct Flow & Species Taxonomy**
-   - Displays top-3 candidate species ranked by confidence percentage bars.
-   - One-tap quick confirm or deep observation editor.
-   - Searchable species taxonomy database and custom observation entry for field ornithologists.
-
-5. **Local Field Journal & Hardware GPS Logging**
-   - Stores observations directly in `localStorage`—persisting timestamps, confidence percentages, field notes, and audio duration.
-   - Offline GPS integration: queries hardware satellite GPS chips without requiring active cellular network triangulation.
-   - Searchable by query (common name, scientific name, or field notes) and date filters.
-
 6. **RFC 4180 CSV Export**
-   - Single-click CSV export with complete observation metadata (`id`, `timestamp_utc`, `species_common_name`, `species_scientific_name`, `confidence_pct`, `notes`, `latitude`, `longitude`, `gps_accuracy_m`, `audio_duration_sec`, `source`, `confirmed_by_user`).
-   - Ready for import into desktop GIS tools, eBird, iNaturalist, or research spreadsheets.
+   - Single-click CSV export with complete observation metadata (`id`, `timestamp_utc`, `survey_location`, `species_common_name`, `species_scientific_name`, `confidence_pct`, `notes`, `latitude`, `longitude`, `gps_accuracy_m`, `audio_duration_sec`, `source`, `confirmed_by_user`).
+   - Rich Area Biodiversity Survey reports containing survey headers, species checklist summaries, and raw observation logs ready for conservation databases.
+
+7. **Sunlight Contrast Mode & Outdoor Accessibility**
+   - Dedicated "Sunlight Mode" toggle that converts the UI to high-contrast monochrome with bold borders, preventing glare washout under direct outdoor midday sun.
+   - Minimum 48px tap targets optimized for one-handed operation while hiking or wearing outdoor trail gloves.
 
 7. **Trailhead Demo Mode**
    - Built-in synthesized 16kHz WAV bird call samples (American Robin, Song Sparrow, Mourning Dove, Barn Owl) for rapid evaluation, desktop testing, and trailside calibration.

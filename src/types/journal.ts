@@ -32,7 +32,40 @@ export interface JournalEntry {
   confidence: number;
   notes: string;
   location?: GeoLocation | null;
+  locationName?: string; // e.g. "Pine Ridge Trail", "Redwood Creek Basin"
+  surveyId?: string; // id of survey session
   audioDurationSeconds: number;
   source: 'live_mic' | 'sample_audio';
   confirmedByUser: boolean;
+}
+
+export interface SurveyChecklistItem {
+  speciesId: string;
+  commonName: string;
+  scientificName: string;
+  habitat: string;
+  detectionCount: number;
+  maxConfidence: number;
+  firstDetectedTime: string;
+  lastDetectedTime: string;
+}
+
+export interface SurveyRecordingEvent {
+  id: string;
+  timestamp: string;
+  speciesName: string;
+  scientificName: string;
+  confidence: number;
+  source: 'live_mic' | 'sample_audio';
+  durationSeconds: number;
+  isUnknown?: boolean;
+}
+
+export interface SurveySession {
+  id: string;
+  locationName: string;
+  habitatTag?: string;
+  startTime: string; // ISO string
+  endTime?: string;
+  location?: GeoLocation | null;
 }

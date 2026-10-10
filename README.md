@@ -1,6 +1,6 @@
 # 🌿 TrailWhistle
 
-> **Offline-first, on-device bird call identifier Progressive Web App.**  
+> **Offline-first, on-device Area Biodiversity Survey Tool & Avian Census PWA.**  
 > Built for the **Hacktoberfest Open-Source AI Challenge: Week 1** (*Theme: "Touch Grass"*).  
 > Zero cloud servers. Zero API keys. Zero cellular data required.
 
@@ -15,23 +15,27 @@
 
 TrailWhistle gets people off the screen and into the natural world. In remote wilderness, mountain canyons, and deep forests, cellular reception drops to zero. That's usually where traditional AI applications fail.
 
-TrailWhistle is architected from the ground up to run **100% on-device** using the open-weight **BirdNET v2.4 ONNX** model (6,522 global avian species) compiled to WebAssembly via **ONNX Runtime Web (`onnxruntime-web`)**. The screen is designed to be the **shortest part of your outdoor experience**:
-1. Tap once to capture 3 seconds of birdsong.
-2. The on-device neural network identifies the top-3 probable bird species with confidence ratings (requiring at least 25% confidence, with an honest Unknown state when acoustic confidence is low—never inventing fake species).
-3. Confirm or refine the sighting, attach optional GPS coordinates and field notes.
-4. The observation is saved to your offline field journal (`localStorage`).
-5. Export everything to standard RFC 4180 CSV anytime.
+TrailWhistle is architected as an **Area Biodiversity Survey Tool** running **100% on-device** using the open-weight **BirdNET v2.4 ONNX** model (6,522 global avian species) compiled to WebAssembly via **ONNX Runtime Web (`onnxruntime-web`)**. 
+
+Rather than isolated single-bird identification, TrailWhistle supports the core ecological field workflow:
+1. **Arrive at a location**: Set your survey site (e.g. Pine Ridge Trailhead, Redwood Creek Basin) and habitat transect.
+2. **Sample continuously**: Tap once to capture 3 seconds of birdsong across the area as calls sound.
+3. **Build live checklist**: Watch the running species checklist tally distinct species, frequency of detection, and peak confidence ratings.
+4. **Inspect recording timeline & survey stats**: Track survey duration, detections count, species richness, and hardware GPS coverage.
+5. **Export CSV survey**: Single-click export of complete area biodiversity survey reports ready for conservation databases.
 
 ---
 
 ## ✨ Features
 
+- 🌲 **Area Biodiversity Survey Mode:** Side-by-side field dashboard with active survey site management, live species checklist, and survey stats strip.
 - 🎙️ **3-Second Avian Audio Capture:** Tactile, glove-friendly touch button with AudioWorklet processing, real-time volume meter, and countdown timer.
 - 🧠 **BirdNET v2.4 On-Device Neural Inference:** Powered by open weights (`BirdNET_v2.4_int8_arm.onnx`, ~47MB INT8 quantized) via `onnxruntime-web` in WebAssembly across 6,522 real species.
 - 🎯 **Honest Acoustic Calibration:** Displays honest Unknown state when confidence is below 25%—zero fake confidence padding or invented species.
 - 📊 **Top-3 Species Confidence Bars:** Clear probability ranking with acoustic signature details and habitat bio.
-- 📝 **Confirm & Correct Workflow:** One-tap quick confirm or deep species taxonomy search and custom observation logging.
-- 📓 **Offline Field Journal:** Persisted locally in `localStorage` with search filtering by species, date, and confirmation status.
+- 📋 **Live Area Species Checklist:** Real-time running checklist tracking species detection counts, peak confidence percentages, and timestamps.
+- ⏱️ **Recording History Timeline:** Chronological feed of acoustic captures with confidence indicators and audio sources.
+- 📓 **Field Survey Log with Location Grouping (Journal):** Observations grouped by survey site with site-level checklist chips, overview biodiversity metrics, and location-specific CSV exports.
 - 📍 **Hardware Satellite GPS:** Captures precise latitude, longitude, and accuracy offline without requiring cellular cell-tower triangulation.
 - 💾 **RFC 4180 CSV Export:** Instant one-click CSV file export compatible with eBird, iNaturalist, QGIS, and spreadsheets.
 - ☀️ **Sunlight Outdoor Mode:** High-contrast monochrome mode built specifically for direct midday sunlight glare.

@@ -1,7 +1,27 @@
-import React, { useState } from 'react';
-import { Search, Download, Trash2, MapPin, Calendar, CheckCircle2, Feather, FileSpreadsheet } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import {
+  Search,
+  Download,
+  Trash2,
+  MapPin,
+  Calendar,
+  CheckCircle2,
+  Feather,
+  FileSpreadsheet,
+  Trees,
+  Bird,
+  ChevronDown,
+  ChevronUp,
+  Layers,
+  Sparkles,
+} from 'lucide-react';
 import { JournalEntry } from '../types/journal';
-import { filterJournalEntries, exportJournalToCsvFile } from '../services/journal';
+import {
+  filterJournalEntries,
+  exportJournalToCsvFile,
+  exportAreaSurveyCsvFile,
+  groupEntriesByLocation,
+} from '../services/journal';
 
 interface JournalListProps {
   entries: JournalEntry[];
@@ -20,14 +40,45 @@ export const JournalList: React.FC<JournalListProps> = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterDate, setFilterDate] = useState('');
+  const [locationFilter, setLocationFilter] = useState('all');
   const [confirmedOnly, setConfirmedOnly] = useState(false);
+  const [expandedLocations, setExpandedLocations] = useState<Record<string, boolean>>({});
 
-  const filteredEntries = filterJournalEntries(entries, {
-    query: searchQuery,
-    startDate: filterDate ? `${filterDate}T00:00:00Z` : undefined,
-    endDate: filterDate ? `${filterDate}T23:59:59Z` : undefined,
-    confirmedOnly,
-  });
+  // Distinct locations for dropdown filter
+  const allLocations = useMemo(() => {
+    const set = new Set<string>();
+    entries.forEach((e) => {
+      set.add(e.locationName?.trim() || 'General Field Observations');
+    });
+    return Array.from(set);
+  }, [entries]);
+
+  // Filtered flat entries
+  const filteredEntries = useMemo(() => {
+    return filterJournalEntries(entries, {
+      query: searchQuery,
+      startDate: filterDate ? `${filterDate}T00:00:00Z` : undefined,
+      endDate: filterDate ? `${filterDate}T23:59:59Z` : undefined,
+      confirmedOnly,
+      locationFilter: locationFilter === 'all' ? undefined : locationFilter,
+    });
+  }, [entries, searchQuery, filterDate, confirmedOnly, locationFilter]);
+
+  // Grouped by survey location
+  const locationGroups = useMemo(() => {
+    return groupEntriesByLocation(filteredEntries);
+  }, [filteredEntries]);
+
+  // Overall biodiversity stats
+  const totalUniqueSpecies = useMemo(() => {
+    const set = new Set<string>();
+    entries.forEach((e) => set.add(e.commonName.toLowerCase().trim()));
+    return set.size;
+  }, [entries]);
+
+  const totalGpsFixed = useMemo(() => {
+    return entries.filter((e) => e.location !== null && e.location !== undefined).length;
+  }, [entries]);
 
   const handleExportCsv = () => {
     if (entries.length === 0) {
@@ -37,35 +88,58 @@ export const JournalList: React.FC<JournalListProps> = ({
     exportJournalToCsvFile(filteredEntries.length > 0 ? filteredEntries : entries);
   };
 
+  const handleExportLocationCsv = (locationName: string, groupEntries: JournalEntry[]) => {
+    exportAreaSurveyCsvFile(locationName, groupEntries);
+  };
+
   const handleClearAll = () => {
     if (confirm('Are you sure you want to clear your local field journal? This cannot be undone.')) {
       onClearJournal();
     }
   };
 
+  const toggleLocationExpand = (loc: string) => {
+    setExpandedLocations((prev) => ({
+      ...prev,
+      [loc]: prev[loc] === undefined ? false : !prev[loc],
+    }));
+  };
+
+  const isLocExpanded = (loc: string) => {
+    // Default expanded unless explicitly set to false
+    return expandedLocations[loc] !== false;
+  };
+
   return (
-    <div className="space-y-4">
-      {/* Action Header: Search & Export */}
-      <div className={`p-4 rounded-2xl border transition-all ${
-        isSunlightMode ? 'bg-white border-black text-black' : 'bg-forest-900/60 border-forest-800 text-earth-50'
+    <div className="space-y-5">
+      {/* Field Survey Log Header */}
+      <div className={`p-5 rounded-2xl border transition-all ${
+        isSunlightMode ? 'bg-white border-2 border-black text-black shadow-md' : 'bg-forest-900/60 border-forest-800 text-earth-50 shadow-lg'
       }`}>
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 mb-3">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 mb-4">
           <div>
-            <h2 className="text-lg font-bold tracking-tight flex items-center gap-2">
-              <Feather className="w-5 h-5 text-feather-yellow" />
-              Field Journal
-            </h2>
-            <p className={`text-xs ${isSunlightMode ? 'text-gray-700' : 'text-forest-300'}`}>
-              {entries.length} {entries.length === 1 ? 'observation' : 'observations'} recorded offline in localStorage
-            </p>
+            <div className="flex items-center gap-2">
+              <span className={`p-2 rounded-xl flex items-center justify-center ${
+                isSunlightMode ? 'bg-black text-white' : 'bg-forest-800 text-feather-yellow'
+              }`}>
+                <Trees className="w-5 h-5" />
+              </span>
+              <div>
+                <h2 className="text-xl font-black tracking-tight font-sans">Field Survey Log</h2>
+                <p className={`text-xs ${isSunlightMode ? 'text-gray-700' : 'text-forest-300'}`}>
+                  {entries.length} {entries.length === 1 ? 'observation' : 'observations'} across {locationGroups.length} {locationGroups.length === 1 ? 'survey site' : 'survey sites'}
+                </p>
+              </div>
+            </div>
           </div>
 
+          {/* Top Actions: Export CSV & Clear */}
           <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={handleExportCsv}
               disabled={entries.length === 0}
-              className={`flex-1 sm:flex-none py-2 px-3.5 min-h-[44px] rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition-all ${
+              className={`flex-1 sm:flex-none py-2.5 px-4 min-h-[44px] rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow-md transition-all ${
                 entries.length === 0
                   ? 'opacity-40 cursor-not-allowed bg-gray-500 text-white'
                   : isSunlightMode
@@ -95,23 +169,82 @@ export const JournalList: React.FC<JournalListProps> = ({
           </div>
         </div>
 
+        {/* Survey Overview Stats Bar */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-3 border-t border-forest-800/40">
+          <div className={`p-2.5 rounded-xl border text-center ${
+            isSunlightMode ? 'bg-gray-50 border-gray-300' : 'bg-forest-950/60 border-forest-800/60'
+          }`}>
+            <div className={`text-[10px] font-bold uppercase tracking-wider ${isSunlightMode ? 'text-gray-600' : 'text-forest-400'}`}>
+              Survey Sites
+            </div>
+            <div className="text-lg font-black">{locationGroups.length}</div>
+          </div>
+
+          <div className={`p-2.5 rounded-xl border text-center ${
+            isSunlightMode ? 'bg-gray-50 border-gray-300' : 'bg-forest-950/60 border-forest-800/60'
+          }`}>
+            <div className={`text-[10px] font-bold uppercase tracking-wider ${isSunlightMode ? 'text-gray-600' : 'text-forest-400'}`}>
+              Species Life List
+            </div>
+            <div className="text-lg font-black text-feather-yellow">{totalUniqueSpecies}</div>
+          </div>
+
+          <div className={`p-2.5 rounded-xl border text-center ${
+            isSunlightMode ? 'bg-gray-50 border-gray-300' : 'bg-forest-950/60 border-forest-800/60'
+          }`}>
+            <div className={`text-[10px] font-bold uppercase tracking-wider ${isSunlightMode ? 'text-gray-600' : 'text-forest-400'}`}>
+              Total Detections
+            </div>
+            <div className="text-lg font-black text-emerald-400">{entries.length}</div>
+          </div>
+
+          <div className={`p-2.5 rounded-xl border text-center ${
+            isSunlightMode ? 'bg-gray-50 border-gray-300' : 'bg-forest-950/60 border-forest-800/60'
+          }`}>
+            <div className={`text-[10px] font-bold uppercase tracking-wider ${isSunlightMode ? 'text-gray-600' : 'text-forest-400'}`}>
+              GPS Waypoints
+            </div>
+            <div className="text-lg font-black text-sky-400">{totalGpsFixed}</div>
+          </div>
+        </div>
+
         {/* Filters */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 border-t border-forest-800/40">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-3 mt-3 border-t border-forest-800/40">
+          {/* Search Query */}
           <div className="relative">
             <Search className="w-4 h-4 absolute left-3 top-3 text-gray-400" />
             <input
               type="text"
-              placeholder="Search species or notes..."
+              placeholder="Search species, notes, or site..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className={`w-full pl-9 pr-3 py-2 min-h-[44px] rounded-xl text-xs border ${
-                isSunlightMode 
-                  ? 'bg-gray-50 border-gray-300 text-black' 
+                isSunlightMode
+                  ? 'bg-gray-50 border-gray-300 text-black'
                   : 'bg-forest-950 border-forest-800 text-earth-100 placeholder-forest-500'
               }`}
             />
           </div>
 
+          {/* Location Group Filter */}
+          <div>
+            <select
+              value={locationFilter}
+              onChange={(e) => setLocationFilter(e.target.value)}
+              className={`w-full px-3 py-2 min-h-[44px] rounded-xl text-xs border ${
+                isSunlightMode
+                  ? 'bg-gray-50 border-gray-300 text-black'
+                  : 'bg-forest-950 border-forest-800 text-earth-100'
+              }`}
+            >
+              <option value="all">All Survey Sites ({allLocations.length})</option>
+              {allLocations.map((loc) => (
+                <option key={loc} value={loc}>{loc}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Date Filter */}
           <div className="flex gap-2">
             <div className="relative flex-1">
               <Calendar className="w-4 h-4 absolute left-3 top-3 text-gray-400" />
@@ -120,8 +253,8 @@ export const JournalList: React.FC<JournalListProps> = ({
                 value={filterDate}
                 onChange={(e) => setFilterDate(e.target.value)}
                 className={`w-full pl-9 pr-3 py-2 min-h-[44px] rounded-xl text-xs border ${
-                  isSunlightMode 
-                    ? 'bg-gray-50 border-gray-300 text-black' 
+                  isSunlightMode
+                    ? 'bg-gray-50 border-gray-300 text-black'
                     : 'bg-forest-950 border-forest-800 text-earth-100'
                 }`}
               />
@@ -139,21 +272,23 @@ export const JournalList: React.FC<JournalListProps> = ({
         </div>
       </div>
 
-      {/* Entries List */}
+      {/* Main Content: Location Grouped Survey Logs */}
       {filteredEntries.length === 0 ? (
-        <div className={`p-8 rounded-2xl border text-center ${
-          isSunlightMode ? 'bg-white border-black text-black' : 'bg-forest-900/40 border-forest-800 text-earth-100'
+        <div className={`p-8 sm:p-12 rounded-2xl border text-center transition-all ${
+          isSunlightMode ? 'bg-white border-2 border-black text-black' : 'bg-forest-900/40 border-forest-800 text-earth-100'
         }`}>
-          <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-forest-800/40 flex items-center justify-center text-feather-yellow">
+          <div className="w-16 h-16 mx-auto mb-3 rounded-2xl bg-forest-800/40 flex items-center justify-center text-feather-yellow">
             <Feather className="w-8 h-8" />
           </div>
           <h3 className="text-base font-bold mb-1">
             {entries.length === 0 ? 'No Observations Yet' : 'No Matching Observations'}
           </h3>
-          <p className={`text-xs max-w-sm mx-auto mb-4 ${isSunlightMode ? 'text-gray-700' : 'text-forest-300'}`}>
-            {entries.length === 0 
-              ? 'Head outside onto your local trail or park. Tap the Record button to identify bird calls offline.'
-              : 'Try clearing your search query or date filter.'}
+          <p className={`text-xs max-w-sm mx-auto mb-5 leading-relaxed ${
+            isSunlightMode ? 'text-gray-700' : 'text-forest-300'
+          }`}>
+            {entries.length === 0
+              ? 'Arrive at your local trail or park. Tap Record to identify bird calls offline and build your first area biodiversity survey.'
+              : 'Try clearing your search query, location filter, or date filter.'}
           </p>
           {entries.length === 0 && (
             <button
@@ -162,7 +297,7 @@ export const JournalList: React.FC<JournalListProps> = ({
               className={`px-5 py-2.5 min-h-[48px] rounded-xl font-bold text-xs inline-flex items-center gap-2 shadow-md transition-all ${
                 isSunlightMode
                   ? 'bg-black text-white hover:bg-gray-800 border-2 border-black'
-                  : 'bg-forest-600 hover:bg-forest-500 text-white'
+                  : 'bg-forest-600 hover:bg-forest-500 text-white border border-forest-400/40'
               }`}
             >
               <span>Record a Bird Call</span>
@@ -170,91 +305,201 @@ export const JournalList: React.FC<JournalListProps> = ({
           )}
         </div>
       ) : (
-        <div className="space-y-3">
-          {filteredEntries.map((entry) => {
-            const date = new Date(entry.timestamp);
-            const formattedDate = date.toLocaleDateString(undefined, {
+        <div className="space-y-4">
+          {locationGroups.map((group) => {
+            const isExpanded = isLocExpanded(group.locationName);
+            const dateStr = new Date(group.latestTimestamp).toLocaleDateString(undefined, {
               month: 'short',
               day: 'numeric',
               year: 'numeric',
             });
-            const formattedTime = date.toLocaleTimeString(undefined, {
-              hour: '2-digit',
-              minute: '2-digit',
-            });
 
             return (
               <div
-                key={entry.id}
-                className={`p-4 rounded-xl border transition-all ${
+                key={group.locationName}
+                className={`rounded-2xl border overflow-hidden transition-all shadow-sm ${
                   isSunlightMode
-                    ? 'bg-white border-black text-black shadow-sm'
-                    : 'bg-forest-900/70 border-forest-800 text-earth-100 hover:border-forest-700'
+                    ? 'bg-white border-2 border-black text-black'
+                    : 'bg-forest-900/70 border-forest-800 text-earth-50'
                 }`}
               >
-                <div className="flex items-start justify-between mb-2">
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <h4 className="font-bold text-base">{entry.commonName}</h4>
-                      {entry.confirmedByUser && (
-                        <span title="Confirmed by user">
-                          <CheckCircle2 className="w-4 h-4 text-forest-400" />
-                        </span>
-                      )}
+                {/* Location Group Header Banner */}
+                <div className={`p-4 sm:p-5 border-b transition-colors ${
+                  isSunlightMode
+                    ? 'bg-gray-100 border-black'
+                    : 'bg-forest-950/80 border-forest-800'
+                }`}>
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div className="flex items-start gap-3">
+                      <div className={`p-2.5 rounded-xl shrink-0 ${
+                        isSunlightMode ? 'bg-black text-white' : 'bg-forest-800 text-feather-yellow'
+                      }`}>
+                        <MapPin className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <h3 className="text-lg font-black tracking-tight">{group.locationName}</h3>
+                          <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-full ${
+                            isSunlightMode ? 'bg-black text-white' : 'bg-forest-800 text-feather-yellow'
+                          }`}>
+                            {group.speciesCount} {group.speciesCount === 1 ? 'Species' : 'Species'}
+                          </span>
+                          <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-full ${
+                            isSunlightMode ? 'bg-gray-300 text-black' : 'bg-forest-800/70 text-forest-200'
+                          }`}>
+                            {group.totalDetections} {group.totalDetections === 1 ? 'Detection' : 'Detections'}
+                          </span>
+                        </div>
+
+                        <div className={`text-xs mt-1 flex items-center gap-3 flex-wrap ${
+                          isSunlightMode ? 'text-gray-700' : 'text-forest-300'
+                        }`}>
+                          <span>{dateStr}</span>
+                          {group.hasGps && group.representativeGps && (
+                            <span className="font-mono text-[11px] text-forest-400">
+                              {group.representativeGps.latitude.toFixed(4)}°, {group.representativeGps.longitude.toFixed(4)}°
+                            </span>
+                          )}
+                        </div>
+                      </div>
                     </div>
-                    <div className={`text-xs italic ${isSunlightMode ? 'text-gray-700' : 'text-forest-300'}`}>
-                      {entry.scientificName}
+
+                    {/* Actions: Export Location CSV + Toggle Collapse */}
+                    <div className="flex items-center gap-2 self-end sm:self-center">
+                      <button
+                        type="button"
+                        onClick={() => handleExportLocationCsv(group.locationName, group.entries)}
+                        className={`py-1.5 px-3 min-h-[38px] rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all ${
+                          isSunlightMode
+                            ? 'bg-black text-white hover:bg-gray-800 border border-black'
+                            : 'bg-forest-800 hover:bg-forest-700 text-forest-100 border border-forest-600'
+                        }`}
+                        title={`Export CSV survey report for ${group.locationName}`}
+                      >
+                        <Download className="w-3.5 h-3.5" />
+                        <span>Site CSV</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => toggleLocationExpand(group.locationName)}
+                        className={`p-2 min-w-[38px] min-h-[38px] rounded-lg border flex items-center justify-center transition-all ${
+                          isSunlightMode
+                            ? 'bg-white border-black text-black hover:bg-gray-100'
+                            : 'bg-forest-900 border-forest-700 text-forest-200 hover:bg-forest-800'
+                        }`}
+                        aria-label={isExpanded ? 'Collapse location entries' : 'Expand location entries'}
+                      >
+                        {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                      </button>
                     </div>
                   </div>
 
-                  <div className="text-right">
-                    <span className={`text-xs font-mono font-bold px-2 py-0.5 rounded ${
-                      isSunlightMode ? 'bg-black text-white' : 'bg-forest-800 text-feather-yellow'
-                    }`}>
-                      {Math.round(entry.confidence * 100)}%
-                    </span>
-                    <div className={`text-[10px] mt-1 ${isSunlightMode ? 'text-gray-600' : 'text-forest-400'}`}>
-                      {formattedDate} • {formattedTime}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Notes */}
-                {entry.notes && (
-                  <p className={`text-xs p-2.5 rounded-lg mb-2 ${
-                    isSunlightMode ? 'bg-gray-100 text-black' : 'bg-forest-950/80 text-earth-200'
-                  }`}>
-                    {entry.notes}
-                  </p>
-                )}
-
-                {/* Footer details: GPS & Delete */}
-                <div className="flex items-center justify-between text-[11px] pt-2 border-t border-forest-800/40">
-                  <div className="flex items-center gap-3">
-                    {entry.location ? (
-                      <span className="flex items-center gap-1 font-mono text-forest-400">
-                        <MapPin className="w-3 h-3 shrink-0" />
-                        {entry.location.latitude.toFixed(4)}°, {entry.location.longitude.toFixed(4)}°
-                        {entry.location.accuracy && ` (±${entry.location.accuracy}m)`}
+                  {/* Species checklist chips for this location */}
+                  <div className="flex flex-wrap gap-1.5 mt-3 pt-3 border-t border-forest-800/30">
+                    {group.distinctSpecies.map((sp) => (
+                      <span
+                        key={sp.commonName}
+                        className={`text-[11px] font-medium px-2.5 py-1 rounded-lg border flex items-center gap-1.5 ${
+                          isSunlightMode
+                            ? 'bg-white border-gray-400 text-black'
+                            : 'bg-forest-900/90 border-forest-700/70 text-forest-100'
+                        }`}
+                      >
+                        <Bird className="w-3 h-3 text-feather-yellow" />
+                        <span className="font-semibold">{sp.count}x {sp.commonName}</span>
                       </span>
-                    ) : (
-                      <span className="opacity-60 italic">No GPS attached</span>
-                    )}
-                    <span className="opacity-75">
-                      {entry.source === 'live_mic' ? 'Live Mic' : 'Sample Song'} ({entry.audioDurationSeconds}s)
-                    </span>
+                    ))}
                   </div>
-
-                  <button
-                    type="button"
-                    onClick={() => onDeleteEntry(entry.id)}
-                    className="p-1 min-w-[36px] min-h-[36px] flex items-center justify-center rounded text-red-400 hover:text-red-300 hover:bg-forest-800"
-                    title="Delete entry"
-                    aria-label={`Delete observation for ${entry.commonName}`}
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
                 </div>
+
+                {/* Expanded Individual Observations */}
+                {isExpanded && (
+                  <div className="p-4 sm:p-5 space-y-3">
+                    {group.entries.map((entry) => {
+                      const date = new Date(entry.timestamp);
+                      const formattedTime = date.toLocaleTimeString(undefined, {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      });
+
+                      return (
+                        <div
+                          key={entry.id}
+                          className={`p-4 rounded-xl border transition-all ${
+                            isSunlightMode
+                              ? 'bg-gray-50 border-gray-300 text-black shadow-sm'
+                              : 'bg-forest-950/70 border-forest-800/90 text-earth-100 hover:border-forest-700'
+                          }`}
+                        >
+                          <div className="flex items-start justify-between mb-2">
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <h4 className="font-bold text-base">{entry.commonName}</h4>
+                                {entry.confirmedByUser && (
+                                  <span title="Confirmed observation">
+                                    <CheckCircle2 className="w-4 h-4 text-forest-400" />
+                                  </span>
+                                )}
+                              </div>
+                              <div className={`text-xs italic ${isSunlightMode ? 'text-gray-700' : 'text-forest-300'}`}>
+                                {entry.scientificName}
+                              </div>
+                            </div>
+
+                            <div className="text-right">
+                              <span className={`text-xs font-mono font-bold px-2 py-0.5 rounded ${
+                                isSunlightMode ? 'bg-black text-white' : 'bg-forest-800 text-feather-yellow'
+                              }`}>
+                                {Math.round(entry.confidence * 100)}%
+                              </span>
+                              <div className={`text-[10px] mt-1 ${isSunlightMode ? 'text-gray-600' : 'text-forest-400'}`}>
+                                {formattedTime}
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Notes */}
+                          {entry.notes && (
+                            <p className={`text-xs p-2.5 rounded-lg mb-2 ${
+                              isSunlightMode ? 'bg-white border border-gray-300 text-black' : 'bg-forest-900/80 text-earth-200'
+                            }`}>
+                              {entry.notes}
+                            </p>
+                          )}
+
+                          {/* Footer details: GPS & Delete */}
+                          <div className="flex items-center justify-between text-[11px] pt-2 border-t border-forest-800/40">
+                            <div className="flex items-center gap-3">
+                              {entry.location ? (
+                                <span className="flex items-center gap-1 font-mono text-forest-400">
+                                  <MapPin className="w-3 h-3 shrink-0" />
+                                  {entry.location.latitude.toFixed(4)}°, {entry.location.longitude.toFixed(4)}°
+                                  {entry.location.accuracy && ` (±${entry.location.accuracy}m)`}
+                                </span>
+                              ) : (
+                                <span className="opacity-60 italic">No GPS attached</span>
+                              )}
+                              <span className="opacity-75">
+                                {entry.source === 'live_mic' ? 'Live Mic' : 'Sample Song'} ({entry.audioDurationSeconds}s)
+                              </span>
+                            </div>
+
+                            <button
+                              type="button"
+                              onClick={() => onDeleteEntry(entry.id)}
+                              className="p-1 min-w-[36px] min-h-[36px] flex items-center justify-center rounded text-red-400 hover:text-red-300 hover:bg-forest-800"
+                              title="Delete entry"
+                              aria-label={`Delete observation for ${entry.commonName}`}
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
             );
           })}
