@@ -373,6 +373,10 @@ export function mapRawPredictionsToSpecies(
         confidence: score,
         habitat: dbInfo ? dbInfo.habitat : 'Wild avian habitat',
         matchedClass: rawLabel,
+        family: dbInfo?.family,
+        iucnStatus: dbInfo?.iucnStatus || 'LC (Least Concern)',
+        callType: dbInfo?.callType || 'Avian Vocalization',
+        frequencyBandHz: dbInfo?.frequencyBandHz || '1.8 kHz – 5.5 kHz',
       });
     }
 

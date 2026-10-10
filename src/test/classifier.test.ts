@@ -43,9 +43,14 @@ describe('BirdNET v2.4 Classifier Service & Species Mapping', () => {
 
     expect(mapped[1].commonName).toBe('American Robin');
     expect(mapped[1].confidence).toBe(0.72);
+    expect(mapped[1].family).toBe('Turdidae (Thrushes)');
+    expect(mapped[1].iucnStatus).toBe('LC (Least Concern)');
+    expect(mapped[1].callType).toBe('Melodic Dawn Chorus Song');
+    expect(mapped[1].frequencyBandHz).toBe('2.2 kHz – 4.5 kHz');
 
     expect(mapped[2].commonName).toBe('Song Sparrow');
     expect(mapped[2].confidence).toBe(0.65);
+    expect(mapped[2].callType).toBe('Buzz & Melodic Trill');
   });
 
   it('handles Mourning Dove classification mapping', () => {

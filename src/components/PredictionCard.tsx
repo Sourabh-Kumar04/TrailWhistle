@@ -1,5 +1,5 @@
 import React from 'react';
-import { Check, Edit3, Bird, Sparkles, MapPin, Info, HelpCircle } from 'lucide-react';
+import { Check, Edit3, Bird, Sparkles, MapPin, Info, HelpCircle, ShieldCheck, Activity, Music } from 'lucide-react';
 import { PredictionResult } from '../types/journal';
 
 interface PredictionCardProps {
@@ -29,7 +29,7 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({
           ? 'bg-white border-2 border-black text-black shadow-lg'
           : isUnknown
             ? 'bg-forest-950/90 border-amber-500/60 text-earth-50 shadow-xl ring-1 ring-amber-500/30'
-            : 'bg-forest-900/90 border-forest-600/80 text-earth-50 shadow-xl ring-1 ring-forest-500/30'
+            : 'bg-canopy-900/95 border-forest-600/80 text-earth-50 shadow-xl ring-1 ring-forest-500/30'
       }`}>
         <div className="flex items-center justify-between mb-2">
           <span className={`text-[11px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full flex items-center gap-1 ${
@@ -59,7 +59,7 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({
 
         {/* Confidence Bar */}
         <div className={`w-full h-2 rounded-full overflow-hidden mb-3 ${
-          isSunlightMode ? 'bg-gray-200' : 'bg-forest-950'
+          isSunlightMode ? 'bg-neutral-300' : 'bg-forest-950'
         }`}>
           <div
             className={`h-full transition-all duration-500 ${
@@ -67,21 +67,38 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({
                 ? 'bg-black'
                 : isUnknown
                   ? 'bg-amber-500'
-                  : 'bg-gradient-to-r from-forest-500 to-feather-yellow'
+                  : 'bg-gradient-to-r from-moss-500 to-feather-yellow'
             }`}
             style={{ width: `${Math.max(8, Math.round(topPrediction.confidence * 100))}%` }}
           />
         </div>
 
         <div className="mb-3">
-          <h3 className="text-2xl font-black tracking-tight">{topPrediction.commonName}</h3>
+          <div className="flex items-center gap-2 flex-wrap mb-1">
+            <h3 className="text-2xl font-black tracking-tight">{topPrediction.commonName}</h3>
+            {topPrediction.iucnStatus && !isUnknown && (
+              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 ${
+                isSunlightMode
+                  ? 'bg-neutral-100 border border-black text-black'
+                  : 'bg-moss-900/90 text-moss-200 border border-moss-700/60'
+              }`}>
+                <ShieldCheck className="w-3 h-3 text-moss-400" />
+                <span>{topPrediction.iucnStatus}</span>
+              </span>
+            )}
+          </div>
           <p className={`text-xs italic font-serif ${isSunlightMode ? 'text-neutral-900 font-bold' : 'text-moss-200'}`}>
             {topPrediction.scientificName}
+            {topPrediction.family && (
+              <span className="not-italic font-sans opacity-80 ml-2 text-[11px] font-medium">
+                • {topPrediction.family}
+              </span>
+            )}
           </p>
         </div>
 
         {/* Habitat & Acoustic Details */}
-        <div className={`p-3 rounded-xl text-xs mb-4 space-y-1.5 ${
+        <div className={`p-3 rounded-xl text-xs mb-4 space-y-2 ${
           isSunlightMode
             ? 'bg-neutral-100 border-2 border-black text-black font-medium'
             : isUnknown
@@ -101,10 +118,18 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({
                 <MapPin className="w-3.5 h-3.5 text-moss-400 shrink-0 mt-0.5" />
                 <span><strong className="font-bold">Habitat:</strong> {topPrediction.habitat}</span>
               </div>
-              <div className="flex items-start gap-1.5">
-                <Info className="w-3.5 h-3.5 text-feather-yellow shrink-0 mt-0.5" />
-                <span><strong className="font-bold">Signature:</strong> {topPrediction.matchedClass}</span>
-              </div>
+              {topPrediction.callType && (
+                <div className="flex items-start gap-1.5">
+                  <Music className="w-3.5 h-3.5 text-feather-yellow shrink-0 mt-0.5" />
+                  <span><strong className="font-bold">Acoustic Vocalization:</strong> {topPrediction.callType}</span>
+                </div>
+              )}
+              {topPrediction.frequencyBandHz && (
+                <div className="flex items-start gap-1.5">
+                  <Activity className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
+                  <span><strong className="font-bold">Bioacoustic Frequency:</strong> {topPrediction.frequencyBandHz}</span>
+                </div>
+              )}
             </>
           )}
         </div>

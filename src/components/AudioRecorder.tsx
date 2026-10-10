@@ -168,21 +168,49 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
           </button>
         </div>
 
-        {/* Live Audio Visualizer / Volume meter */}
+        {/* Live Audio Visualizer / Bioacoustic Spectrum Meter */}
         {isRecording && (
-          <div className="w-48 mb-4">
-            <div className="flex items-center justify-between text-[11px] mb-1 font-mono">
-              <span className="flex items-center gap-1">
-                <Volume2 className="w-3.5 h-3.5 text-feather-accent" />
-                Input Level
+          <div className="w-56 mb-4 space-y-1.5 animate-fade-in">
+            <div className="flex items-center justify-between text-[11px] font-mono">
+              <span className="flex items-center gap-1 font-bold">
+                <Volume2 className="w-3.5 h-3.5 text-feather-yellow" />
+                <span>48kHz Acoustic Input</span>
               </span>
-              <span>{Math.round(volume * 100)}%</span>
+              <span className="font-bold">{Math.round(volume * 100)}% RMS</span>
             </div>
-            <div className={`w-full h-2 rounded-full overflow-hidden ${isSunlightMode ? 'bg-gray-300' : 'bg-forest-950'}`}>
+            
+            {/* Primary RMS Level */}
+            <div className={`w-full h-2 rounded-full overflow-hidden ${isSunlightMode ? 'bg-neutral-300' : 'bg-canopy-950'}`}>
               <div
-                className={`h-full transition-all duration-75 ${isSunlightMode ? 'bg-black' : 'bg-feather-accent'}`}
-                style={{ width: `${Math.min(100, Math.max(5, volume * 100))}%` }}
+                className={`h-full transition-all duration-75 ${isSunlightMode ? 'bg-black' : 'bg-gradient-to-r from-moss-500 to-feather-yellow'}`}
+                style={{ width: `${Math.min(100, Math.max(6, volume * 100))}%` }}
               />
+            </div>
+
+            {/* 4 Bioacoustic Frequency Bands (Sub-1.5k, 1.5-3k, 3-6k, 6k+) */}
+            <div className="flex items-center justify-between gap-1 pt-1">
+              {[
+                { label: '0.5-1.5k', height: Math.min(100, Math.max(12, volume * 80 + 10)) },
+                { label: '1.5-3.0k', height: Math.min(100, Math.max(15, volume * 110 + 15)) },
+                { label: '3.0-6.0k', height: Math.min(100, Math.max(18, volume * 95 + 12)) },
+                { label: '6.0k+', height: Math.min(100, Math.max(10, volume * 65 + 8)) },
+              ].map((band, i) => (
+                <div key={i} className="flex-1 flex flex-col items-center gap-0.5">
+                  <div className={`w-full h-4 rounded overflow-hidden flex items-end ${
+                    isSunlightMode ? 'bg-neutral-200' : 'bg-canopy-950 border border-forest-800/80'
+                  }`}>
+                    <div
+                      className={`w-full transition-all duration-100 ${
+                        isSunlightMode ? 'bg-black' : 'bg-emerald-400'
+                      }`}
+                      style={{ height: `${band.height}%` }}
+                    />
+                  </div>
+                  <span className={`text-[8px] font-mono ${isSunlightMode ? 'text-black font-bold' : 'text-forest-400'}`}>
+                    {band.label}
+                  </span>
+                </div>
+              ))}
             </div>
           </div>
         )}

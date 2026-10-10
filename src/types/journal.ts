@@ -13,6 +13,9 @@ export interface BirdSpecies {
   habitat: string;
   description: string;
   audiosetClasses: string[];
+  iucnStatus?: string;
+  callType?: string;
+  frequencyBandHz?: string;
 }
 
 export interface PredictionResult {
@@ -22,6 +25,10 @@ export interface PredictionResult {
   confidence: number; // 0.0 - 1.0
   habitat: string;
   matchedClass: string;
+  family?: string;
+  iucnStatus?: string;
+  callType?: string;
+  frequencyBandHz?: string;
 }
 
 export interface JournalEntry {

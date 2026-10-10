@@ -9,6 +9,9 @@ export const BIRD_SPECIES_DATABASE: BirdSpecies[] = [
     habitat: 'Gardens, woodlands, suburban lawns, parks',
     description: 'Rich, carol-like musical whistle described as "cheerily, cheer-up, cheer-up, cheerily". Common across North America.',
     audiosetClasses: ['Bird vocalization, bird call, bird song', 'Bird', 'Chirp, tweet'],
+    iucnStatus: 'LC (Least Concern)',
+    callType: 'Melodic Dawn Chorus Song',
+    frequencyBandHz: '2.2 kHz – 4.5 kHz',
   },
   {
     id: 'song-sparrow',
@@ -18,6 +21,9 @@ export const BIRD_SPECIES_DATABASE: BirdSpecies[] = [
     habitat: 'Shrubby borders, marshes, open woods, edge thickets',
     description: 'Starts with 2-3 bright, clean introductory notes followed by an energetic buzz and musical trill.',
     audiosetClasses: ['Chirp, tweet', 'Bird vocalization, bird call, bird song', 'Bird'],
+    iucnStatus: 'LC (Least Concern)',
+    callType: 'Buzz & Melodic Trill',
+    frequencyBandHz: '3.0 kHz – 7.8 kHz',
   },
   {
     id: 'mourning-dove',
@@ -27,6 +33,9 @@ export const BIRD_SPECIES_DATABASE: BirdSpecies[] = [
     habitat: 'Open country, forest edges, suburbs, agricultural fields',
     description: 'Soft, distinctive sorrowful coo-OO-oo-oo-oo call often mistaken for an owl, along with whistling wingbeats.',
     audiosetClasses: ['Pigeon, dove', 'Bird vocalization, bird call, bird song', 'Bird'],
+    iucnStatus: 'LC (Least Concern)',
+    callType: 'Low Sorrowful Coo',
+    frequencyBandHz: '0.4 kHz – 1.8 kHz',
   },
   {
     id: 'barn-owl',
@@ -36,6 +45,9 @@ export const BIRD_SPECIES_DATABASE: BirdSpecies[] = [
     habitat: 'Grasslands, agricultural fields, old barns, marshes',
     description: 'Does not hoot; delivers a harsh, raspy 2-second hissing shriek echoing across night meadows.',
     audiosetClasses: ['Owl', 'Bird vocalization, bird call, bird song', 'Bird'],
+    iucnStatus: 'LC (Least Concern)',
+    callType: 'Hissing Night Screech',
+    frequencyBandHz: '1.5 kHz – 6.5 kHz',
   },
   {
     id: 'great-horned-owl',
@@ -45,6 +57,9 @@ export const BIRD_SPECIES_DATABASE: BirdSpecies[] = [
     habitat: 'Deciduous and coniferous forests, desert canyons, suburban groves',
     description: 'Deep, resonant, four-to-five-syllable stuttering hoot: "hoo-h’HOO--oo-oo".',
     audiosetClasses: ['Owl', 'Bird vocalization, bird call, bird song'],
+    iucnStatus: 'LC (Least Concern)',
+    callType: 'Deep Resonant Hoot',
+    frequencyBandHz: '0.3 kHz – 1.2 kHz',
   },
   {
     id: 'american-crow',
