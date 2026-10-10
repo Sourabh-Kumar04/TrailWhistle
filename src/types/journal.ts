@@ -55,6 +55,8 @@ export interface SurveyChecklistItem {
   maxConfidence: number;
   firstDetectedTime: string;
   lastDetectedTime: string;
+  iucnStatus?: string;
+  family?: string;
 }
 
 export interface SurveyRecordingEvent {

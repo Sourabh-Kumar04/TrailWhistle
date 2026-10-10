@@ -217,6 +217,8 @@ export function buildSurveyChecklist(
         maxConfidence: entry.confidence,
         firstDetectedTime: entry.timestamp,
         lastDetectedTime: entry.timestamp,
+        iucnStatus: dbMatch?.iucnStatus,
+        family: dbMatch?.family,
       });
     } else {
       existing.detectionCount += 1;
