@@ -13,7 +13,7 @@ import { AreaSpeciesChecklist } from './components/AreaSpeciesChecklist';
 import { RecordingTimeline } from './components/RecordingTimeline';
 import { PredictionResult, JournalEntry, SurveySession, SurveyRecordingEvent } from './types/journal';
 import { ModelProgressInfo } from './types/model';
-import { SampleAudioItem } from './data/sampleAudio';
+import { SampleAudioItem, SAMPLE_AUDIO_LIST } from './data/sampleAudio';
 import { loadAudioFromUrl } from './services/audio';
 import { classifyBirdAudio, resetClassifierCache } from './services/classifier';
 import {
@@ -271,24 +271,36 @@ export const App: React.FC = () => {
               isSunlightMode={isSunlightMode}
             />
 
-            {/* Compact 4-Step Survey Workflow Onboarding Hint */}
-            <SurveyOnboardingHint isSunlightMode={isSunlightMode} />
+            {/* Prominent Survey Stats Bar (Full-Width Overview) */}
+            <SurveyStatsBar
+              speciesCount={surveyChecklist.length}
+              totalRecordings={currentSurveyRecordingsCount}
+              startTime={activeSurvey.startTime}
+              location={activeSurvey.location}
+              locationName={activeSurvey.locationName}
+              isSunlightMode={isSunlightMode}
+            />
 
-            {/* Model Download & Cache Banner */}
+            {/* Model Download Banner (Only expands during download/ready/error) */}
             <ModelDownloadBanner
               progressInfo={modelProgress}
               onRetry={handleRetryModel}
               isSunlightMode={isSunlightMode}
             />
 
+            {/* Compact 4-Step Survey Workflow Guide */}
+            <SurveyOnboardingHint isSunlightMode={isSunlightMode} />
+
             {/* Two-Column Side-by-Side Survey Layout on Desktop/Tablet */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
-              {/* Left Column: Acoustic Field Recorder & Latest Inference */}
+              {/* Left Column: Acoustic Field Recorder (with Quick Test Pills) & Latest Inference */}
               <div className="lg:col-span-5 space-y-4">
                 <AudioRecorder
                   onAudioCaptured={handleAudioCaptured}
                   isProcessing={isProcessing}
                   isSunlightMode={isSunlightMode}
+                  onSelectSample={handleSelectSample}
+                  selectedSample={selectedSample}
                 />
 
                 {predictions && (
@@ -301,21 +313,13 @@ export const App: React.FC = () => {
                 )}
               </div>
 
-              {/* Right Column: Survey Stats, Live Species Checklist & Timeline */}
+              {/* Right Column: Live Species Checklist & Timeline */}
               <div className="lg:col-span-7 space-y-4">
-                <SurveyStatsBar
-                  speciesCount={surveyChecklist.length}
-                  totalRecordings={currentSurveyRecordingsCount}
-                  startTime={activeSurvey.startTime}
-                  location={activeSurvey.location}
-                  locationName={activeSurvey.locationName}
-                  isSunlightMode={isSunlightMode}
-                />
-
                 <AreaSpeciesChecklist
                   checklist={surveyChecklist}
                   locationName={activeSurvey.locationName}
                   isSunlightMode={isSunlightMode}
+                  onRunSampleDemo={() => handleSelectSample(SAMPLE_AUDIO_LIST[0])}
                 />
 
                 <RecordingTimeline

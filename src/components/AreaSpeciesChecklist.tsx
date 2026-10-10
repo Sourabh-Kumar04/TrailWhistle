@@ -6,12 +6,14 @@ interface AreaSpeciesChecklistProps {
   checklist: SurveyChecklistItem[];
   locationName: string;
   isSunlightMode: boolean;
+  onRunSampleDemo?: () => void;
 }
 
 export const AreaSpeciesChecklist: React.FC<AreaSpeciesChecklistProps> = ({
   checklist,
   locationName,
   isSunlightMode,
+  onRunSampleDemo,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -67,59 +69,38 @@ export const AreaSpeciesChecklist: React.FC<AreaSpeciesChecklistProps> = ({
 
       {/* Checklist Content */}
       {checklist.length === 0 ? (
-        <div className={`flex-1 flex flex-col items-center justify-center p-6 text-center rounded-xl border border-dashed ${
+        <div className={`flex-1 flex flex-col items-center justify-center p-6 text-center rounded-xl border border-dashed my-auto ${
           isSunlightMode ? 'bg-neutral-50 border-2 border-black' : 'bg-canopy-950/60 border-forest-800/80'
         }`}>
-          <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-3 shadow-inner ${
-            isSunlightMode ? 'bg-black text-white' : 'bg-forest-800/80 text-feather-yellow'
-          }`}>
-            <Sparkles className="w-6 h-6" />
+          <div className="relative mb-3 flex items-center justify-center">
+            <div className={`w-14 h-14 rounded-full flex items-center justify-center shadow-inner ${
+              isSunlightMode ? 'bg-black text-white' : 'bg-forest-800 text-feather-yellow'
+            }`}>
+              <Bird className="w-7 h-7" />
+            </div>
+            <div className="absolute inset-0 rounded-full border border-feather-accent/40 animate-ping opacity-40 pointer-events-none" />
           </div>
-          <h3 className="font-bold text-sm mb-1">Checklist Empty — Ready for Survey</h3>
+          <h3 className="font-black text-base mb-1 tracking-tight">Census Station Active</h3>
           <p className={`text-xs max-w-sm mb-4 leading-relaxed ${
             isSunlightMode ? 'text-black font-medium' : 'text-forest-200'
           }`}>
-            Arrive at your site, point your phone toward the canopy or scrub, and record multiple 3-second audio clips to populate this live area checklist.
+            Waiting for audio captures in <strong className="text-feather-yellow">{locationName}</strong>. Tap Record or test with a field sample to populate this live area checklist.
           </p>
 
-          {/* 4-Step Field Workflow Infographic */}
-          <div className="grid grid-cols-2 gap-2 text-left w-full max-w-sm">
-            <div className={`p-2.5 rounded-lg border text-[11px] ${
-              isSunlightMode ? 'bg-white border-2 border-black text-black' : 'bg-canopy-900 border-forest-800 text-forest-200'
-            }`}>
-              <div className="font-bold text-feather-accent mb-0.5 flex items-center gap-1">
-                <span>1. Arrive</span>
-              </div>
-              <div className="opacity-90">Set current site name or GPS coordinates.</div>
-            </div>
-
-            <div className={`p-2.5 rounded-lg border text-[11px] ${
-              isSunlightMode ? 'bg-white border-2 border-black text-black' : 'bg-canopy-900 border-forest-800 text-forest-200'
-            }`}>
-              <div className="font-bold text-feather-accent mb-0.5 flex items-center gap-1">
-                <span>2. Record</span>
-              </div>
-              <div className="opacity-90">Take 3-second rapid captures as you walk.</div>
-            </div>
-
-            <div className={`p-2.5 rounded-lg border text-[11px] ${
-              isSunlightMode ? 'bg-white border-2 border-black text-black' : 'bg-canopy-900 border-forest-800 text-forest-200'
-            }`}>
-              <div className="font-bold text-feather-accent mb-0.5 flex items-center gap-1">
-                <span>3. Build</span>
-              </div>
-              <div className="opacity-90">BirdNET v2.4 aggregates distinct species.</div>
-            </div>
-
-            <div className={`p-2.5 rounded-lg border text-[11px] ${
-              isSunlightMode ? 'bg-white border-2 border-black text-black' : 'bg-canopy-900 border-forest-800 text-forest-200'
-            }`}>
-              <div className="font-bold text-feather-accent mb-0.5 flex items-center gap-1">
-                <span>4. Export</span>
-              </div>
-              <div className="opacity-90">Single-click export to CSV survey file.</div>
-            </div>
-          </div>
+          {onRunSampleDemo && (
+            <button
+              type="button"
+              onClick={onRunSampleDemo}
+              className={`py-2 px-4 rounded-xl text-xs font-bold flex items-center gap-2 shadow-md transition-all active:scale-95 ${
+                isSunlightMode
+                  ? 'bg-black text-white hover:bg-neutral-800 border-2 border-black font-extrabold'
+                  : 'bg-moss-700 hover:bg-moss-600 text-white border border-moss-500'
+              }`}
+            >
+              <Sparkles className="w-3.5 h-3.5 text-feather-yellow" />
+              <span>Simulate American Robin Call</span>
+            </button>
+          )}
         </div>
       ) : (
         <div className="space-y-2.5 overflow-y-auto max-h-[460px] pr-1">

@@ -310,12 +310,12 @@ describe('UI Components', () => {
       />
     );
 
-    expect(screen.getByText('Species Count')).toBeInTheDocument();
+    expect(screen.getByText('Species Life Count')).toBeInTheDocument();
     expect(screen.getByText('4 Species')).toBeInTheDocument();
-    expect(screen.getByText('Recordings')).toBeInTheDocument();
-    expect(screen.getByText('9 Captures')).toBeInTheDocument();
-    expect(screen.getByText('Time Span')).toBeInTheDocument();
-    expect(screen.getByText('Area Coverage')).toBeInTheDocument();
+    expect(screen.getByText('Acoustic Census')).toBeInTheDocument();
+    expect(screen.getByText('9 Recordings')).toBeInTheDocument();
+    expect(screen.getByText('Survey Elapsed')).toBeInTheDocument();
+    expect(screen.getByText('Transect Coverage')).toBeInTheDocument();
     expect(screen.getByText('±8m GPS')).toBeInTheDocument();
   });
 
@@ -333,17 +333,20 @@ describe('UI Components', () => {
       },
     ];
 
+    const onDemo = vi.fn();
     const { rerender } = render(
       <AreaSpeciesChecklist
         checklist={[]}
         locationName="Pine Ridge Trailhead"
         isSunlightMode={false}
+        onRunSampleDemo={onDemo}
       />
     );
 
-    expect(screen.getByText('Checklist Empty — Ready for Survey')).toBeInTheDocument();
-    expect(screen.getByText('1. Arrive')).toBeInTheDocument();
-    expect(screen.getByText('4. Export')).toBeInTheDocument();
+    expect(screen.getByText('Census Station Active')).toBeInTheDocument();
+    const demoBtn = screen.getByText('Simulate American Robin Call');
+    fireEvent.click(demoBtn);
+    expect(onDemo).toHaveBeenCalled();
 
     rerender(
       <AreaSpeciesChecklist

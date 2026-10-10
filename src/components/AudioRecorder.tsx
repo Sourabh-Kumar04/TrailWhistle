@@ -1,17 +1,22 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Mic, Square, Play, Sparkles, Volume2, AlertCircle, Radio } from 'lucide-react';
+import { Mic, Square, Play, Sparkles, Volume2, AlertCircle, Radio, FlaskConical } from 'lucide-react';
 import { recordMicAudio } from '../services/audio';
+import { SAMPLE_AUDIO_LIST, SampleAudioItem } from '../data/sampleAudio';
 
 interface AudioRecorderProps {
   onAudioCaptured: (audioData: Float32Array, wavBlob: Blob, source: 'live_mic' | 'sample_audio') => void;
   isProcessing: boolean;
   isSunlightMode: boolean;
+  onSelectSample?: (sample: SampleAudioItem) => void;
+  selectedSample?: SampleAudioItem | null;
 }
 
 export const AudioRecorder: React.FC<AudioRecorderProps> = ({
   onAudioCaptured,
   isProcessing,
   isSunlightMode,
+  onSelectSample,
+  selectedSample,
 }) => {
   const [isRecording, setIsRecording] = useState(false);
   const [countdown, setCountdown] = useState(3.0);
@@ -213,6 +218,54 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
           }`}>
             <AlertCircle className="w-4 h-4 shrink-0 text-red-500" />
             <span>{errorMessage}</span>
+          </div>
+        )}
+
+        {/* Quick Field Test Simulator for Immediate 30s Discovery */}
+        {onSelectSample && (
+          <div className={`w-full pt-3 mt-2 border-t ${
+            isSunlightMode ? 'border-neutral-900' : 'border-forest-800/60'
+          }`}>
+            <div className="flex items-center justify-between mb-2">
+              <span className={`text-[11px] font-bold uppercase tracking-wider flex items-center gap-1.5 ${
+                isSunlightMode ? 'text-black font-extrabold' : 'text-forest-200'
+              }`}>
+                <FlaskConical className="w-3.5 h-3.5 text-feather-yellow" />
+                <span>Simulate Field Call:</span>
+              </span>
+              <span className={`text-[10px] font-mono ${
+                isSunlightMode ? 'text-black font-bold' : 'text-forest-400'
+              }`}>
+                48kHz xeno-canto
+              </span>
+            </div>
+
+            <div className="grid grid-cols-2 gap-1.5 w-full">
+              {SAMPLE_AUDIO_LIST.map((sample) => {
+                const isSelected = selectedSample?.id === sample.id;
+                return (
+                  <button
+                    key={sample.id}
+                    type="button"
+                    onClick={() => onSelectSample(sample)}
+                    disabled={isRecording || isProcessing}
+                    className={`p-2 rounded-xl text-left text-xs font-semibold flex items-center justify-between transition-all min-h-[44px] ${
+                      isSelected
+                        ? isSunlightMode
+                          ? 'bg-black text-white font-extrabold ring-2 ring-black'
+                          : 'bg-moss-700 text-white border border-moss-400 shadow-sm'
+                        : isSunlightMode
+                          ? 'bg-neutral-100 border-2 border-black hover:bg-neutral-200 text-black font-bold'
+                          : 'bg-canopy-950/90 border border-forest-800 hover:border-forest-600 text-forest-100 hover:text-white'
+                    }`}
+                    title={`Run on-device BirdNET inference on ${sample.speciesName}`}
+                  >
+                    <span className="truncate pr-1">{sample.speciesName}</span>
+                    <Play className="w-3.5 h-3.5 shrink-0 opacity-80" />
+                  </button>
+                );
+              })}
+            </div>
           </div>
         )}
       </div>
