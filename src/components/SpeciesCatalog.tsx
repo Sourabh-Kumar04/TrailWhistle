@@ -71,35 +71,32 @@ export const DEMO_SPECIES_LIST: DemoSpeciesCardItem[] = [
   },
 ];
 
-import { SAMPLE_AUDIO_LIST, SampleAudioItem } from '../data/sampleAudio';
-import { BIRD_SPECIES_DATABASE } from '../data/birdDatabase';
-
 interface SpeciesCatalogProps {
   detectedChecklist: SurveyChecklistItem[];
   locationName: string;
   isSunlightMode: boolean;
   searchQuery?: string;
   onSearchChange?: (q: string) => void;
-  onSelectSample?: (sample: SampleAudioItem) => void;
 }
 
 export const SpeciesCatalog: React.FC<SpeciesCatalogProps> = ({
   detectedChecklist,
   locationName,
-  isSunlightMode,
-  searchQuery,
+  isSunlightMode: _isSunlightMode,
+  searchQuery: externalSearchQuery,
   onSearchChange,
-  onSelectSample,
 }) => {
   const [internalQuery, setInternalQuery] = useState('');
-  const currentQuery = searchQuery !== undefined ? searchQuery : internalQuery;
-  const updateQuery = (q: string) => {
-    if (onSearchChange) onSearchChange(q);
-    setInternalQuery(q);
-  };
-
+  const currentSearchQuery = externalSearchQuery !== undefined ? externalSearchQuery : internalQuery;
   const [playingId, setPlayingId] = useState<string | null>(null);
   const audioPlayerRef = useRef<HTMLAudioElement | null>(null);
+
+  const handleSearchChange = (val: string) => {
+    setInternalQuery(val);
+    if (onSearchChange) {
+      onSearchChange(val);
+    }
+  };
 
   const handleTogglePlay = (id: string, audioUrl: string) => {
     if (!audioPlayerRef.current) return;
@@ -115,22 +112,25 @@ export const SpeciesCatalog: React.FC<SpeciesCatalogProps> = ({
     }
   };
 
+  const q = currentSearchQuery.trim().toLowerCase();
   const filteredDemoSpecies = DEMO_SPECIES_LIST.filter(
     (s) =>
-      s.commonName.toLowerCase().includes(currentQuery.toLowerCase()) ||
-      s.scientificName.toLowerCase().includes(currentQuery.toLowerCase()) ||
-      s.family.toLowerCase().includes(currentQuery.toLowerCase())
+      !q ||
+      s.commonName.toLowerCase().includes(q) ||
+      s.scientificName.toLowerCase().includes(q) ||
+      s.family.toLowerCase().includes(q) ||
+      s.habitat.toLowerCase().includes(q) ||
+      s.description.toLowerCase().includes(q)
   );
 
-  const additionalDbSpecies = currentQuery.trim().length > 1
-    ? BIRD_SPECIES_DATABASE.filter(
-        (b) =>
-          !DEMO_SPECIES_LIST.some((d) => d.commonName.toLowerCase() === b.commonName.toLowerCase()) &&
-          (b.commonName.toLowerCase().includes(currentQuery.toLowerCase()) ||
-            b.scientificName.toLowerCase().includes(currentQuery.toLowerCase()) ||
-            b.family.toLowerCase().includes(currentQuery.toLowerCase()))
-      )
-    : [];
+  const filteredDetected = detectedChecklist.filter(
+    (item) =>
+      !q ||
+      item.commonName.toLowerCase().includes(q) ||
+      item.scientificName.toLowerCase().includes(q) ||
+      (item.family && item.family.toLowerCase().includes(q)) ||
+      (item.habitat && item.habitat.toLowerCase().includes(q))
+  );
 
   return (
     <div className="space-y-8 animate-fade-in">
@@ -161,28 +161,28 @@ export const SpeciesCatalog: React.FC<SpeciesCatalogProps> = ({
           <input
             type="text"
             placeholder="Search species or family..."
-            value={currentQuery}
-            onChange={(e) => updateQuery(e.target.value)}
+            value={currentSearchQuery}
+            onChange={(e) => handleSearchChange(e.target.value)}
             className="w-full pl-9 pr-3 py-2 text-xs rounded-full border border-[#E5E0D8] bg-[#F7F5F2] text-[#241B12] placeholder-[#736B63] outline-none focus:border-[#D73C30] transition-colors"
           />
         </div>
       </div>
 
       {/* Active Transect Detections (if any logged) */}
-      {detectedChecklist.length > 0 && (
+      {filteredDetected.length > 0 && (
         <section className="space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="font-serif font-bold text-lg text-[#241B12] flex items-center gap-2">
               <span>Active Transect Detections</span>
               <span className="text-xs font-mono font-bold px-2 py-0.5 rounded-full bg-[#3D8B40]/10 text-[#3D8B40]">
-                {detectedChecklist.length} Logged
+                {filteredDetected.length} Logged
               </span>
             </h3>
             <span className="text-xs text-[#736B63]">Verified on-device BirdNET observations</span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {detectedChecklist.map((item) => (
+            {filteredDetected.map((item) => (
               <div
                 key={item.speciesId}
                 className="p-5 rounded-xl border border-[#E5E0D8] bg-white shadow-sm flex flex-col justify-between"
@@ -226,7 +226,7 @@ export const SpeciesCatalog: React.FC<SpeciesCatalogProps> = ({
             <h3 className="font-serif font-bold text-lg sm:text-xl text-[#241B12] flex items-center gap-2">
               <span>Habitat Reference Examples</span>
               <span className="text-[11px] font-sans font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-[#D73C30]/10 text-[#D73C30] border border-[#D73C30]/20">
-                4 Example Species
+                {filteredDemoSpecies.length} of 4 Available
               </span>
             </h3>
             <p className="text-xs text-[#736B63] mt-0.5">
@@ -235,9 +235,25 @@ export const SpeciesCatalog: React.FC<SpeciesCatalogProps> = ({
           </div>
         </div>
 
-        {/* 4 Demo Species Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          {filteredDemoSpecies.map((species) => {
+        {filteredDemoSpecies.length === 0 ? (
+          <div className="p-8 text-center rounded-xl border border-dashed border-[#E5E0D8] bg-[#FAF8F5]">
+            <p className="text-base font-serif font-bold text-[#241B12]">
+              No reference species found matching &ldquo;{currentSearchQuery}&rdquo;
+            </p>
+            <p className="text-xs text-[#736B63] mt-1.5">
+              Try searching by common name (e.g., &ldquo;Robin&rdquo;), scientific name, or family.
+            </p>
+            <button
+              type="button"
+              onClick={() => handleSearchChange('')}
+              className="mt-4 px-5 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-[#D73C30] text-white hover:bg-[#C23328] transition-colors cursor-pointer"
+            >
+              Clear Search Filter
+            </button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {filteredDemoSpecies.map((species) => {
             const isPlaying = playingId === species.id;
             return (
               <div
@@ -297,88 +313,41 @@ export const SpeciesCatalog: React.FC<SpeciesCatalogProps> = ({
                   </div>
                 </div>
 
-                {/* Card Footer with Audio Call Sample Player & AI Simulation Button */}
-                <div className="mt-5 pt-3 border-t border-[#F0ECE6] flex flex-wrap items-center justify-between gap-2">
+                {/* Card Footer with Audio Call Sample Player */}
+                <div className="mt-5 pt-3 border-t border-[#F0ECE6] flex items-center justify-between">
                   <span className="text-[11px] font-mono text-[#A89B8C]">
                     Freq: {species.frequencyBandHz}
                   </span>
 
-                  <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() => handleTogglePlay(species.id, species.audioUrl)}
-                      className={`px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-xs ${
-                        isPlaying
-                          ? 'bg-[#D73C30] text-white'
-                          : 'bg-[#F7F5F2] hover:bg-[#ECE7E1] text-[#241B12] border border-[#E5E0D8]'
-                      }`}
-                      title={`Listen to sample vocalization of ${species.commonName}`}
-                    >
-                      {isPlaying ? (
-                        <>
-                          <Pause className="w-3.5 h-3.5 fill-current" />
-                          <span>Pause Audio</span>
-                        </>
-                      ) : (
-                        <>
-                          <Play className="w-3.5 h-3.5 text-[#D73C30] fill-current" />
-                          <span>Listen Call</span>
-                        </>
-                      )}
-                    </button>
-
-                    {onSelectSample && (() => {
-                      const match = SAMPLE_AUDIO_LIST.find(
-                        (s) => s.speciesName.toLowerCase() === species.commonName.toLowerCase()
-                      );
-                      if (!match) return null;
-                      return (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            handleTogglePlay(species.id, species.audioUrl);
-                            onSelectSample(match);
-                          }}
-                          className="px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1.5 bg-[#241B12] hover:bg-[#36291E] text-white transition-all cursor-pointer shadow-xs border border-[#4E3A2B]"
-                          title={`Simulate and run BirdNET inference on ${species.commonName}`}
-                        >
-                          <Sparkles className="w-3.5 h-3.5 text-[#E67E22]" />
-                          <span>Classify Call</span>
-                        </button>
-                      );
-                    })()}
-                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleTogglePlay(species.id, species.audioUrl)}
+                    className={`px-3.5 py-1.5 rounded-full text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-xs ${
+                      isPlaying
+                        ? 'bg-[#D73C30] text-white'
+                        : 'bg-[#F7F5F2] hover:bg-[#ECE7E1] text-[#241B12] border border-[#E5E0D8]'
+                    }`}
+                    title={`Listen to sample vocalization of ${species.commonName}`}
+                  >
+                    {isPlaying ? (
+                      <>
+                        <Pause className="w-3.5 h-3.5 fill-current" />
+                        <span>Pause Audio</span>
+                      </>
+                    ) : (
+                      <>
+                        <Play className="w-3.5 h-3.5 text-[#D73C30] fill-current" />
+                        <span>Listen Call</span>
+                      </>
+                    )}
+                  </button>
                 </div>
               </div>
             );
           })}
         </div>
-
-        {/* Search Results from Global Database (if searching beyond the 4 demo species) */}
-        {additionalDbSpecies.length > 0 && (
-          <div className="mt-8 space-y-4 pt-6 border-t border-[#E5E0D8]">
-            <h4 className="font-serif font-bold text-base text-[#241B12] flex items-center gap-2">
-              <span>Additional Matching Species in Database</span>
-              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#E5E0D8] text-[#241B12]">
-                {additionalDbSpecies.length} Found
-              </span>
-            </h4>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-              {additionalDbSpecies.map((bird) => (
-                <div
-                  key={bird.id}
-                  className="p-3.5 rounded-xl border border-[#E5E0D8] bg-[#F7F5F2] hover:bg-white transition-all"
-                >
-                  <div className="font-sans font-bold text-sm text-[#241B12]">{bird.commonName}</div>
-                  <div className="font-serif italic text-xs text-[#736B63]">{bird.scientificName}</div>
-                  <div className="text-[11px] text-[#A89B8C] mt-1">Family: {bird.family}</div>
-                  <div className="text-[11px] text-[#736B63] mt-1">{bird.habitat}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </section>
+      )}
+    </section>
     </div>
   );
 };

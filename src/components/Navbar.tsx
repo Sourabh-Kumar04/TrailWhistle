@@ -92,15 +92,21 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* (2) CENTER: Pill Search Field */}
         <div className="flex-1 max-w-md hidden md:block">
-          <div className="relative flex items-center">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (onSearchChange) onSearchChange(localSearch);
+              onTabChange('species');
+            }}
+            className="relative flex items-center"
+          >
             <button
-              type="button"
-              onClick={() => onTabChange('species')}
-              className="absolute left-3.5 text-[#B8ACA0] hover:text-white cursor-pointer z-10"
-              title="Search species list"
-              aria-label="Search species list"
+              type="submit"
+              className="absolute left-3 text-[#B8ACA0] hover:text-white transition-colors cursor-pointer p-0.5 focus:outline-none"
+              title="Filter species catalog"
+              aria-label="Filter species catalog"
             >
-              <Search className="w-4 h-4" />
+              <Search className="w-4 h-4 text-[#B8ACA0] hover:text-white" />
             </button>
             <input
               type="text"
@@ -108,11 +114,14 @@ export const Navbar: React.FC<NavbarProps> = ({
               onChange={handleSearchInput}
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
+                  e.preventDefault();
+                  if (onSearchChange) onSearchChange(localSearch);
                   onTabChange('species');
                 }
               }}
-              placeholder="Search species, calls, or surveys..."
-              className="w-full bg-[#36291E] hover:bg-[#3D2E22] focus:bg-[#443326] text-white placeholder-[#B8ACA0] text-sm rounded-full pl-10 pr-4 py-2 border border-[#4E3A2B] focus:border-[#D73C30] outline-none transition-all shadow-inner"
+              placeholder="Search species, calls, or families... (Press Enter)"
+              aria-label="Search species catalog"
+              className="w-full bg-[#36291E] hover:bg-[#3D2E22] focus:bg-[#443326] text-white placeholder-[#B8ACA0] text-sm rounded-full pl-10 pr-9 py-2 border border-[#4E3A2B] focus:border-[#D73C30] outline-none transition-all shadow-inner"
             />
             {localSearch && (
               <button
@@ -127,7 +136,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <X className="w-3.5 h-3.5" />
               </button>
             )}
-          </div>
+          </form>
         </div>
 
         {/* (3) RIGHT: Text Nav Links (Survey, Species, Journal) + Coral-Red Pill Buttons (#D73C30) */}
@@ -238,24 +247,11 @@ export const Navbar: React.FC<NavbarProps> = ({
       {/* Mobile Search Bar Strip */}
       <div className="md:hidden px-4 pb-2.5">
         <div className="relative flex items-center">
-          <button
-            type="button"
-            onClick={() => onTabChange('species')}
-            className="absolute left-3 text-[#B8ACA0] hover:text-white cursor-pointer z-10"
-            title="Search species list"
-            aria-label="Search species list"
-          >
-            <Search className="w-3.5 h-3.5" />
-          </button>
+          <Search className="w-3.5 h-3.5 text-[#B8ACA0] absolute left-3 pointer-events-none" />
           <input
             type="text"
             value={localSearch}
             onChange={handleSearchInput}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                onTabChange('species');
-              }
-            }}
             placeholder="Search species, calls, or surveys..."
             className="w-full bg-[#36291E] text-white placeholder-[#B8ACA0] text-xs rounded-full pl-9 pr-4 py-1.5 border border-[#4E3A2B] focus:border-[#D73C30] outline-none"
           />

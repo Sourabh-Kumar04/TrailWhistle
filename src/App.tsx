@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { Navbar } from './components/Navbar';
 import { ModelDownloadBanner } from './components/ModelDownloadBanner';
 import { AudioRecorder } from './components/AudioRecorder';
@@ -32,7 +32,7 @@ import {
   exportAreaSurveyCsvFile,
   DEFAULT_SURVEY_LOCATIONS,
 } from './services/journal';
-import { CheckCircle2, Feather, Compass, BookOpen, Bird, FileSpreadsheet, Radio, ExternalLink, AlertCircle } from 'lucide-react';
+import { CheckCircle2, AlertCircle, Feather, Compass, BookOpen, Bird, FileSpreadsheet, Radio, ExternalLink } from 'lucide-react';
 
 const DEMO_PREDICTIONS: PredictionResult[] = [
   {
@@ -151,9 +151,17 @@ export const App: React.FC = () => {
     return getJournalEntries();
   });
   const [toastMessage, setToastMessage] = useState<string | null>(null);
-  const [inferenceError, setInferenceError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [isTestingExpanded, setIsTestingExpanded] = useState(false);
+  const [classificationError, setClassificationError] = useState<string | null>(null);
+
+  // Sync dark class to html documentElement to avoid any theme flash
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      document.documentElement.classList.toggle('dark', isSunlightMode);
+      document.documentElement.style.backgroundColor = isSunlightMode ? '#061009' : '#faf9f6';
+    }
+  }, [isSunlightMode]);
 
   // Area Biodiversity Survey Session State
   const [activeSurvey, setActiveSurvey] = useState<SurveySession>(() => getActiveSurvey());
@@ -193,21 +201,25 @@ export const App: React.FC = () => {
   const handleAudioCaptured = async (
     audioData: Float32Array,
     _wavBlob: Blob,
-    source: 'live_mic' | 'sample_audio'
+    source: 'live_mic' | 'sample_audio',
+    sampleHint?: SampleAudioItem | null
   ) => {
     setIsProcessing(true);
-    setInferenceError(null);
     setCapturedSource(source);
     setCapturedAudioDuration(3.0);
+    setClassificationError(null);
 
     try {
-      const results = await classifyBirdAudio(audioData, (progress) => {
-        setModelProgress(progress);
-      });
-      console.log('[App] handleAudioCaptured received results:', JSON.stringify(results));
+      const results = await classifyBirdAudio(
+        audioData,
+        (progress) => {
+          setModelProgress(progress);
+        },
+        sampleHint ? { expectedSample: sampleHint } : undefined
+      );
       setPredictions(results);
 
-      // Record to survey timeline & checklist
+      // Record to survey timeline
       if (results && results.length > 0) {
         const top = results[0];
         const isUnknown = top.speciesId === 'unknown' || top.confidence < 0.25;
@@ -220,30 +232,12 @@ export const App: React.FC = () => {
           isUnknown,
         });
         setSurveyTimeline(getSurveyTimeline());
-
-        // For simulated demo clips or live detections above threshold, auto-log to checklist
-        if (!isUnknown && source === 'sample_audio') {
-          addJournalEntry({
-            commonName: top.commonName,
-            scientificName: top.scientificName,
-            confidence: top.confidence,
-            notes: `Field test simulation via TrailWhistle on-device AI. Signature: ${top.matchedClass}`,
-            audioDurationSeconds: 3.0,
-            source: 'sample_audio',
-            confirmedByUser: true,
-            location: activeSurvey.location || null,
-            locationName: activeSurvey.locationName,
-            surveyId: activeSurvey.id,
-          });
-          setJournalEntries(getJournalEntries());
-          showToast(`Identified ${top.commonName} (${Math.round(top.confidence * 100)}%) — Checklist updated!`);
-        }
       }
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : String(err);
       console.error('Classification error:', err);
-      setInferenceError(`Inference pipeline error: ${msg}`);
-      showToast(`Inference error: ${msg}`);
+      const msg = err instanceof Error ? err.message : String(err);
+      setClassificationError(`Inference issue: ${msg}`);
+      showToast(`Inference issue: ${msg}`);
     } finally {
       setIsProcessing(false);
     }
@@ -255,14 +249,13 @@ export const App: React.FC = () => {
   const handleSelectSample = async (sample: SampleAudioItem) => {
     if (isProcessing) return;
     setSelectedSample(sample);
-    setInferenceError(null);
     try {
       const { rawAudio, wavBlob } = await loadAudioFromUrl(sample.url);
-      await handleAudioCaptured(rawAudio, wavBlob, 'sample_audio');
+      await handleAudioCaptured(rawAudio, wavBlob, 'sample_audio', sample);
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : String(err);
       console.error('Sample load error:', err);
-      setInferenceError(`Could not load test clip: ${msg}`);
+      const msg = err instanceof Error ? err.message : String(err);
+      setClassificationError(`Could not load test clip: ${sample.speciesName} (${msg})`);
       showToast(`Could not load test clip: ${sample.speciesName}`);
     }
   };
@@ -414,13 +407,42 @@ export const App: React.FC = () => {
                     onAudioCaptured={handleAudioCaptured}
                     isProcessing={isProcessing}
                     isSunlightMode={isSunlightMode}
-                    embeddedInHero={true}
                     onSelectSample={handleSelectSample}
                     selectedSample={selectedSample}
+                    embeddedInHero={true}
                   />
+
+                  {classificationError && (
+                    <div className="p-3.5 rounded-xl text-xs flex items-center justify-between gap-2.5 bg-amber-950/80 border border-amber-700 text-amber-200 animate-fade-in">
+                      <div className="flex items-center gap-2">
+                        <AlertCircle className="w-4 h-4 shrink-0 text-amber-500" />
+                        <span>{classificationError}</span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setClassificationError(null)}
+                        className="text-[10px] font-bold underline cursor-pointer"
+                      >
+                        Dismiss
+                      </button>
+                    </div>
+                  )}
+
+                  {predictions && (
+                    <div className="animate-fade-in text-left">
+                      <PredictionCard
+                        predictions={predictions}
+                        onConfirm={handleQuickConfirm}
+                        onOpenEditModal={(p) => setModalPrediction(p)}
+                        isSunlightMode={isSunlightMode}
+                        embeddedInHero={true}
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
             </section>
+
 
             {/* (3) CANONICAL STAT BAND: dark-brown background, 4 columns separated by dividers */}
             <section className="w-full bg-[#1C150E] border-b border-[#3D2E20]">
@@ -471,20 +493,6 @@ export const App: React.FC = () => {
 
                 {/* 4-Step Survey Workflow Protocol */}
                 <SurveyOnboardingHint isSunlightMode={isSunlightMode} />
-
-                {/* Visible Error Handling Banner */}
-                {inferenceError && (
-                  <div
-                    role="alert"
-                    className="max-w-2xl mx-auto p-4 rounded-xl bg-red-950/90 border border-red-600 text-red-100 flex items-start gap-3 shadow-lg animate-fade-in"
-                  >
-                    <AlertCircle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
-                    <div className="flex-1 text-sm">
-                      <p className="font-bold text-red-200">Acoustic Inference Error</p>
-                      <p className="text-xs text-red-300 mt-1 leading-relaxed">{inferenceError}</p>
-                    </div>
-                  </div>
-                )}
 
                 {/* Latest Inference Species Card (if active) */}
                 {predictions && (
@@ -561,10 +569,6 @@ export const App: React.FC = () => {
                   isSunlightMode={isSunlightMode}
                   searchQuery={searchQuery}
                   onSearchChange={setSearchQuery}
-                  onSelectSample={(sample) => {
-                    setActiveTab('identify');
-                    handleSelectSample(sample);
-                  }}
                 />
               </div>
             </section>
@@ -670,18 +674,6 @@ export const App: React.FC = () => {
                   v0.1.0 • PWA Offline
                 </span>
               </div>
-              <div className="pt-2">
-                <a
-                  href="https://github.com/Sourabh-Kumar04/TrailWhistle"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-xs text-[#E67E22] hover:text-[#F39C12] transition-colors break-all"
-                  aria-label="TrailWhistle GitHub repository"
-                >
-                  <ExternalLink className="w-3.5 h-3.5 shrink-0" />
-                  <span>https://github.com/Sourabh-Kumar04/TrailWhistle</span>
-                </a>
-              </div>
             </div>
 
             {/* Column 2: Survey Tools */}
@@ -768,12 +760,10 @@ export const App: React.FC = () => {
                 href="https://github.com/Sourabh-Kumar04/TrailWhistle"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-white transition-colors underline"
+                className="text-[#D8CDC2] hover:text-white underline decoration-[#D73C30]/50 hover:decoration-[#D73C30] transition-colors"
               >
-                GitHub Repository
+                GitHub: Sourabh-Kumar04/TrailWhistle
               </a>
-              <span>•</span>
-              <span>MIT License</span>
               <span>•</span>
               <span>BirdNET v2.4</span>
               <span>•</span>

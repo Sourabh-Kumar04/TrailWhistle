@@ -321,11 +321,9 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
         {onSelectSample && (
           <div
             className={`w-full pt-4 mt-2 border-t ${
-              embeddedInHero
-                ? 'border-white/20'
-                : isSunlightMode
-                  ? 'border-[#4A3A2C]'
-                  : 'border-[#E5E0D8]'
+              isSunlightMode
+                ? 'border-[#4A3A2C]'
+                : 'border-[#E5E0D8]'
             }`}
           >
             <div className="flex items-center justify-between mb-3">

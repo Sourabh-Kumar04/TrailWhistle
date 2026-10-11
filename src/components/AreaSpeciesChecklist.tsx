@@ -82,7 +82,7 @@ export const AreaSpeciesChecklist: React.FC<AreaSpeciesChecklistProps> = ({
             Census Station Active
           </h3>
           <p className="text-xs sm:text-sm max-w-sm mb-5 leading-relaxed text-[#736B63]">
-            Listening for avian bioacoustics in <strong className="text-[#241B12]">{locationName}</strong>. Tap Record or test with a field sample to populate this live area checklist.
+            Listening for avian bioacoustics in <strong className="text-[#241B12]">{locationName}</strong>. Tap Record Call in the header to log bird calls detected at this transect.
           </p>
 
           {/* Expected Taxa in Habitat Preview */}

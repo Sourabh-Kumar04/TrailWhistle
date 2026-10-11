@@ -29,68 +29,59 @@ export const SurveyStatsBar: React.FC<SurveyStatsBarProps> = ({
       className={`w-full transition-all duration-200 border rounded-xl overflow-hidden shadow-sm ${
         isSunlightMode
           ? 'bg-[#120D08] border-[#4A3A2C] text-white shadow-xl'
-          : 'bg-white border-[#E5E0D8] text-[#1C1610]'
+          : 'bg-[#1C150E] border-[#3D2E20] text-white shadow-md'
       }`}
     >
       {/* 4 Columns Separated by Thin Vertical Dividers */}
       <div className={`grid grid-cols-2 md:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x ${
-        isSunlightMode ? 'divide-[#4A3A2C]' : 'divide-[#E5E0D8]'
+        isSunlightMode ? 'divide-[#4A3A2C]' : 'divide-[#3D2E20]'
       }`}>
         {/* Column 1: Species Found */}
-        <div className="p-5 sm:p-7 flex flex-col items-center justify-center text-center">
-          <div
-            className={`text-4xl sm:text-5xl font-bold font-sans tracking-tight leading-none ${
-              isSunlightMode ? 'text-white' : 'text-[#1C1610]'
-            }`}
-          >
+        <div className="p-4 sm:p-6 flex flex-col items-center justify-center text-center">
+          <div className="text-3xl sm:text-4xl lg:text-5xl font-bold font-sans tracking-tight leading-none text-white">
             {speciesCount}
           </div>
-          <div className="text-xs uppercase tracking-wider font-semibold text-[#736B63] mt-2">
+          <div className="text-xs uppercase tracking-wider font-semibold text-[#A89B8C] mt-2">
             Species Found
           </div>
         </div>
 
         {/* Column 2: Recordings */}
-        <div className="p-5 sm:p-7 flex flex-col items-center justify-center text-center">
-          <div
-            className={`text-4xl sm:text-5xl font-bold font-sans tracking-tight leading-none ${
-              isSunlightMode ? 'text-white' : 'text-[#1C1610]'
-            }`}
-          >
+        <div className="p-4 sm:p-6 flex flex-col items-center justify-center text-center">
+          <div className="text-3xl sm:text-4xl lg:text-5xl font-bold font-sans tracking-tight leading-none text-white">
             {totalRecordings}
           </div>
-          <div className="text-xs uppercase tracking-wider font-semibold text-[#736B63] mt-2">
+          <div className="text-xs uppercase tracking-wider font-semibold text-[#A89B8C] mt-2">
             Recordings
           </div>
         </div>
 
-        {/* Column 3: Survey Time */}
-        <div className="p-5 sm:p-7 flex flex-col items-center justify-center text-center">
-          <div
-            className={`text-4xl sm:text-5xl font-bold font-sans tracking-tight leading-none ${
-              isSunlightMode ? 'text-white' : 'text-[#1C1610]'
-            }`}
-          >
+        {/* Column 3: Total Field Time */}
+        <div
+          className="p-4 sm:p-6 flex flex-col items-center justify-center text-center group cursor-help"
+          title="Total Field Time (all sessions): Cumulative bioacoustic survey time across all sessions. Resets when starting a new survey transect."
+        >
+          <div className="text-3xl sm:text-4xl lg:text-5xl font-bold font-sans tracking-tight leading-none text-white">
             {surveyTimeDisplay}
           </div>
-          <div className="text-xs uppercase tracking-wider font-semibold text-[#736B63] mt-2">
-            Survey Time
+          <div className="text-xs uppercase tracking-wider font-semibold text-[#A89B8C] mt-2 flex items-center justify-center gap-1">
+            <span>Total Field Time</span>
+            <span className="text-[10px] text-[#D8CDC2] font-mono font-normal">ⓘ</span>
+          </div>
+          <div className="text-[10px] text-[#A89B8C]/80 font-medium mt-0.5">
+            (all sessions)
           </div>
         </div>
 
         {/* Column 4: Sites */}
-        <div className="p-5 sm:p-7 flex flex-col items-center justify-center text-center">
-          <div
-            className={`text-4xl sm:text-5xl font-bold font-sans tracking-tight leading-none ${
-              isSunlightMode ? 'text-white' : 'text-[#1C1610]'
-            }`}
-          >
+        <div className="p-4 sm:p-6 flex flex-col items-center justify-center text-center">
+          <div className="text-3xl sm:text-4xl lg:text-5xl font-bold font-sans tracking-tight leading-none text-white">
             {sitesCount}
           </div>
-          <div className="text-xs uppercase tracking-wider font-semibold text-[#736B63] mt-2 flex items-center justify-center gap-1">
+          <div className="text-xs uppercase tracking-wider font-semibold text-[#A89B8C] mt-2 flex items-center justify-center gap-1">
             <span>Sites</span>
             {location && (
-              <span className="text-[10px] text-[#3D8B40] font-mono font-normal">
+              <span className="text-[10px] text-[#48A54C] font-mono font-normal">
                 (±{location.accuracy || 10}m)
               </span>
             )}
