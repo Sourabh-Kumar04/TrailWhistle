@@ -90,7 +90,14 @@ export const SpeciesCatalog: React.FC<SpeciesCatalogProps> = ({
   const currentSearchQuery = externalSearchQuery !== undefined ? externalSearchQuery : internalQuery;
   const [playingId, setPlayingId] = useState<string | null>(null);
   const audioPlayerRef = useRef<HTMLAudioElement | null>(null);
-  const [taxonomy, setTaxonomy] = useState<Array<{ scientific: string; common: string }>>([]);
+  // BirdNET includes some non-bird sounds (frogs, crickets, monkeys, etc).
+// Filter them from search so birders don't see a toad in bird results.
+const NON_BIRD_RE = /frog|toad|cricket|monkey|howler|\bbat\b|mouse|squirrel|\bdog\b|engine|environmental|fireworks|\bgun\b|noise|siren/i;
+function isBirdTaxon(scientific: string, common: string): boolean {
+  return !NON_BIRD_RE.test(scientific) && !NON_BIRD_RE.test(common);
+}
+
+const [taxonomy, setTaxonomy] = useState<Array<{ scientific: string; common: string }>>([]);
   const [taxonomyLoaded, setTaxonomyLoaded] = useState(false);
 
   useEffect(() => {
@@ -107,7 +114,7 @@ export const SpeciesCatalog: React.FC<SpeciesCatalogProps> = ({
           if (idx < 0) continue;
           const scientific = t.slice(0, idx).trim();
           const common = t.slice(idx + 1).trim();
-          if (scientific && common) entries.push({ scientific, common });
+          if (scientific && common && isBirdTaxon(scientific, common)) entries.push({ scientific, common });
         }
         setTaxonomy(entries);
         setTaxonomyLoaded(true);

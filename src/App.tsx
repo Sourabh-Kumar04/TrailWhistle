@@ -264,7 +264,7 @@ export const App: React.FC = () => {
       commonName: prediction.commonName,
       scientificName: prediction.scientificName,
       confidence: prediction.confidence,
-      notes: `Observed via TrailWhistle on-device AI. Signature: ${prediction.matchedClass}`,
+      notes: 'Identified by sound using on-device AI.',
       audioDurationSeconds: capturedAudioDuration,
       source: capturedSource,
       confirmedByUser: true,
