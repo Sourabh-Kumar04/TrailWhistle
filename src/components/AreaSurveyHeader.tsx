@@ -51,27 +51,27 @@ export const AreaSurveyHeader: React.FC<AreaSurveyHeaderProps> = ({
   return (
     <div className={`p-4 sm:p-5 rounded-2xl border transition-all mb-4 ${
       isSunlightMode
-        ? 'bg-white border-neutral-300 text-neutral-900 shadow-sm'
-        : 'bg-gradient-to-br from-[#0d1e13] via-[#09170e] to-[#050e08] border-emerald-800/50 text-white shadow-xl'
+        ? 'bg-[#06140b] border-emerald-800/80 text-white shadow-xl'
+        : 'bg-white border-[#d4e2d4] text-[#1a2b1e] shadow-sm'
     }`}>
       {/* Headline Feature: BirdNET v2.4 6,522 Species Headline */}
       <div className={`flex flex-wrap items-center justify-between gap-2 pb-3 mb-3 border-b ${
-        isSunlightMode ? 'border-neutral-200' : 'border-emerald-900/40'
+        isSunlightMode ? 'border-emerald-900/60' : 'border-[#eef4ee]'
       }`}>
         <div className="flex items-center gap-2">
-          <span className={`text-xs font-semibold px-2.5 py-1 rounded-lg flex items-center gap-1.5 shadow-sm ${
+          <span className={`text-xs font-semibold px-2.5 py-1 rounded-lg flex items-center gap-1.5 shadow-xs ${
             isSunlightMode
-              ? 'bg-emerald-900 text-white'
-              : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+              ? 'bg-emerald-900 text-white border border-emerald-700'
+              : 'bg-[#eef4ee] text-[#2d5a37] border border-[#d4e2d4]'
           }`}>
-            <Sparkles className="w-3.5 h-3.5 text-feather-yellow" />
+            <Sparkles className={`w-3.5 h-3.5 ${isSunlightMode ? 'text-feather-yellow' : 'text-[#7a9e7e]'}`} />
             <span>Area biodiversity survey</span>
           </span>
           <span className={`text-xs font-medium hidden md:inline-flex items-center gap-1.5 ${
-            isSunlightMode ? 'text-neutral-800' : 'text-emerald-200/90'
+            isSunlightMode ? 'text-emerald-200' : 'text-[#4a5d4e]'
           }`}>
-            <Database className="w-3.5 h-3.5 text-feather-yellow" />
-            <strong className="font-semibold">BirdNET v2.4 Neural Core</strong> • 6,522 Species Global Taxonomy
+            <Database className={`w-3.5 h-3.5 ${isSunlightMode ? 'text-emerald-400' : 'text-[#7a9e7e]'}`} />
+            <strong className={`font-semibold ${isSunlightMode ? 'text-white' : 'text-[#1a2b1e]'}`}>BirdNET v2.4 Neural Core</strong> • 6,522 Species Global Taxonomy
           </span>
         </div>
 
@@ -79,10 +79,10 @@ export const AreaSurveyHeader: React.FC<AreaSurveyHeaderProps> = ({
           {/* Active Survey Pulse indicator */}
           <span className={`inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-full ${
             isSunlightMode
-              ? 'bg-emerald-50 text-emerald-950 border border-emerald-200'
-              : 'bg-emerald-950/80 text-emerald-300 border border-emerald-700/60'
+              ? 'bg-emerald-950 text-emerald-300 border border-emerald-700/60'
+              : 'bg-[#eef4ee] text-[#2d5a37] border border-[#d4e2d4]'
           }`}>
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping shrink-0" />
+            <span className={`w-2 h-2 rounded-full animate-ping shrink-0 ${isSunlightMode ? 'bg-emerald-400' : 'bg-[#7a9e7e]'}`} />
             <Clock className="w-3 h-3" />
             <span>{elapsedMinutes}m active</span>
           </span>
@@ -93,8 +93,8 @@ export const AreaSurveyHeader: React.FC<AreaSurveyHeaderProps> = ({
             onClick={onNewSurvey}
             className={`px-3 py-1.5 min-h-[36px] text-xs font-bold rounded-lg flex items-center gap-1.5 transition-all cursor-pointer ${
               isSunlightMode
-                ? 'bg-neutral-100 text-neutral-900 border border-neutral-300 hover:bg-neutral-200'
-                : 'bg-emerald-900/60 hover:bg-emerald-800 text-emerald-200 hover:text-white border border-emerald-700/60 shadow-sm'
+                ? 'bg-emerald-900/80 hover:bg-emerald-800 text-emerald-200 hover:text-white border border-emerald-700/60 shadow-sm'
+                : 'bg-[#f4f7f4] hover:bg-[#eef4ee] text-[#1a2b1e] border border-[#d4e2d4]'
             }`}
             title="Start a new area survey session at another site"
           >
@@ -110,7 +110,9 @@ export const AreaSurveyHeader: React.FC<AreaSurveyHeaderProps> = ({
         <div className="flex-1 space-y-2">
           <div className="flex items-center gap-2">
             <div className={`p-1.5 rounded-lg shrink-0 ${
-              isSunlightMode ? 'bg-amber-100 text-amber-900' : 'bg-amber-500/10 text-feather-yellow border border-amber-500/20'
+              isSunlightMode
+                ? 'bg-emerald-950 text-emerald-400 border border-emerald-800'
+                : 'bg-[#eef4ee] text-[#2d5a37] border border-[#d4e2d4]'
             }`}>
               <MapPin className="w-4 h-4" />
             </div>
@@ -122,14 +124,16 @@ export const AreaSurveyHeader: React.FC<AreaSurveyHeaderProps> = ({
                   onChange={(e) => setTempName(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleSaveName()}
                   className={`px-3 py-1.5 text-sm font-bold rounded-lg border flex-1 outline-none ${
-                    isSunlightMode ? 'bg-white border-neutral-400 text-neutral-900 focus:border-black' : 'bg-canopy-950 border-emerald-700 text-white focus:border-emerald-400'
+                    isSunlightMode
+                      ? 'bg-[#061009] border-emerald-700 text-white focus:border-emerald-400'
+                      : 'bg-[#faf9f6] border-[#d4e2d4] text-[#1a2b1e] focus:border-[#7a9e7e]'
                   }`}
                   autoFocus
                 />
                 <button
                   type="button"
                   onClick={handleSaveName}
-                  className="p-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg cursor-pointer"
+                  className="p-2 bg-[#7a9e7e] hover:bg-[#688f6c] text-white rounded-lg cursor-pointer"
                   title="Save site name"
                 >
                   <Check className="w-4 h-4" />
@@ -137,7 +141,9 @@ export const AreaSurveyHeader: React.FC<AreaSurveyHeaderProps> = ({
               </div>
             ) : (
               <div className="flex items-center gap-2">
-                <h1 className="text-xl sm:text-2xl font-black tracking-tight font-sans">{survey.locationName}</h1>
+                <h1 className={`text-xl sm:text-2xl font-black tracking-tight font-sans ${
+                  isSunlightMode ? 'text-white' : 'text-[#1a2b1e]'
+                }`}>{survey.locationName}</h1>
                 <button
                   type="button"
                   onClick={() => {
@@ -145,7 +151,9 @@ export const AreaSurveyHeader: React.FC<AreaSurveyHeaderProps> = ({
                     setIsEditingName(true);
                   }}
                   className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
-                    isSunlightMode ? 'text-neutral-500 hover:text-black hover:bg-neutral-100' : 'text-emerald-400/70 hover:text-white hover:bg-emerald-900/40'
+                    isSunlightMode
+                      ? 'text-emerald-400/80 hover:text-white hover:bg-emerald-900/50'
+                      : 'text-[#4a5d4e] hover:text-[#1a2b1e] hover:bg-[#eef4ee]'
                   }`}
                   title="Rename survey site"
                 >
@@ -164,8 +172,8 @@ export const AreaSurveyHeader: React.FC<AreaSurveyHeaderProps> = ({
                 onChange={handleSelectPreset}
                 className={`text-xs font-semibold py-1.5 px-3 rounded-lg border appearance-none pr-8 cursor-pointer transition-all ${
                   isSunlightMode
-                    ? 'bg-neutral-100 border-neutral-300 text-neutral-900 hover:bg-neutral-200'
-                    : 'bg-[#06120a] border-emerald-800/80 text-emerald-200 hover:border-emerald-600'
+                    ? 'bg-[#06120a] border-emerald-800/80 text-emerald-200 hover:border-emerald-600'
+                    : 'bg-[#faf9f6] border-[#d4e2d4] text-[#1a2b1e] hover:border-[#7a9e7e]'
                 }`}
               >
                 <option value="" disabled>Trail Presets...</option>
@@ -183,8 +191,8 @@ export const AreaSurveyHeader: React.FC<AreaSurveyHeaderProps> = ({
                 onChange={handleSelectHabitat}
                 className={`text-xs font-semibold py-1.5 pl-7 pr-8 rounded-lg border appearance-none cursor-pointer transition-all ${
                   isSunlightMode
-                    ? 'bg-neutral-100 border-neutral-300 text-neutral-900 hover:bg-neutral-200'
-                    : 'bg-[#06120a] border-emerald-800/80 text-emerald-200 hover:border-emerald-600'
+                    ? 'bg-[#06120a] border-emerald-800/80 text-emerald-200 hover:border-emerald-600'
+                    : 'bg-[#faf9f6] border-[#d4e2d4] text-[#1a2b1e] hover:border-[#7a9e7e]'
                 }`}
               >
                 {HABITAT_TAGS.map((tag) => (
@@ -192,7 +200,7 @@ export const AreaSurveyHeader: React.FC<AreaSurveyHeaderProps> = ({
                 ))}
               </select>
               <Trees className={`pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 ${
-                isSunlightMode ? 'text-emerald-700' : 'text-emerald-400'
+                isSunlightMode ? 'text-emerald-400' : 'text-[#7a9e7e]'
               }`} />
               <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] opacity-60">▼</span>
             </div>
@@ -205,14 +213,14 @@ export const AreaSurveyHeader: React.FC<AreaSurveyHeaderProps> = ({
             type="button"
             onClick={onExportCsv}
             disabled={totalRecordings === 0}
-            className={`py-2.5 px-4 min-h-[44px] rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow-lg transition-all cursor-pointer ${
+            className={`py-2.5 px-4 min-h-[44px] rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer ${
               totalRecordings === 0
                 ? isSunlightMode 
-                  ? 'opacity-40 cursor-not-allowed bg-neutral-200 text-neutral-500 border border-neutral-300' 
-                  : 'opacity-40 cursor-not-allowed bg-emerald-950/40 text-emerald-500/50 border border-emerald-900/40'
+                  ? 'opacity-40 cursor-not-allowed bg-emerald-950/40 text-emerald-500/50 border border-emerald-900/40' 
+                  : 'opacity-40 cursor-not-allowed bg-[#f4f7f4] text-[#4a5d4e] border border-[#d4e2d4]'
                 : isSunlightMode
-                  ? 'bg-emerald-900 text-white hover:bg-emerald-800 shadow-emerald-950/10 hover:scale-[1.02] active:scale-95'
-                  : 'bg-gradient-to-r from-emerald-600 to-forest-600 hover:from-emerald-500 hover:to-forest-500 text-white border border-emerald-400/40 shadow-emerald-950/40 hover:scale-[1.02] active:scale-95'
+                  ? 'bg-emerald-700 hover:bg-emerald-600 text-white border border-emerald-500/50 shadow-md hover:scale-[1.02] active:scale-95'
+                  : 'bg-[#7a9e7e] hover:bg-[#688f6c] text-white shadow-sm hover:scale-[1.02] active:scale-95'
             }`}
             title="Download CSV report of current area biodiversity survey"
           >

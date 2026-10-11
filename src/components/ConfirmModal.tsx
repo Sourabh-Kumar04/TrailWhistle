@@ -92,22 +92,24 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-md animate-fade-in">
       <div className={`w-full max-w-lg rounded-t-3xl sm:rounded-2xl max-h-[90vh] overflow-y-auto p-5 sm:p-6 transition-all shadow-2xl ${
-        isSunlightMode ? 'bg-white text-neutral-900 border border-neutral-300' : 'bg-[#06140b] text-white border border-emerald-800/80'
+        isSunlightMode ? 'bg-[#06140b] text-white border border-emerald-800/80' : 'bg-white text-[#1a2b1e] border border-[#d4e2d4]'
       }`}>
         {/* Header */}
         <div className={`flex items-center justify-between pb-4 border-b mb-4 ${
-          isSunlightMode ? 'border-neutral-200' : 'border-emerald-900/60'
+          isSunlightMode ? 'border-emerald-900/60' : 'border-[#eef4ee]'
         }`}>
           <div className="flex items-center gap-2">
-            <Feather className="w-5 h-5 text-feather-yellow" />
-            <h3 className="font-extrabold text-lg tracking-tight font-sans">Confirm Field Observation</h3>
+            <Feather className={`w-5 h-5 ${isSunlightMode ? 'text-emerald-400' : 'text-[#7a9e7e]'}`} />
+            <h3 className={`font-extrabold text-lg tracking-tight font-sans ${isSunlightMode ? 'text-white' : 'text-[#1a2b1e]'}`}>
+              Confirm Field Observation
+            </h3>
           </div>
           <button
             type="button"
             onClick={onClose}
             aria-label="Close dialog"
             className={`p-2 min-w-[40px] min-h-[40px] rounded-lg transition-colors cursor-pointer ${
-              isSunlightMode ? 'hover:bg-neutral-100 text-neutral-500 hover:text-black' : 'hover:bg-emerald-900 text-neutral-400 hover:text-white'
+              isSunlightMode ? 'hover:bg-emerald-900 text-neutral-400 hover:text-white' : 'hover:bg-[#faf9f6] text-[#4a5d4e] hover:text-[#1a2b1e]'
             }`}
           >
             <X className="w-5 h-5" />
@@ -116,17 +118,19 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
 
         {/* Selected Bird Summary */}
         <div className={`p-4 rounded-xl border mb-4 transition-all ${
-          isSunlightMode ? 'bg-neutral-50 border-neutral-200' : 'bg-[#040e07] border-emerald-900/80'
+          isSunlightMode ? 'bg-[#040e07] border-emerald-900/80' : 'bg-[#faf9f6] border-[#d4e2d4]'
         }`}>
           <div className="flex items-start justify-between">
             <div>
-              <div className="text-xl sm:text-2xl font-black tracking-tight">{isCustomSpecies && customName ? customName : selectedCommonName}</div>
-              <div className={`text-xs italic mt-0.5 ${isSunlightMode ? 'text-neutral-600' : 'text-emerald-300/80'}`}>
+              <div className={`text-xl sm:text-2xl font-black tracking-tight ${isSunlightMode ? 'text-white' : 'text-[#1a2b1e]'}`}>
+                {isCustomSpecies && customName ? customName : selectedCommonName}
+              </div>
+              <div className={`text-xs italic mt-0.5 ${isSunlightMode ? 'text-emerald-300/80' : 'text-[#4a5d4e]'}`}>
                 {isCustomSpecies ? 'Manual identification' : selectedScientificName}
               </div>
             </div>
             <span className={`text-xs font-mono font-bold px-2.5 py-1 rounded-full border ${
-              isSunlightMode ? 'bg-emerald-50 text-emerald-950 border-emerald-300' : 'bg-emerald-950 text-feather-yellow border-emerald-800'
+              isSunlightMode ? 'bg-emerald-950 text-emerald-300 border-emerald-800' : 'bg-[#eef4ee] text-[#2d5a37] border-[#d4e2d4]'
             }`}>
               {Math.round(confidence * 100)}% match
             </span>
@@ -136,7 +140,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
         {/* Alternate top predictions selector */}
         <div className="mb-4">
           <label className={`block text-xs font-semibold mb-2 ${
-            isSunlightMode ? 'text-neutral-700' : 'text-emerald-300'
+            isSunlightMode ? 'text-emerald-300' : 'text-[#4a5d4e]'
           }`}>
             Classified candidates:
           </label>
@@ -151,11 +155,11 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
                   className={`p-2 rounded-xl border text-xs min-h-[48px] text-left transition-all cursor-pointer ${
                     isSelected
                       ? isSunlightMode
-                        ? 'bg-neutral-900 text-white border-neutral-900 font-bold shadow-sm'
-                        : 'bg-emerald-700 border-emerald-400 text-white font-bold ring-2 ring-emerald-400/40 shadow-sm'
+                        ? 'bg-emerald-700 border-emerald-400 text-white font-bold ring-2 ring-emerald-400/40 shadow-sm'
+                        : 'bg-[#2d5a37] border-[#2d5a37] text-white font-bold ring-2 ring-[#7a9e7e] shadow-sm'
                       : isSunlightMode
-                        ? 'bg-neutral-50 border-neutral-200 text-neutral-800 hover:bg-neutral-100'
-                        : 'bg-[#040e07] border-emerald-900/60 text-emerald-200 hover:border-emerald-700'
+                        ? 'bg-[#040e07] border-emerald-900/60 text-emerald-200 hover:border-emerald-700'
+                        : 'bg-[#faf9f6] border-[#d4e2d4] text-[#1a2b1e] hover:border-[#7a9e7e]'
                   }`}
                 >
                   <div className="font-bold line-clamp-1">{p.commonName}</div>
@@ -173,8 +177,8 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
             onClick={() => setShowSearchSpecies(!showSearchSpecies)}
             className={`w-full py-2 px-3 text-xs font-bold rounded-xl border flex items-center justify-center gap-1.5 transition-all min-h-[44px] cursor-pointer ${
               isSunlightMode
-                ? 'bg-neutral-100 border-neutral-300 text-neutral-900 hover:bg-neutral-200'
-                : 'bg-emerald-950 border-emerald-800/80 text-emerald-200 hover:bg-emerald-900'
+                ? 'bg-emerald-950 border-emerald-800/80 text-emerald-200 hover:bg-emerald-900'
+                : 'bg-[#faf9f6] border-[#d4e2d4] text-[#2d5a37] hover:bg-[#f0ede6]'
             }`}
           >
             <Search className="w-3.5 h-3.5" />
@@ -183,7 +187,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
 
           {showSearchSpecies && (
             <div className={`mt-2 p-3 rounded-xl border ${
-              isSunlightMode ? 'bg-neutral-50 border-neutral-300' : 'bg-[#040e07] border-emerald-900/80'
+              isSunlightMode ? 'bg-[#040e07] border-emerald-900/80' : 'bg-[#faf9f6] border-[#d4e2d4]'
             }`}>
               <input
                 type="text"
@@ -191,7 +195,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className={`w-full p-2 rounded-lg text-xs mb-2 border outline-none ${
-                  isSunlightMode ? 'bg-white border-neutral-300 text-neutral-900 focus:border-black' : 'bg-[#06140b] border-emerald-800 text-white focus:border-emerald-500'
+                  isSunlightMode ? 'bg-[#06140b] border-emerald-800 text-white focus:border-emerald-500' : 'bg-white border-[#d4e2d4] text-[#1a2b1e] focus:border-[#7a9e7e]'
                 }`}
               />
 
@@ -202,7 +206,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
                     type="button"
                     onClick={() => handleSelectFromDb(sp)}
                     className={`w-full text-left p-1.5 rounded text-xs flex justify-between transition-colors cursor-pointer ${
-                      isSunlightMode ? 'hover:bg-neutral-200 text-neutral-900' : 'hover:bg-emerald-900/60 text-emerald-100'
+                      isSunlightMode ? 'hover:bg-emerald-900/60 text-emerald-100' : 'hover:bg-[#eef4ee] text-[#1a2b1e]'
                     }`}
                   >
                     <span className="font-medium">{sp.commonName}</span>
@@ -212,7 +216,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
               </div>
 
               {/* Custom Bird Input */}
-              <div className={`pt-2 mt-2 border-t ${isSunlightMode ? 'border-neutral-200' : 'border-emerald-900/60'}`}>
+              <div className={`pt-2 mt-2 border-t ${isSunlightMode ? 'border-emerald-900/60' : 'border-[#eef4ee]'}`}>
                 <label className="text-[11px] block font-semibold mb-1">Or enter custom unlisted bird:</label>
                 <div className="flex gap-2">
                   <input
@@ -224,7 +228,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
                       setIsCustomSpecies(true);
                     }}
                     className={`flex-1 p-2 rounded-lg text-xs border outline-none ${
-                      isSunlightMode ? 'bg-white border-neutral-300 text-neutral-900' : 'bg-[#06140b] border-emerald-800 text-white'
+                      isSunlightMode ? 'bg-[#06140b] border-emerald-800 text-white' : 'bg-white border-[#d4e2d4] text-[#1a2b1e]'
                     }`}
                   />
                   <button
@@ -235,7 +239,9 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
                         setShowSearchSpecies(false);
                       }
                     }}
-                    className="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg text-xs cursor-pointer"
+                    className={`px-3 py-1 font-bold rounded-lg text-xs cursor-pointer text-white ${
+                      isSunlightMode ? 'bg-emerald-700 hover:bg-emerald-600' : 'bg-[#2d5a37] hover:bg-[#23472b]'
+                    }`}
                   >
                     Apply
                   </button>
@@ -248,7 +254,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
         {/* Field Notes */}
         <div className="mb-4">
           <label className={`block text-xs font-semibold mb-1.5 ${
-            isSunlightMode ? 'text-neutral-700' : 'text-emerald-300'
+            isSunlightMode ? 'text-emerald-300' : 'text-[#4a5d4e]'
           }`}>
             Field notes / trail context:
           </label>
@@ -259,8 +265,8 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
             placeholder="e.g. Sighted singing in white pine canopy, 20m off trail."
             className={`w-full p-2.5 rounded-xl text-xs border resize-none min-h-[48px] outline-none ${
               isSunlightMode 
-                ? 'bg-white border-neutral-300 text-neutral-900 focus:border-black placeholder-neutral-400' 
-                : 'bg-[#040e07] border-emerald-900 text-emerald-100 placeholder-emerald-700/60 focus:border-emerald-500'
+                ? 'bg-[#040e07] border-emerald-900 text-emerald-100 placeholder-emerald-700/60 focus:border-emerald-500' 
+                : 'bg-[#faf9f6] border-[#d4e2d4] text-[#1a2b1e] focus:border-[#7a9e7e] placeholder-[#4a5d4e]/60'
             }`}
           />
         </div>
@@ -268,14 +274,14 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
         {/* GPS Capture */}
         <div className="mb-6 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <MapPin className={`w-4 h-4 ${location ? 'text-emerald-400' : 'text-neutral-500'}`} />
+            <MapPin className={`w-4 h-4 ${location ? (isSunlightMode ? 'text-emerald-400' : 'text-[#2d5a37]') : (isSunlightMode ? 'text-neutral-500' : 'text-[#7a9e7e]')}`} />
             <div className="text-xs">
               {location ? (
-                <span className="font-mono font-semibold text-emerald-400">
+                <span className={`font-mono font-semibold ${isSunlightMode ? 'text-emerald-400' : 'text-[#2d5a37]'}`}>
                   {location.latitude.toFixed(4)}°, {location.longitude.toFixed(4)}° (±{location.accuracy}m)
                 </span>
               ) : (
-                <span className={isSunlightMode ? 'text-neutral-600' : 'text-emerald-400/60'}>
+                <span className={isSunlightMode ? 'text-emerald-400/60' : 'text-[#4a5d4e]'}>
                   Offline GPS coordinates optional
                 </span>
               )}
@@ -289,11 +295,11 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
             className={`px-3 py-1.5 min-h-[40px] text-xs font-bold rounded-xl border flex items-center gap-1.5 transition-all cursor-pointer ${
               location
                 ? isSunlightMode
-                  ? 'bg-emerald-50 border-emerald-300 text-emerald-900 font-bold'
-                  : 'bg-emerald-950 border-emerald-700 text-emerald-200'
+                  ? 'bg-emerald-950 border-emerald-700 text-emerald-200'
+                  : 'bg-[#eef4ee] border-[#d4e2d4] text-[#2d5a37]'
                 : isSunlightMode
-                  ? 'bg-neutral-100 border-neutral-300 text-neutral-900 hover:bg-neutral-200'
-                  : 'bg-emerald-950 border-emerald-800 text-feather-yellow hover:bg-emerald-900'
+                  ? 'bg-emerald-950 border-emerald-800 text-emerald-300 hover:bg-emerald-900'
+                  : 'bg-[#faf9f6] border-[#d4e2d4] text-[#2d5a37] hover:bg-[#f0ede6]'
             }`}
           >
             {isGettingGps ? (
@@ -322,8 +328,8 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
             onClick={onClose}
             className={`flex-1 py-3 min-h-[48px] rounded-xl font-bold text-sm border transition-all cursor-pointer ${
               isSunlightMode
-                ? 'bg-neutral-100 border-neutral-300 text-neutral-900 hover:bg-neutral-200'
-                : 'bg-emerald-950 border-emerald-800 text-emerald-200 hover:bg-emerald-900'
+                ? 'bg-emerald-950 border-emerald-800 text-emerald-200 hover:bg-emerald-900'
+                : 'bg-[#faf9f6] border-[#d4e2d4] text-[#4a5d4e] hover:bg-[#f0ede6]'
             }`}
           >
             Cancel
@@ -332,10 +338,10 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
           <button
             type="button"
             onClick={handleSave}
-            className={`flex-1 py-3 min-h-[48px] rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-lg transition-all cursor-pointer ${
+            className={`flex-1 py-3 min-h-[48px] rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer ${
               isSunlightMode
-                ? 'bg-emerald-900 text-white hover:bg-emerald-800'
-                : 'bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white border border-emerald-400/40 shadow-emerald-950/50'
+                ? 'bg-emerald-800 hover:bg-emerald-700 text-white shadow-md'
+                : 'bg-[#2d5a37] hover:bg-[#23472b] text-white shadow-sm'
             }`}
           >
             <Check className="w-4 h-4" />

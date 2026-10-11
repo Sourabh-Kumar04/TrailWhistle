@@ -93,53 +93,52 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
   return (
     <div className={`p-5 sm:p-6 rounded-2xl border transition-all duration-300 relative overflow-hidden ${
       isSunlightMode 
-        ? 'bg-white border-neutral-300 text-neutral-900 shadow-md' 
-        : 'bg-gradient-to-br from-[#0c1b12]/95 via-[#08150e]/95 to-[#040c07]/95 border-emerald-800/50 text-earth-50 shadow-2xl'
+        ? 'bg-[#06140b] border-emerald-800/80 text-white shadow-2xl' 
+        : 'bg-white border-[#d4e2d4] text-[#1a2b1e] shadow-sm'
     }`}>
-      {/* Ambient background glow behind the sensor */}
-      {!isSunlightMode && (
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
-      )}
-
       {/* Header Badge */}
       <div className={`flex items-center justify-between pb-3.5 mb-5 border-b relative z-10 ${
-        isSunlightMode ? 'border-neutral-200' : 'border-emerald-900/40'
+        isSunlightMode ? 'border-emerald-900/60' : 'border-[#eef4ee]'
       }`}>
         <div className="flex items-center gap-2.5">
           <div className={`p-1.5 rounded-lg ${
-            isSunlightMode ? 'bg-emerald-100 text-emerald-950' : 'bg-emerald-950/80 text-emerald-400 border border-emerald-700/50'
+            isSunlightMode ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' : 'bg-[#eef4ee] text-[#2d5a37] border border-[#d4e2d4]'
           }`}>
             <Radio className="w-4 h-4 animate-pulse" />
           </div>
           <div>
-            <h2 className={`text-sm font-bold font-sans ${isSunlightMode ? 'text-neutral-900' : 'text-emerald-100'}`}>
+            <h2 className={`text-sm font-bold font-sans ${isSunlightMode ? 'text-white' : 'text-[#1a2b1e]'}`}>
               Acoustic field recorder
             </h2>
-            <p className={`text-[11px] ${isSunlightMode ? 'text-neutral-600' : 'text-emerald-300/70'}`}>
+            <p className={`text-[11px] ${isSunlightMode ? 'text-emerald-300/80' : 'text-[#4a5d4e]'}`}>
               Real-time on-device audio worklet
             </p>
           </div>
         </div>
         <span className={`text-[10px] font-mono font-bold px-2.5 py-1 rounded-full flex items-center gap-1 ${
           isSunlightMode 
-            ? 'bg-neutral-100 text-neutral-900 border border-neutral-300' 
-            : 'bg-emerald-950/90 text-emerald-300 border border-emerald-700/60 shadow-inner'
+            ? 'bg-emerald-950 text-emerald-300 border border-emerald-700/60' 
+            : 'bg-[#eef4ee] text-[#2d5a37] border border-[#d4e2d4]'
         }`}>
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+          <span className={`w-1.5 h-1.5 rounded-full ${isSunlightMode ? 'bg-emerald-400' : 'bg-[#7a9e7e]'}`} />
           <span>48kHz Worklet</span>
         </span>
       </div>
 
       {/* Capture Section */}
       <div className="flex flex-col items-center justify-center text-center relative z-10">
-        <h3 className="text-lg sm:text-xl font-extrabold tracking-tight mb-1 font-sans">
+        <h3 className={`text-lg sm:text-xl font-extrabold tracking-tight mb-1 font-sans ${
+          isSunlightMode ? 'text-white' : 'text-[#1a2b1e]'
+        }`}>
           {isRecording 
             ? 'Sampling Canopy Acoustics...' 
             : isProcessing 
               ? 'Inferring BirdNET v2.4 Neural Core...' 
               : 'Record 3 Seconds of Birdsong'}
         </h3>
-        <p className={`text-xs mb-6 max-w-sm leading-relaxed ${isSunlightMode ? 'text-neutral-600 font-medium' : 'text-emerald-300/70'}`}>
+        <p className={`text-xs mb-6 max-w-sm leading-relaxed ${
+          isSunlightMode ? 'text-emerald-300/80' : 'text-[#4a5d4e]'
+        }`}>
           Aim microphone toward trees or shrubs. High-fidelity 48kHz audio is analyzed locally on device.
         </p>
 
@@ -147,8 +146,8 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
         <div className="relative mb-6 flex items-center justify-center group">
           {/* Subtle outer ambient pulse halo in idle */}
           {!isRecording && !isProcessing && (
-            <div className={`absolute w-36 h-36 rounded-full transition-all duration-700 group-hover:scale-110 opacity-40 ${
-              isSunlightMode ? 'bg-neutral-200' : 'bg-emerald-500/20 blur-md'
+            <div className={`absolute w-36 h-36 rounded-full transition-all duration-700 group-hover:scale-110 opacity-30 ${
+              isSunlightMode ? 'bg-amber-400/20 blur-md' : 'bg-amber-200/50 blur-md'
             }`} />
           )}
 
@@ -166,20 +165,20 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
             </>
           )}
 
-          {/* Tactile Record Button */}
+          {/* Tactile Record Button - Warm Amber (#f59e0b) ONLY for the record button */}
           <button
             type="button"
             onClick={handleStartRecording}
             disabled={isRecording || isProcessing}
             aria-label={isRecording ? 'Recording in progress' : 'Record 3 seconds of bird call'}
-            className={`w-32 h-32 rounded-full flex flex-col items-center justify-center transition-all duration-300 transform active:scale-95 shadow-2xl select-none relative z-10 cursor-pointer ${
+            className={`w-32 h-32 rounded-full flex flex-col items-center justify-center transition-all duration-300 transform active:scale-95 shadow-xl select-none relative z-10 cursor-pointer ${
               isRecording
                 ? 'bg-gradient-to-br from-red-500 to-red-700 text-white ring-8 ring-red-500/30 shadow-[0_0_50px_rgba(239,68,68,0.5)]'
                 : isProcessing
-                  ? 'bg-emerald-950 text-emerald-300 cursor-not-allowed border-2 border-emerald-700/60 opacity-90'
-                  : isSunlightMode
-                    ? 'bg-emerald-900 hover:bg-emerald-800 text-white border-4 border-emerald-700 hover:scale-105 shadow-xl shadow-emerald-950/20'
-                    : 'bg-gradient-to-br from-emerald-500 via-emerald-600 to-forest-800 hover:from-emerald-400 hover:to-forest-700 text-white border-2 border-emerald-300/40 hover:scale-105 shadow-[0_0_40px_rgba(16,185,129,0.35)]'
+                  ? isSunlightMode
+                    ? 'bg-emerald-950 text-emerald-300 cursor-not-allowed border-2 border-emerald-700 opacity-90'
+                    : 'bg-[#eef4ee] text-[#2d5a37] cursor-not-allowed border-2 border-[#d4e2d4]'
+                  : 'bg-[#f59e0b] hover:bg-[#d97706] text-white border-4 border-amber-300/40 hover:scale-105 shadow-lg shadow-amber-500/25'
             }`}
           >
             {isRecording ? (
@@ -189,15 +188,15 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
               </>
             ) : isProcessing ? (
               <>
-                <Sparkles className="w-9 h-9 animate-spin text-feather-yellow mb-1" />
-                <span className="text-xs font-bold text-feather-yellow">Classifying...</span>
+                <Sparkles className="w-9 h-9 animate-spin text-[#7a9e7e] mb-1" />
+                <span className="text-xs font-bold text-[#2d5a37]">Classifying...</span>
               </>
             ) : (
               <>
-                <div className="p-2.5 rounded-full bg-white/10 mb-1">
-                  <Mic className="w-8 h-8" />
+                <div className="p-2.5 rounded-full bg-white/20 mb-1">
+                  <Mic className="w-8 h-8 text-white" />
                 </div>
-                <span className="text-sm font-bold tracking-normal">Record</span>
+                <span className="text-sm font-bold tracking-normal text-white">Record</span>
               </>
             )}
           </button>
@@ -205,20 +204,22 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
 
         {/* Live Audio Visualizer / Bioacoustic Spectrum Meter */}
         {isRecording && (
-          <div className="w-64 mb-5 space-y-2 animate-fade-in p-3 rounded-xl bg-black/40 border border-emerald-900/50">
+          <div className={`w-64 mb-5 space-y-2 animate-fade-in p-3 rounded-xl border ${
+            isSunlightMode ? 'bg-black/60 border-emerald-900/60' : 'bg-[#faf9f6] border-[#d4e2d4]'
+          }`}>
             <div className="flex items-center justify-between text-[11px] font-mono">
-              <span className="flex items-center gap-1.5 font-bold text-emerald-300">
-                <Volume2 className="w-3.5 h-3.5 text-feather-yellow" />
+              <span className={`flex items-center gap-1.5 font-bold ${isSunlightMode ? 'text-emerald-300' : 'text-[#2d5a37]'}`}>
+                <Volume2 className={`w-3.5 h-3.5 ${isSunlightMode ? 'text-feather-yellow' : 'text-[#7a9e7e]'}`} />
                 <span>Bioacoustic Level</span>
               </span>
-              <span className="font-bold text-feather-yellow">{Math.round(volume * 100)}% RMS</span>
+              <span className={`font-bold ${isSunlightMode ? 'text-feather-yellow' : 'text-[#1a2b1e]'}`}>{Math.round(volume * 100)}% RMS</span>
             </div>
             
             {/* Primary RMS Level Bar */}
-            <div className={`w-full h-2 rounded-full overflow-hidden ${isSunlightMode ? 'bg-neutral-300' : 'bg-[#050e08]'}`}>
+            <div className={`w-full h-2 rounded-full overflow-hidden ${isSunlightMode ? 'bg-[#050e08]' : 'bg-[#eef4ee]'}`}>
               <div
                 className={`h-full transition-all duration-75 rounded-full ${
-                  isSunlightMode ? 'bg-emerald-900' : 'bg-gradient-to-r from-emerald-400 via-feather-yellow to-red-500 shadow-sm'
+                  isSunlightMode ? 'bg-emerald-400' : 'bg-[#7a9e7e]'
                 }`}
                 style={{ width: `${Math.min(100, Math.max(6, volume * 100))}%` }}
               />
@@ -234,16 +235,16 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
               ].map((band, i) => (
                 <div key={i} className="flex-1 flex flex-col items-center gap-1">
                   <div className={`w-full h-5 rounded-md overflow-hidden flex items-end ${
-                    isSunlightMode ? 'bg-neutral-200' : 'bg-[#050e08] border border-emerald-950'
+                    isSunlightMode ? 'bg-[#050e08] border border-emerald-950' : 'bg-[#eef4ee]'
                   }`}>
                     <div
                       className={`w-full transition-all duration-100 rounded-t ${
-                        isSunlightMode ? 'bg-emerald-900' : 'bg-gradient-to-t from-emerald-600 to-emerald-400'
+                        isSunlightMode ? 'bg-emerald-400' : 'bg-[#7a9e7e]'
                       }`}
                       style={{ height: `${band.height}%` }}
                     />
                   </div>
-                  <span className={`text-[9px] font-mono font-semibold ${isSunlightMode ? 'text-neutral-700' : 'text-emerald-400/70'}`}>
+                  <span className={`text-[9px] font-mono font-semibold ${isSunlightMode ? 'text-emerald-400/80' : 'text-[#4a5d4e]'}`}>
                     {band.label}
                   </span>
                 </div>
@@ -264,13 +265,13 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
             <button
               type="button"
               onClick={handleTogglePreview}
-              className={`px-4 py-2 min-h-[40px] rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer shadow-md ${
+              className={`px-4 py-2 min-h-[40px] rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer shadow-xs ${
                 isSunlightMode
-                  ? 'bg-neutral-100 hover:bg-neutral-200 border border-neutral-300 text-neutral-900'
-                  : 'bg-emerald-950/80 hover:bg-emerald-900/90 text-emerald-200 border border-emerald-700/60 shadow-emerald-950/40'
+                  ? 'bg-emerald-950/80 hover:bg-emerald-900 text-emerald-200 border border-emerald-700/60'
+                  : 'bg-[#f4f7f4] hover:bg-[#eef4ee] text-[#1a2b1e] border border-[#d4e2d4]'
               }`}
             >
-              <Play className={`w-3.5 h-3.5 text-feather-yellow ${isPlayingPreview ? 'fill-current' : ''}`} />
+              <Play className={`w-3.5 h-3.5 ${isSunlightMode ? 'text-emerald-400' : 'text-[#7a9e7e]'} ${isPlayingPreview ? 'fill-current' : ''}`} />
               <span>{isPlayingPreview ? 'Playing Captured Audio...' : 'Replay 3s Captured Audio'}</span>
             </button>
           </div>
@@ -279,7 +280,7 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
         {/* Error message */}
         {errorMessage && (
           <div className={`p-3.5 rounded-xl text-xs flex items-center gap-2.5 mb-4 w-full text-left ${
-            isSunlightMode ? 'bg-red-50 border border-red-300 text-red-900' : 'bg-red-950/80 border border-red-700 text-red-200'
+            isSunlightMode ? 'bg-red-950/80 border border-red-700 text-red-200' : 'bg-red-50 border border-red-200 text-red-900'
           }`}>
             <AlertCircle className="w-4 h-4 shrink-0 text-red-400" />
             <span>{errorMessage}</span>
@@ -289,17 +290,17 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
         {/* Quick Field Test Simulator for Immediate 30s Discovery */}
         {onSelectSample && (
           <div className={`w-full pt-4 mt-2 border-t ${
-            isSunlightMode ? 'border-neutral-200' : 'border-emerald-900/40'
+            isSunlightMode ? 'border-emerald-900/60' : 'border-[#eef4ee]'
           }`}>
             <div className="flex items-center justify-between mb-2.5">
               <span className={`text-xs font-semibold flex items-center gap-1.5 ${
-                isSunlightMode ? 'text-neutral-800' : 'text-emerald-200'
+                isSunlightMode ? 'text-emerald-200' : 'text-[#1a2b1e]'
               }`}>
-                <FlaskConical className="w-3.5 h-3.5 text-feather-yellow" />
+                <FlaskConical className={`w-3.5 h-3.5 ${isSunlightMode ? 'text-emerald-400' : 'text-[#7a9e7e]'}`} />
                 <span>Simulate field call:</span>
               </span>
               <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full ${
-                isSunlightMode ? 'bg-neutral-100 text-neutral-600' : 'bg-emerald-950 text-emerald-400 border border-emerald-900'
+                isSunlightMode ? 'bg-emerald-950 text-emerald-400 border border-emerald-900' : 'bg-[#f4f7f4] text-[#4a5d4e] border border-[#d4e2d4]'
               }`}>
                 48kHz xeno-canto
               </span>
@@ -317,26 +318,28 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
                     className={`p-2.5 rounded-xl text-left text-xs font-bold flex items-center justify-between transition-all min-h-[44px] cursor-pointer group ${
                       isSelected
                         ? isSunlightMode
-                          ? 'bg-emerald-900 text-white font-extrabold shadow-sm'
-                          : 'bg-emerald-800 text-white border border-emerald-400 shadow-md shadow-emerald-950/50'
+                          ? 'bg-emerald-800 text-white border border-emerald-400 shadow-md'
+                          : 'bg-[#7a9e7e] text-white border border-[#7a9e7e] shadow-xs'
                         : isSunlightMode
-                          ? 'bg-neutral-100 border border-neutral-300 hover:bg-neutral-200 text-neutral-900'
-                          : 'bg-[#06120a] border border-emerald-900/70 hover:border-emerald-600 hover:bg-[#0a1a0f] text-emerald-100'
+                          ? 'bg-[#06120a] border border-emerald-900/70 hover:border-emerald-600 hover:bg-[#0a1a0f] text-emerald-100'
+                          : 'bg-[#faf9f6] border border-[#d4e2d4] hover:bg-[#eef4ee] text-[#1a2b1e]'
                     }`}
                     title={`Run on-device BirdNET inference on ${sample.speciesName}`}
                   >
                     <div className="truncate pr-1">
                       <div className="truncate font-semibold">{sample.speciesName}</div>
                       <div className={`text-[10px] font-mono font-normal truncate ${
-                        isSelected ? 'opacity-80' : 'opacity-60'
+                        isSelected 
+                          ? 'opacity-90 text-white' 
+                          : isSunlightMode ? 'opacity-60 text-emerald-300' : 'text-[#4a5d4e]'
                       }`}>
                         3.0s sample
                       </div>
                     </div>
                     <div className={`w-6 h-6 rounded-lg flex items-center justify-center shrink-0 transition-transform group-hover:scale-110 ${
                       isSelected
-                        ? 'bg-white text-emerald-900'
-                        : isSunlightMode ? 'bg-neutral-200 text-neutral-800' : 'bg-emerald-950 text-feather-yellow'
+                        ? 'bg-white text-[#2d5a37]'
+                        : isSunlightMode ? 'bg-emerald-950 text-emerald-400' : 'bg-[#eef4ee] text-[#2d5a37]'
                     }`}>
                       <Play className="w-3 h-3 fill-current" />
                     </div>

@@ -330,7 +330,7 @@ export const App: React.FC = () => {
 
   return (
     <div className={`min-h-screen flex flex-col font-sans transition-colors ${
-      isSunlightMode ? 'bg-[#f4f7f4] text-[#0a160d]' : 'bg-[#07130b] text-[#f7faf8]'
+      isSunlightMode ? 'bg-[#061009] text-[#f7faf8]' : 'bg-[#faf9f6] text-[#1a2b1e]'
     }`}>
       {/* Top Navigation */}
       <Navbar
@@ -347,9 +347,9 @@ export const App: React.FC = () => {
         {toastMessage && (
           <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 animate-bounce">
             <div className={`px-4 py-2.5 rounded-full shadow-2xl flex items-center gap-2 text-xs font-bold ${
-              isSunlightMode ? 'bg-black text-white' : 'bg-forest-600 text-white border border-forest-400'
+              isSunlightMode ? 'bg-black text-white border border-emerald-700' : 'bg-[#1a2b1e] text-white border border-[#2d5a37]'
             }`}>
-              <CheckCircle2 className="w-4 h-4 text-feather-yellow" />
+              <CheckCircle2 className="w-4 h-4 text-[#7a9e7e]" />
               <span>{toastMessage}</span>
             </div>
           </div>
@@ -470,8 +470,8 @@ export const App: React.FC = () => {
       {/* Outdoor Trail Footer */}
       <footer className={`border-t py-4 text-center text-xs transition-colors ${
         isSunlightMode 
-          ? 'border-black text-black bg-white font-semibold' 
-          : 'border-forest-900/80 text-forest-300 bg-canopy-950/95'
+          ? 'border-emerald-900/60 text-emerald-300 bg-[#061009]' 
+          : 'border-[#d4e2d4] text-[#4a5d4e] bg-[#f7f5f0]'
       }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-1">
           <span>TrailWhistle • Area Biodiversity Survey Tool • BirdNET v2.4</span>

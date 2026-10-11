@@ -21,14 +21,14 @@ export const ModelDownloadBanner: React.FC<ModelDownloadBannerProps> = ({
     return (
       <div className={`p-3 rounded-xl border mb-4 text-xs flex items-center justify-between ${
         isSunlightMode 
-          ? 'bg-green-100 border-green-800 text-green-950 font-bold' 
-          : 'bg-forest-900/80 border-forest-600/70 text-forest-100'
+          ? 'bg-[#06140b] border-emerald-800 text-emerald-300 font-bold' 
+          : 'bg-[#eef4ee] border-[#d4e2d4] text-[#2d5a37]'
       }`}>
         <div className="flex items-center gap-2">
-          <CheckCircle2 className="w-4 h-4 text-forest-400 shrink-0" />
+          <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
           <span>BirdNET v2.4 cached locally. 100% offline audio identification ready (6,522 species).</span>
         </div>
-        <span className="text-[10px] uppercase font-bold tracking-wider text-forest-400">Offline Active</span>
+        <span className="text-[10px] uppercase font-bold tracking-wider opacity-80">Offline Active</span>
       </div>
     );
   }
@@ -40,12 +40,12 @@ export const ModelDownloadBanner: React.FC<ModelDownloadBannerProps> = ({
     return (
       <div className={`p-4 rounded-xl border mb-4 shadow-sm ${
         isSunlightMode 
-          ? 'bg-yellow-50 border-black text-black' 
-          : 'bg-forest-900 border-feather-accent/50 text-earth-100'
+          ? 'bg-[#06140b] border-emerald-800 text-white' 
+          : 'bg-white border-[#d4e2d4] text-[#1a2b1e]'
       }`}>
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2 text-sm font-bold">
-            <RefreshCw className="w-4 h-4 animate-spin text-feather-yellow" />
+            <RefreshCw className={`w-4 h-4 animate-spin ${isSunlightMode ? 'text-emerald-400' : 'text-[#7a9e7e]'}`} />
             <span>Downloading On-Device BirdNET v2.4 Model (~47MB)...</span>
           </div>
           <span className="text-xs font-mono font-bold">{progressInfo.progress}%</span>
@@ -53,17 +53,19 @@ export const ModelDownloadBanner: React.FC<ModelDownloadBannerProps> = ({
 
         {/* Progress Bar */}
         <div className={`w-full h-2.5 rounded-full overflow-hidden ${
-          isSunlightMode ? 'bg-gray-300' : 'bg-forest-950'
+          isSunlightMode ? 'bg-emerald-950' : 'bg-[#eef4ee]'
         }`}>
           <div
             className={`h-full transition-all duration-300 ${
-              isSunlightMode ? 'bg-black' : 'bg-feather-yellow'
+              isSunlightMode ? 'bg-emerald-400' : 'bg-[#2d5a37]'
             }`}
             style={{ width: `${Math.max(5, progressInfo.progress)}%` }}
           />
         </div>
 
-        <div className="flex items-center justify-between mt-2 text-[11px] opacity-80">
+        <div className={`flex items-center justify-between mt-2 text-[11px] ${
+          isSunlightMode ? 'text-emerald-400/80' : 'text-[#4a5d4e]'
+        }`}>
           <span>{progressInfo.file ? `Weights: ${progressInfo.file.split('/').pop()}` : 'Initializing ONNX runtime...'}</span>
           {loadedMB && totalMB ? <span>{loadedMB}MB / {totalMB}MB</span> : <span>One-time download</span>}
         </div>
@@ -75,8 +77,8 @@ export const ModelDownloadBanner: React.FC<ModelDownloadBannerProps> = ({
     return (
       <div className={`p-4 rounded-xl border mb-4 ${
         isSunlightMode 
-          ? 'bg-red-100 border-red-700 text-red-950' 
-          : 'bg-red-950/80 border-red-700/80 text-red-200'
+          ? 'bg-red-950/80 border-red-700/80 text-red-200' 
+          : 'bg-red-50 border-red-200 text-red-800'
       }`}>
         <div className="flex items-start gap-2.5">
           <AlertTriangle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
@@ -86,10 +88,10 @@ export const ModelDownloadBanner: React.FC<ModelDownloadBannerProps> = ({
             <button
               type="button"
               onClick={onRetry}
-              className={`px-3 py-1.5 min-h-[36px] font-bold text-xs rounded-lg inline-flex items-center gap-1.5 transition-all ${
+              className={`px-3 py-1.5 min-h-[36px] font-bold text-xs rounded-lg inline-flex items-center gap-1.5 transition-all text-white ${
                 isSunlightMode
-                  ? 'bg-red-900 text-white hover:bg-black'
-                  : 'bg-red-800 text-white hover:bg-red-700'
+                  ? 'bg-red-800 hover:bg-red-700'
+                  : 'bg-red-700 hover:bg-red-800'
               }`}
             >
               <RefreshCw className="w-3.5 h-3.5" />

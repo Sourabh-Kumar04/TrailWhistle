@@ -99,24 +99,24 @@ export const OfflineDiagnosticModal: React.FC<OfflineDiagnosticModalProps> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-fade-in">
       <div className={`w-full max-w-lg rounded-2xl border p-5 sm:p-6 shadow-2xl transition-all ${
         isSunlightMode
-          ? 'bg-white border border-neutral-300 text-neutral-900 shadow-xl'
-          : 'bg-[#06140b] border border-emerald-800/80 text-white shadow-2xl'
+          ? 'bg-[#06140b] border border-emerald-800/80 text-white shadow-2xl'
+          : 'bg-white border border-[#d4e2d4] text-[#1a2b1e] shadow-xl'
       }`}>
         {/* Header */}
         <div className={`flex items-center justify-between pb-3 mb-4 border-b ${
-          isSunlightMode ? 'border-neutral-200' : 'border-emerald-900/60'
+          isSunlightMode ? 'border-emerald-900/60' : 'border-[#eef4ee]'
         }`}>
           <div className="flex items-center gap-2.5">
             <div className={`p-2 rounded-xl flex items-center justify-center ${
-              isSunlightMode ? 'bg-emerald-100 text-emerald-950 border border-emerald-200' : 'bg-emerald-950 border border-emerald-800 text-feather-yellow'
+              isSunlightMode ? 'bg-emerald-950 border border-emerald-800 text-emerald-400' : 'bg-[#eef4ee] border border-[#d4e2d4] text-[#2d5a37]'
             }`}>
               <ShieldCheck className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-base sm:text-lg font-black tracking-tight font-sans">
+              <h3 className={`text-base sm:text-lg font-black tracking-tight font-sans ${isSunlightMode ? 'text-white' : 'text-[#1a2b1e]'}`}>
                 Field Readiness & Offline Diagnostic
               </h3>
-              <p className={`text-xs ${isSunlightMode ? 'text-neutral-600 font-medium' : 'text-emerald-300/80'}`}>
+              <p className={`text-xs ${isSunlightMode ? 'text-emerald-300/80' : 'text-[#4a5d4e]'}`}>
                 100% on-device autonomy verification for backcountry expeditions
               </p>
             </div>
@@ -127,8 +127,8 @@ export const OfflineDiagnosticModal: React.FC<OfflineDiagnosticModalProps> = ({
             onClick={onClose}
             className={`p-1.5 rounded-lg transition-all cursor-pointer ${
               isSunlightMode
-                ? 'bg-neutral-100 hover:bg-neutral-200 text-neutral-700 border border-neutral-300'
-                : 'bg-emerald-950 hover:bg-emerald-900 text-emerald-300 border border-emerald-800'
+                ? 'bg-emerald-950 hover:bg-emerald-900 text-emerald-300 border border-emerald-800'
+                : 'bg-[#faf9f6] hover:bg-[#f0ede6] text-[#4a5d4e] border border-[#d4e2d4]'
             }`}
             aria-label="Close diagnostic modal"
           >
@@ -141,20 +141,20 @@ export const OfflineDiagnosticModal: React.FC<OfflineDiagnosticModalProps> = ({
           {/* 1. Network Status */}
           <div className={`p-3 rounded-xl border flex items-center justify-between gap-3 ${
             isSunlightMode
-              ? 'bg-neutral-50 border-neutral-200'
-              : 'bg-[#040e07] border-emerald-900/60'
+              ? 'bg-[#040e07] border-emerald-900/60'
+              : 'bg-[#faf9f6] border-[#d4e2d4]'
           }`}>
             <div className="flex items-center gap-2.5">
               {isOnline ? (
-                <Wifi className="w-4 h-4 text-emerald-500 shrink-0" />
+                <Wifi className="w-4 h-4 text-emerald-600 shrink-0" />
               ) : (
-                <WifiOff className="w-4 h-4 text-amber-500 shrink-0" />
+                <WifiOff className="w-4 h-4 text-[#7a9e7e] shrink-0" />
               )}
               <div>
-                <div className="font-bold">
+                <div className={`font-bold ${isSunlightMode ? 'text-white' : 'text-[#1a2b1e]'}`}>
                   {isOnline ? 'Online (Wi-Fi / Cell Connected)' : 'Offline / Backcountry Mode Active'}
                 </div>
-                <div className={`text-[11px] ${isSunlightMode ? 'text-neutral-600' : 'text-emerald-300/70'}`}>
+                <div className={`text-[11px] ${isSunlightMode ? 'text-emerald-300/70' : 'text-[#4a5d4e]'}`}>
                   {isOnline
                     ? 'Ready to prime local caches before leaving trailhead'
                     : 'Zero cloud dependency. TrailWhistle operates entirely on-device'}
@@ -163,8 +163,8 @@ export const OfflineDiagnosticModal: React.FC<OfflineDiagnosticModalProps> = ({
             </div>
             <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded border ${
               isOnline
-                ? isSunlightMode ? 'bg-emerald-50 text-emerald-900 border-emerald-200' : 'bg-emerald-950 text-emerald-300 border border-emerald-700/60'
-                : isSunlightMode ? 'bg-amber-50 text-amber-900 border-amber-300 font-extrabold' : 'bg-amber-950 text-amber-300 border border-amber-700/60'
+                ? isSunlightMode ? 'bg-emerald-950 text-emerald-300 border border-emerald-700/60' : 'bg-[#eef4ee] text-[#2d5a37] border border-[#d4e2d4]'
+                : isSunlightMode ? 'bg-emerald-950 text-emerald-300 border border-emerald-700/60' : 'bg-[#eef4ee] text-[#2d5a37] border border-[#d4e2d4]'
             }`}>
               {isOnline ? 'CONNECTED' : 'STANDALONE'}
             </span>
@@ -173,14 +173,16 @@ export const OfflineDiagnosticModal: React.FC<OfflineDiagnosticModalProps> = ({
           {/* 2. BirdNET v2.4 ONNX Model Cache */}
           <div className={`p-3 rounded-xl border flex items-center justify-between gap-3 ${
             isSunlightMode
-              ? 'bg-neutral-50 border-neutral-200'
-              : 'bg-[#040e07] border-emerald-900/60'
+              ? 'bg-[#040e07] border-emerald-900/60'
+              : 'bg-[#faf9f6] border-[#d4e2d4]'
           }`}>
             <div className="flex items-center gap-2.5">
-              <Cpu className="w-4 h-4 text-feather-yellow shrink-0" />
+              <Cpu className={`w-4 h-4 ${isSunlightMode ? 'text-emerald-400' : 'text-[#7a9e7e]'} shrink-0`} />
               <div>
-                <div className="font-bold">BirdNET v2.4 Neural Core (~47MB)</div>
-                <div className={`text-[11px] ${isSunlightMode ? 'text-neutral-600' : 'text-emerald-300/70'}`}>
+                <div className={`font-bold ${isSunlightMode ? 'text-white' : 'text-[#1a2b1e]'}`}>
+                  BirdNET v2.4 Neural Core (~47MB)
+                </div>
+                <div className={`text-[11px] ${isSunlightMode ? 'text-emerald-300/70' : 'text-[#4a5d4e]'}`}>
                   {modelCached
                     ? 'INT8 quantized weights cached locally in browser Cache API'
                     : 'Model loads on-demand on first recording or test clip'}
@@ -188,7 +190,7 @@ export const OfflineDiagnosticModal: React.FC<OfflineDiagnosticModalProps> = ({
               </div>
             </div>
             <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded border ${
-              isSunlightMode ? 'bg-neutral-100 text-neutral-800 border-neutral-300' : 'bg-emerald-950 text-emerald-300 border border-emerald-800'
+              isSunlightMode ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' : 'bg-[#eef4ee] text-[#2d5a37] border border-[#d4e2d4]'
             }`}>
               {modelCached ? 'CACHED' : 'ON-DEMAND'}
             </span>
@@ -197,20 +199,22 @@ export const OfflineDiagnosticModal: React.FC<OfflineDiagnosticModalProps> = ({
           {/* 3. Global Avian Taxonomy */}
           <div className={`p-3 rounded-xl border flex items-center justify-between gap-3 ${
             isSunlightMode
-              ? 'bg-neutral-50 border-neutral-200'
-              : 'bg-[#040e07] border-emerald-900/60'
+              ? 'bg-[#040e07] border-emerald-900/60'
+              : 'bg-[#faf9f6] border-[#d4e2d4]'
           }`}>
             <div className="flex items-center gap-2.5">
-              <Database className="w-4 h-4 text-emerald-400 shrink-0" />
+              <Database className={`w-4 h-4 ${isSunlightMode ? 'text-emerald-400' : 'text-[#7a9e7e]'} shrink-0`} />
               <div>
-                <div className="font-bold">6,522 Species Global Taxonomy</div>
-                <div className={`text-[11px] ${isSunlightMode ? 'text-neutral-600' : 'text-emerald-300/70'}`}>
+                <div className={`font-bold ${isSunlightMode ? 'text-white' : 'text-[#1a2b1e]'}`}>
+                  6,522 Species Global Taxonomy
+                </div>
+                <div className={`text-[11px] ${isSunlightMode ? 'text-emerald-300/70' : 'text-[#4a5d4e]'}`}>
                   Full Latin binomial & English common names bundled offline
                 </div>
               </div>
             </div>
             <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded border ${
-              isSunlightMode ? 'bg-neutral-100 text-neutral-900 border-neutral-300' : 'bg-emerald-950 text-feather-yellow border border-emerald-800'
+              isSunlightMode ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' : 'bg-[#eef4ee] text-[#2d5a37] border border-[#d4e2d4]'
             }`}>
               6,522 ACTIVE
             </span>
@@ -219,20 +223,22 @@ export const OfflineDiagnosticModal: React.FC<OfflineDiagnosticModalProps> = ({
           {/* 4. AudioWorklet & WebAssembly Core */}
           <div className={`p-3 rounded-xl border flex items-center justify-between gap-3 ${
             isSunlightMode
-              ? 'bg-neutral-50 border-neutral-200'
-              : 'bg-[#040e07] border-emerald-900/60'
+              ? 'bg-[#040e07] border-emerald-900/60'
+              : 'bg-[#faf9f6] border-[#d4e2d4]'
           }`}>
             <div className="flex items-center gap-2.5">
-              <Radio className="w-4 h-4 text-sky-400 shrink-0" />
+              <Radio className={`w-4 h-4 ${isSunlightMode ? 'text-emerald-400' : 'text-[#7a9e7e]'} shrink-0`} />
               <div>
-                <div className="font-bold">48kHz AudioWorklet + WebAssembly SIMD</div>
-                <div className={`text-[11px] ${isSunlightMode ? 'text-neutral-600' : 'text-emerald-300/70'}`}>
+                <div className={`font-bold ${isSunlightMode ? 'text-white' : 'text-[#1a2b1e]'}`}>
+                  48kHz AudioWorklet + WebAssembly SIMD
+                </div>
+                <div className={`text-[11px] ${isSunlightMode ? 'text-emerald-300/70' : 'text-[#4a5d4e]'}`}>
                   Hardware-accelerated on-device neural tensor computation
                 </div>
               </div>
             </div>
             <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded border ${
-              isSunlightMode ? 'bg-neutral-100 text-sky-900 border-neutral-300' : 'bg-emerald-950 text-sky-300 border border-emerald-800'
+              isSunlightMode ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' : 'bg-[#eef4ee] text-[#2d5a37] border border-[#d4e2d4]'
             }`}>
               WASM SIMD
             </span>
@@ -241,20 +247,22 @@ export const OfflineDiagnosticModal: React.FC<OfflineDiagnosticModalProps> = ({
           {/* 5. Storage Quota */}
           <div className={`p-3 rounded-xl border flex items-center justify-between gap-3 ${
             isSunlightMode
-              ? 'bg-neutral-50 border-neutral-200'
-              : 'bg-[#040e07] border-emerald-900/60'
+              ? 'bg-[#040e07] border-emerald-900/60'
+              : 'bg-[#faf9f6] border-[#d4e2d4]'
           }`}>
             <div className="flex items-center gap-2.5">
-              <HardDrive className="w-4 h-4 text-emerald-400 shrink-0" />
+              <HardDrive className={`w-4 h-4 ${isSunlightMode ? 'text-emerald-400' : 'text-[#7a9e7e]'} shrink-0`} />
               <div>
-                <div className="font-bold">Local Device Storage Quota</div>
-                <div className={`text-[11px] ${isSunlightMode ? 'text-neutral-600' : 'text-emerald-300/70'}`}>
+                <div className={`font-bold ${isSunlightMode ? 'text-white' : 'text-[#1a2b1e]'}`}>
+                  Local Device Storage Quota
+                </div>
+                <div className={`text-[11px] ${isSunlightMode ? 'text-emerald-300/70' : 'text-[#4a5d4e]'}`}>
                   {entries.length} observations saved in private localStorage
                 </div>
               </div>
             </div>
             <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded border ${
-              isSunlightMode ? 'bg-neutral-100 text-neutral-800 border-neutral-300' : 'bg-emerald-950 text-emerald-200 border border-emerald-800'
+              isSunlightMode ? 'bg-emerald-950 text-emerald-200 border border-emerald-800' : 'bg-[#eef4ee] text-[#2d5a37] border border-[#d4e2d4]'
             }`}>
               {storageEstimate ? `${storageEstimate.usageMB}MB / ${storageEstimate.quotaMB}MB` : 'LOCAL OK'}
             </span>
@@ -263,19 +271,19 @@ export const OfflineDiagnosticModal: React.FC<OfflineDiagnosticModalProps> = ({
 
         {/* Footer Actions */}
         <div className={`flex flex-col sm:flex-row items-center justify-between gap-2.5 pt-3 border-t ${
-          isSunlightMode ? 'border-neutral-200' : 'border-emerald-900/40'
+          isSunlightMode ? 'border-emerald-900/40' : 'border-[#eef4ee]'
         }`}>
           <button
             type="button"
             onClick={handleExportJson}
             className={`w-full sm:w-auto py-2.5 px-3.5 min-h-[44px] rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
               isSunlightMode
-                ? 'bg-neutral-100 hover:bg-neutral-200 border border-neutral-300 text-neutral-900'
-                : 'bg-emerald-950 hover:bg-emerald-900 text-emerald-200 border border-emerald-800'
+                ? 'bg-emerald-950 hover:bg-emerald-900 text-emerald-200 border border-emerald-800'
+                : 'bg-[#faf9f6] hover:bg-[#f0ede6] border border-[#d4e2d4] text-[#1a2b1e]'
             }`}
             title="Download full JSON survey backup"
           >
-            <FileJson className="w-4 h-4 text-feather-yellow" />
+            <FileJson className={`w-4 h-4 ${isSunlightMode ? 'text-emerald-400' : 'text-[#7a9e7e]'}`} />
             <span>Export Raw JSON Backup</span>
           </button>
 
@@ -284,8 +292,8 @@ export const OfflineDiagnosticModal: React.FC<OfflineDiagnosticModalProps> = ({
             onClick={onClose}
             className={`w-full sm:w-auto py-2.5 px-5 min-h-[44px] rounded-xl text-xs font-bold flex items-center justify-center transition-all cursor-pointer ${
               isSunlightMode
-                ? 'bg-emerald-900 text-white hover:bg-emerald-800 shadow-sm'
-                : 'bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white border border-emerald-400/40 shadow-emerald-950/50'
+                ? 'bg-emerald-800 hover:bg-emerald-700 text-white shadow-md'
+                : 'bg-[#2d5a37] hover:bg-[#23472b] text-white shadow-sm'
             }`}
           >
             <span>Close Diagnostic</span>

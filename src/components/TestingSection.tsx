@@ -21,8 +21,8 @@ export const TestingSection: React.FC<TestingSectionProps> = ({
     <div
       className={`rounded-xl border transition-all ${
         isSunlightMode
-          ? 'bg-white border-2 border-black text-black shadow-sm'
-          : 'bg-forest-950/60 border-forest-800/80 text-earth-100 shadow-md'
+          ? 'bg-[#06140b] border border-emerald-800/80 text-white shadow-xl'
+          : 'bg-white border border-[#d4e2d4] text-[#1a2b1e] shadow-sm'
       }`}
     >
       {/* Collapsible Trigger Header */}
@@ -30,7 +30,7 @@ export const TestingSection: React.FC<TestingSectionProps> = ({
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
         className={`w-full p-3 sm:p-3.5 flex items-center justify-between text-left transition-colors ${
-          isSunlightMode ? 'hover:bg-gray-50' : 'hover:bg-forest-900/40'
+          isSunlightMode ? 'hover:bg-emerald-950/40' : 'hover:bg-[#faf9f6]'
         }`}
         aria-expanded={isOpen}
       >
@@ -38,28 +38,28 @@ export const TestingSection: React.FC<TestingSectionProps> = ({
           <div
             className={`p-1.5 rounded-lg flex items-center justify-center ${
               isSunlightMode
-                ? 'bg-black text-white'
-                : 'bg-forest-800 text-feather-yellow'
+                ? 'bg-emerald-950 border border-emerald-800 text-emerald-400'
+                : 'bg-[#eef4ee] text-[#2d5a37] border border-[#d4e2d4]'
             }`}
           >
             <FlaskConical className="w-3.5 h-3.5" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-sm font-semibold tracking-tight">
+              <span className={`text-sm font-semibold tracking-tight ${isSunlightMode ? 'text-white' : 'text-[#1a2b1e]'}`}>
                 Field testing & audio simulation
               </span>
               <span
                 className={`text-[10px] font-mono font-medium px-2 py-0.5 rounded-full ${
                   isSunlightMode
-                    ? 'bg-yellow-200 text-black border border-black'
-                    : 'bg-amber-950/80 text-amber-300 border border-amber-700/60'
+                    ? 'bg-emerald-950 border border-emerald-800 text-emerald-300'
+                    : 'bg-[#eef4ee] border border-[#d4e2d4] text-[#2d5a37]'
                 }`}
               >
                 For testing only
               </span>
             </div>
-            <p className={`text-[11px] mt-0.5 ${isSunlightMode ? 'text-gray-700' : 'text-forest-300'}`}>
+            <p className={`text-[11px] mt-0.5 ${isSunlightMode ? 'text-emerald-400/80' : 'text-[#4a5d4e]'}`}>
               Simulate live field audio using real pre-bundled xeno-canto recordings
             </p>
           </div>
@@ -67,13 +67,13 @@ export const TestingSection: React.FC<TestingSectionProps> = ({
 
         <div className="flex items-center gap-1.5 shrink-0 ml-2">
           <span className={`text-[11px] font-semibold hidden sm:inline ${
-            isSunlightMode ? 'text-gray-700' : 'text-forest-400'
+            isSunlightMode ? 'text-emerald-300' : 'text-[#4a5d4e]'
           }`}>
             {isOpen ? 'Collapse' : 'Expand (4 Clips)'}
           </span>
           <div
             className={`p-1 rounded-lg ${
-              isSunlightMode ? 'bg-gray-100 text-black' : 'bg-forest-900 text-forest-300'
+              isSunlightMode ? 'bg-emerald-950 text-emerald-300' : 'bg-[#faf9f6] text-[#4a5d4e]'
             }`}
           >
             {isOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
@@ -83,13 +83,15 @@ export const TestingSection: React.FC<TestingSectionProps> = ({
 
       {/* Expanded Testing Content */}
       {isOpen && (
-        <div className="p-3.5 pt-2 border-t border-forest-800/40 animate-fade-in">
+        <div className={`p-3.5 pt-2 border-t ${
+          isSunlightMode ? 'border-emerald-800/40' : 'border-[#eef4ee]'
+        } animate-fade-in`}>
           <div className={`p-2.5 rounded-lg text-xs mb-3 flex items-start gap-2 ${
             isSunlightMode
-              ? 'bg-amber-50 border border-amber-300 text-amber-950'
-              : 'bg-amber-950/40 border border-amber-800/60 text-amber-200'
+              ? 'bg-emerald-950/60 border border-emerald-800/80 text-emerald-200'
+              : 'bg-[#faf9f6] border border-[#d4e2d4] text-[#1a2b1e]'
           }`}>
-            <Music className="w-4 h-4 shrink-0 text-feather-yellow mt-0.5" />
+            <Music className={`w-4 h-4 shrink-0 ${isSunlightMode ? 'text-emerald-400' : 'text-[#7a9e7e]'} mt-0.5`} />
             <p className="leading-relaxed text-[11px]">
               <strong>Offline QA & Testing:</strong> Tap any sample to feed a 3-second 48kHz audio snippet directly into the BirdNET v2.4 ONNX inference worker and verify real-time classification, checklist updates, and confidence scoring.
             </p>
@@ -107,11 +109,11 @@ export const TestingSection: React.FC<TestingSectionProps> = ({
                   className={`p-2.5 rounded-xl border text-left min-h-[52px] flex items-center justify-between transition-all ${
                     isSelected
                       ? isSunlightMode
-                        ? 'bg-black text-white border-black font-bold ring-2 ring-black'
-                        : 'bg-forest-700 border-feather-accent text-white font-bold ring-2 ring-forest-500'
+                        ? 'bg-emerald-800 border-emerald-500 text-white font-bold ring-2 ring-emerald-400'
+                        : 'bg-[#2d5a37] border-[#2d5a37] text-white font-bold ring-2 ring-[#7a9e7e]'
                       : isSunlightMode
-                        ? 'bg-gray-50 border-gray-300 hover:border-black text-black'
-                        : 'bg-forest-950/60 border-forest-800/80 hover:bg-forest-800/60 text-earth-100'
+                        ? 'bg-[#06120a] border-emerald-900/80 hover:bg-emerald-950/60 text-white'
+                        : 'bg-[#faf9f6] border-[#d4e2d4] hover:border-[#7a9e7e] text-[#1a2b1e]'
                   }`}
                 >
                   <div className="overflow-hidden pr-1">
@@ -119,19 +121,19 @@ export const TestingSection: React.FC<TestingSectionProps> = ({
                     <div
                       className={`text-[10px] truncate ${
                         isSelected
-                          ? 'text-gray-200'
+                          ? 'text-white/80'
                           : isSunlightMode
-                            ? 'text-gray-600'
-                            : 'text-forest-300'
+                            ? 'text-emerald-400/70'
+                            : 'text-[#4a5d4e]'
                       }`}
                     >
                       {sample.scientificName}
                     </div>
                   </div>
                   {isSelected ? (
-                    <Check className="w-4 h-4 shrink-0 text-feather-yellow" />
+                    <Check className="w-4 h-4 shrink-0 text-white" />
                   ) : (
-                    <Play className="w-3.5 h-3.5 shrink-0 opacity-70" />
+                    <Play className={`w-3.5 h-3.5 shrink-0 opacity-70 ${isSunlightMode ? 'text-emerald-400' : 'text-[#7a9e7e]'}`} />
                   )}
                 </button>
               );
