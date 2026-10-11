@@ -280,14 +280,19 @@ export const SpeciesCatalog: React.FC<SpeciesCatalogProps> = ({
             {taxonomyMatches.map((t) => (
               <div
                 key={t.scientific}
-                className="p-4 rounded-xl border border-[#E5E0D8] bg-white shadow-sm"
+                className="p-4 rounded-xl border border-[#E5E0D8] bg-white shadow-sm flex items-start gap-3"
               >
+                <div className="w-12 h-12 rounded-full bg-[#F7F5F2] border border-[#E5E0D8] flex items-center justify-center shrink-0">
+                  <Bird className="w-6 h-6 text-[#8C6D4F]" />
+                </div>
+                <div className="min-w-0">
                 <h4 className="font-sans font-bold text-base text-[#241B12]">
                   {t.common}
                 </h4>
                 <p className="font-serif italic text-sm text-[#736B63]">
                   {t.scientific}
                 </p>
+              </div>
               </div>
             ))}
           </div>
