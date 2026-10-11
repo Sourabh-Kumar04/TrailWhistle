@@ -657,7 +657,7 @@ export const App: React.FC = () => {
       {/* (8) FOOTER: dark brown (#241B12) with link columns */}
       <footer className="w-full bg-[#241B12] text-[#EAE4DC] border-t border-[#3D2E20] pt-12 pb-8 transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 pb-10 border-b border-[#3D2E20]">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pb-10 border-b border-[#3D2E20]">
             {/* Column 1: Brand & Cornell Bioacoustics */}
             <div className="space-y-3">
               <div className="flex items-center space-x-2.5">
@@ -721,33 +721,6 @@ export const App: React.FC = () => {
               </ul>
             </div>
 
-            {/* Column 3: Science & Taxonomy */}
-            <div className="space-y-2.5">
-              <h3 className="font-serif font-bold text-sm text-white uppercase tracking-wider">
-                Science & Bioacoustics
-              </h3>
-              <ul className="space-y-2 text-xs text-[#B8ACA0]">
-                <li>BirdNET v2.4 Neural Core</li>
-                <li>6,522 Species Global Taxonomy</li>
-                <li>48kHz AudioWorklet Ingest</li>
-                <li>Honest Confidence Calibration (&lt;25% Unknown)</li>
-                <li>GPS Transect Geo-referencing</li>
-              </ul>
-            </div>
-
-            {/* Column 4: Offline Field Ethics */}
-            <div className="space-y-2.5">
-              <h3 className="font-serif font-bold text-sm text-white uppercase tracking-wider">
-                Field Ethics & Privacy
-              </h3>
-              <ul className="space-y-2 text-xs text-[#B8ACA0]">
-                <li>100% On-Device Local Processing</li>
-                <li>Zero Cloud Telemetry & Tracking</li>
-                <li>Zero Cellular Signal Required</li>
-                <li>Open-Source MIT License</li>
-                <li>Touch Grass Bioacoustics Initiative</li>
-              </ul>
-            </div>
           </div>
 
           {/* Bottom Bar */}
