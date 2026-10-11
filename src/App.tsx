@@ -667,11 +667,11 @@ export const App: React.FC = () => {
                 <span className="font-serif font-bold text-xl text-white tracking-tight">TrailWhistle</span>
               </div>
               <p className="text-xs text-[#B8ACA0] leading-relaxed">
-                Cornell Lab Birds of the World inspired offline-first bioacoustic surveying system. Identifies 6,522 bird species directly on-device using BirdNET v2.4.
+                Identify birds by their songs — right on your phone, even with no signal. Powered by open-source BirdNET AI.
               </p>
               <div className="flex items-center gap-2 pt-1">
                 <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#36291E] border border-[#4E3A2B] text-[#D8CDC2]">
-                  v0.1.0 • PWA Offline
+                  100% Offline
                 </span>
               </div>
             </div>
@@ -679,7 +679,7 @@ export const App: React.FC = () => {
             {/* Column 2: Survey Tools */}
             <div className="space-y-2.5">
               <h3 className="font-serif font-bold text-sm text-white uppercase tracking-wider">
-                Field Survey Tools
+                Explore
               </h3>
               <ul className="space-y-2 text-xs text-[#B8ACA0]">
                 <li>
@@ -688,7 +688,7 @@ export const App: React.FC = () => {
                     onClick={() => setActiveTab('identify')}
                     className="hover:text-white transition-colors cursor-pointer text-left"
                   >
-                    Acoustic Census & Live Recorder
+                    Record Bird Calls
                   </button>
                 </li>
                 <li>
@@ -697,7 +697,7 @@ export const App: React.FC = () => {
                     onClick={() => setActiveTab('species')}
                     className="hover:text-white transition-colors cursor-pointer text-left"
                   >
-                    Area Species Checklist
+                    Species Guide
                   </button>
                 </li>
                 <li>
@@ -715,7 +715,7 @@ export const App: React.FC = () => {
                     onClick={handleExportCurrentSurveyCsv}
                     className="hover:text-white transition-colors cursor-pointer text-left"
                   >
-                    Export RFC 4180 CSV Dataset
+                    Export Survey Data
                   </button>
                 </li>
               </ul>
