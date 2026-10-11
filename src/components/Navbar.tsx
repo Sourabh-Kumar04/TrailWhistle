@@ -178,7 +178,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   : 'text-[#E7E2DC] hover:text-white hover:bg-[#36291E]/60'
               }`}
             >
-              <span>Journal</span>
+              <span>Field Log</span>
               {journalCount > 0 && (
                 <span className="text-[10px] font-bold px-1.5 py-0.2 rounded-full bg-[#D73C30] text-white">
                   {journalCount}
