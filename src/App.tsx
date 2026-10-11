@@ -393,12 +393,12 @@ export const App: React.FC = () => {
               <div className="max-w-4xl mx-auto text-center relative z-10">
                 {/* Large WHITE SERIF headline */}
                 <h1 className="font-serif text-3xl sm:text-5xl md:text-6xl font-bold text-white tracking-tight leading-tight drop-shadow-md">
-                  Discover the birds around you.
+                  Hear a bird. Know its name.
                 </h1>
 
                 {/* Small sans subhead, centered */}
                 <p className="font-sans text-sm sm:text-base md:text-lg text-[#EAE4DC] max-w-2xl mx-auto mt-4 mb-8 leading-relaxed font-normal">
-                  Real-time acoustic biodiversity surveying powered by on-device BirdNET v2.4 AI. 6,522 species, 100% offline, zero cloud telemetry in the field.
+                  Point your phone at the dawn chorus. TrailWhistle recognizes 6,522 bird species using on-device AI — no internet, no account, no waiting.
                 </p>
 
                 {/* Prominent record button (embedded in hero with live bioacoustic visualizer) */}
@@ -553,10 +553,10 @@ export const App: React.FC = () => {
             >
               <div className="max-w-4xl mx-auto text-center">
                 <h1 className="font-serif text-3xl sm:text-4xl font-bold text-white tracking-tight">
-                  Regional species checklist & taxonomy
+                  Explore Bird Species
                 </h1>
                 <p className="font-sans text-sm sm:text-base text-[#EAE4DC] max-w-xl mx-auto mt-2">
-                  Browse detected avian taxa and reference the BirdNET v2.4 6,522-species global taxonomic database.
+                  Search all 6,522 species BirdNET can recognize, from American Robins to rare warblers.
                 </p>
               </div>
             </section>
@@ -587,10 +587,10 @@ export const App: React.FC = () => {
             >
               <div className="max-w-4xl mx-auto text-center">
                 <h1 className="font-serif text-3xl sm:text-4xl font-bold text-white tracking-tight">
-                  Avian survey logbook & observations
+                  Your Field Log
                 </h1>
                 <p className="font-sans text-sm sm:text-base text-[#EAE4DC] max-w-xl mx-auto mt-2">
-                  Review historical bioacoustic encounters, export RFC 4180 CSV surveys, and manage private on-device backups.
+                  Every bird you identify, saved with time and location. Export your surveys anytime.
                 </p>
               </div>
             </section>
