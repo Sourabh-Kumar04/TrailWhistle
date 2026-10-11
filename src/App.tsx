@@ -408,6 +408,7 @@ export const App: React.FC = () => {
                     onSelectSample={handleSelectSample}
                     selectedSample={selectedSample}
                     embeddedInHero={true}
+                    showDemos={false}
                   />
 
                   {classificationError && (
@@ -437,6 +438,28 @@ export const App: React.FC = () => {
                       />
                     </div>
                   )}
+                </div>
+              </div>
+            </section>
+
+            {/* DEMO STRIP: sample calls for visitors without a mic */}
+            <section className="w-full bg-[#1C150E] border-b border-[#3D2E20] py-6">
+              <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
+                <p className="text-xs text-[#B8ACA0] mb-3 font-sans">
+                  No microphone? Try a pre-recorded demo call:
+                </p>
+                <div className="flex flex-wrap justify-center gap-2">
+                  {SAMPLE_AUDIO_LIST.map((sample) => (
+                    <button
+                      key={sample.id}
+                      type="button"
+                      onClick={() => handleSelectSample(sample)}
+                      disabled={isProcessing}
+                      className="px-4 py-2 rounded-full text-xs font-semibold bg-[#2E2217] hover:bg-[#3D2E20] text-[#EAE4DC] border border-[#4A3A2C] transition-colors cursor-pointer"
+                    >
+                      {sample.speciesName}
+                    </button>
+                  ))}
                 </div>
               </div>
             </section>

@@ -10,6 +10,7 @@ interface AudioRecorderProps {
   onSelectSample?: (sample: SampleAudioItem) => void;
   selectedSample?: SampleAudioItem | null;
   embeddedInHero?: boolean;
+  showDemos?: boolean;
 }
 
 export const AudioRecorder: React.FC<AudioRecorderProps> = ({
@@ -19,6 +20,7 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
   onSelectSample,
   selectedSample,
   embeddedInHero = false,
+  showDemos = true,
 }) => {
   const [isRecording, setIsRecording] = useState(false);
   const [countdown, setCountdown] = useState(3.0);
@@ -318,7 +320,7 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
         )}
 
         {/* Quick Field Simulation Pills */}
-        {onSelectSample && (
+        {onSelectSample && showDemos && (
           <div
             className={`w-full pt-4 mt-2 border-t ${
               isSunlightMode
