@@ -132,14 +132,14 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
                 embeddedInHero ? 'text-white' : isSunlightMode ? 'text-white' : 'text-[#241B12]'
               }`}
             >
-              Acoustic field recorder
+              Listen for birds
             </h2>
             <p
               className={`text-xs ${
                 embeddedInHero ? 'text-[#EAE4DC]' : isSunlightMode ? 'text-[#B8ACA0]' : 'text-[#736B63]'
               }`}
             >
-              Real-time on-device bioacoustic sensor
+              Tap record to identify any bird
             </p>
           </div>
         </div>
@@ -153,7 +153,7 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
           }`}
         >
           <span className="w-1.5 h-1.5 rounded-full bg-[#3D8B40]" />
-          <span>48kHz Worklet</span>
+          <span>Works Offline</span>
         </span>
       </div>
 
@@ -333,7 +333,7 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
                 }`}
               >
                 <FlaskConical className="w-3.5 h-3.5 text-[#E67E22]" />
-                <span>Simulate field bird call:</span>
+                <span>Try a sample call:</span>
               </span>
               <span
                 className={`text-[10px] font-sans uppercase tracking-wider px-2.5 py-0.5 rounded-full ${
@@ -344,7 +344,7 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
                       : 'bg-[#F7F5F2] text-[#736B63] border border-[#E5E0D8]'
                 }`}
               >
-                48kHz xeno-canto
+                Sample recordings
               </span>
             </div>
 

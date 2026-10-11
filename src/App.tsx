@@ -6,7 +6,6 @@ import { PredictionCard } from './components/PredictionCard';
 import { ConfirmModal } from './components/ConfirmModal';
 import { JournalList } from './components/JournalList';
 import { SurveyOnboardingHint } from './components/SurveyOnboardingHint';
-import { TestingSection } from './components/TestingSection';
 import { AreaSurveyHeader } from './components/AreaSurveyHeader';
 import { SurveyStatsBar } from './components/SurveyStatsBar';
 import { AreaSpeciesChecklist } from './components/AreaSpeciesChecklist';
@@ -152,7 +151,6 @@ export const App: React.FC = () => {
   });
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [isTestingExpanded, setIsTestingExpanded] = useState(false);
   const [classificationError, setClassificationError] = useState<string | null>(null);
 
   // Sync dark class to html documentElement to avoid any theme flash
@@ -556,7 +554,7 @@ export const App: React.FC = () => {
                   Explore Bird Species
                 </h1>
                 <p className="font-sans text-sm sm:text-base text-[#EAE4DC] max-w-xl mx-auto mt-2">
-                  Search all 6,522 species BirdNET can recognize, from American Robins to rare warblers.
+                  Search all 6,522 species BirdNET can recognize, from American Robin to rare warblers.
                 </p>
               </div>
             </section>
@@ -628,31 +626,6 @@ export const App: React.FC = () => {
         />
       )}
 
-      {/* Discreet Collapsed Developer Testing Section at Bottom */}
-      <section className="w-full bg-[#18120B] border-t border-[#3D2E20] py-4 text-xs transition-colors">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center">
-          <button
-            type="button"
-            onClick={() => setIsTestingExpanded((prev) => !prev)}
-            className="text-[#A89B8C] hover:text-white transition-colors flex items-center gap-2 cursor-pointer font-medium text-xs px-4 py-2 rounded-full border border-[#3D2E20] bg-[#241B12]/90 hover:bg-[#2E2217] shadow-sm"
-            aria-expanded={isTestingExpanded}
-          >
-            <span>{isTestingExpanded ? 'Hide' : 'Show'} Developer Audio Simulation & Testing</span>
-            <span className="text-[10px] text-[#A89B8C]">({isTestingExpanded ? '▲' : '▼'})</span>
-          </button>
-
-          {isTestingExpanded && (
-            <div className="w-full max-w-4xl mt-5 animate-fade-in">
-              <TestingSection
-                onSelectSample={handleSelectSample}
-                selectedSample={selectedSample}
-                isProcessing={isProcessing}
-                isSunlightMode={isSunlightMode}
-              />
-            </div>
-          )}
-        </div>
-      </section>
 
       {/* (8) FOOTER: dark brown (#241B12) with link columns */}
       <footer className="w-full bg-[#241B12] text-[#EAE4DC] border-t border-[#3D2E20] pt-12 pb-8 transition-colors">

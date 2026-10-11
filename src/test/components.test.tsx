@@ -214,8 +214,8 @@ describe('UI Components', () => {
     );
 
     expect(screen.getByLabelText(/Record 3 seconds of bird call/i)).toBeInTheDocument();
-    expect(screen.getByText(/Acoustic field recorder/i)).toBeInTheDocument();
-    expect(screen.getByText('48kHz Worklet')).toBeInTheDocument();
+    expect(screen.getByText(/Listen for birds/i)).toBeInTheDocument();
+    expect(screen.getByText('Works Offline')).toBeInTheDocument();
     // Demo clips are no longer in AudioRecorder prime screen space
     expect(screen.queryByText(/Desktop \/ Trailhead Demo Clips/i)).not.toBeInTheDocument();
   });
