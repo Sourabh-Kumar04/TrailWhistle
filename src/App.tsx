@@ -724,25 +724,7 @@ export const App: React.FC = () => {
           </div>
 
           {/* Bottom Bar */}
-          <div className="pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-[#8A7E73] gap-2">
-            <div>
-              © 2026 TrailWhistle. Design language inspired by Cornell Lab of Ornithology (Birds of the World).
-            </div>
-            <div className="flex items-center gap-4 text-[11px]">
-              <a
-                href="https://github.com/Sourabh-Kumar04/TrailWhistle"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[#D8CDC2] hover:text-white underline decoration-[#D73C30]/50 hover:decoration-[#D73C30] transition-colors"
-              >
-                GitHub: Sourabh-Kumar04/TrailWhistle
-              </a>
-              <span>•</span>
-              <span>BirdNET v2.4</span>
-              <span>•</span>
-              <span>WebAssembly SIMD</span>
-            </div>
-          </div>
+          <div className="pt-6 text-center text-xs text-[#8A7E73]">© 2026 TrailWhistle</div>
         </div>
       </footer>
     </div>
