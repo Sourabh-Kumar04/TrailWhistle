@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Bird, MapPin, Volume2, Search, Play, Pause, Trees, ShieldCheck, Sparkles } from 'lucide-react';
 import { SurveyChecklistItem } from '../types/journal';
 
@@ -90,6 +90,31 @@ export const SpeciesCatalog: React.FC<SpeciesCatalogProps> = ({
   const currentSearchQuery = externalSearchQuery !== undefined ? externalSearchQuery : internalQuery;
   const [playingId, setPlayingId] = useState<string | null>(null);
   const audioPlayerRef = useRef<HTMLAudioElement | null>(null);
+  const [taxonomy, setTaxonomy] = useState<Array<{ scientific: string; common: string }>>([]);
+  const [taxonomyLoaded, setTaxonomyLoaded] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/models/labels.txt")
+      .then((r) => { if (!r.ok) throw new Error("labels fetch failed"); return r.text(); })
+      .then((text) => {
+        if (cancelled) return;
+        const entries: Array<{ scientific: string; common: string }> = [];
+        for (const line of text.split("\n")) {
+          const t = line.trim();
+          if (!t) continue;
+          const idx = t.lastIndexOf("_");
+          if (idx < 0) continue;
+          const scientific = t.slice(0, idx).trim();
+          const common = t.slice(idx + 1).trim();
+          if (scientific && common) entries.push({ scientific, common });
+        }
+        setTaxonomy(entries);
+        setTaxonomyLoaded(true);
+      })
+      .catch(() => { if (!cancelled) setTaxonomyLoaded(true); });
+    return () => { cancelled = true; };
+  }, []);
 
   const handleSearchChange = (val: string) => {
     setInternalQuery(val);
@@ -113,6 +138,23 @@ export const SpeciesCatalog: React.FC<SpeciesCatalogProps> = ({
   };
 
   const q = currentSearchQuery.trim().toLowerCase();
+  const taxonomyMatches = q && taxonomyLoaded
+    ? taxonomy
+        .filter(
+          (t) =>
+            t.common.toLowerCase().includes(q) ||
+            t.scientific.toLowerCase().includes(q)
+        )
+        .slice(0, 50)
+    : [];
+  const taxonomyTotal =
+    q && taxonomyLoaded
+      ? taxonomy.filter(
+          (t) =>
+            t.common.toLowerCase().includes(q) ||
+            t.scientific.toLowerCase().includes(q)
+        ).length
+      : 0;
   const filteredDemoSpecies = DEMO_SPECIES_LIST.filter(
     (s) =>
       !q ||
@@ -219,6 +261,39 @@ export const SpeciesCatalog: React.FC<SpeciesCatalogProps> = ({
         </section>
       )}
 
+      {/* Full Taxonomy Search Results (all 6,522 BirdNET species) */}
+      {taxonomyMatches.length > 0 && (
+        <section className="space-y-4">
+          <div>
+            <h3 className="font-serif font-bold text-lg sm:text-xl text-[#241B12] flex items-center gap-2">
+              <span>Global Taxonomy Matches</span>
+              <span className="text-[11px] font-sans font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-[#3D8B40]/10 text-[#3D8B40] border border-[#3D8B40]/20">
+                {taxonomyTotal} of 6,522 species
+              </span>
+            </h3>
+            <p className="text-xs text-[#736B63] mt-0.5">
+              Matching species from the full BirdNET v2.4 taxonomy.
+              {taxonomyTotal > 50 ? " Showing first 50." : ""}
+            </p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {taxonomyMatches.map((t) => (
+              <div
+                key={t.scientific}
+                className="p-4 rounded-xl border border-[#E5E0D8] bg-white shadow-sm"
+              >
+                <h4 className="font-sans font-bold text-base text-[#241B12]">
+                  {t.common}
+                </h4>
+                <p className="font-serif italic text-sm text-[#736B63]">
+                  {t.scientific}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
       {/* 4 Demo Reference Species Cards Section */}
       <section className="space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
@@ -235,7 +310,7 @@ export const SpeciesCatalog: React.FC<SpeciesCatalogProps> = ({
           </div>
         </div>
 
-        {filteredDemoSpecies.length === 0 ? (
+        {filteredDemoSpecies.length === 0 && taxonomyMatches.length === 0 ? (
           <div className="p-8 text-center rounded-xl border border-dashed border-[#E5E0D8] bg-[#FAF8F5]">
             <p className="text-base font-serif font-bold text-[#241B12]">
               No reference species found matching &ldquo;{currentSearchQuery}&rdquo;
