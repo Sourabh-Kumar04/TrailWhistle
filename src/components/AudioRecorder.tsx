@@ -333,7 +333,7 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
                 }`}
               >
                 <FlaskConical className="w-3.5 h-3.5 text-[#E67E22]" />
-                <span>Try a sample call:</span>
+                <span>No mic? Try a demo:</span>
               </span>
               <span
                 className={`text-[10px] font-sans uppercase tracking-wider px-2.5 py-0.5 rounded-full ${

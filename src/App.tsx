@@ -457,6 +457,55 @@ export const App: React.FC = () => {
               </div>
             </section>
 
+            {/* HOW IT WORKS: plain-language explainer for first-time visitors */}
+            <section className="w-full bg-white py-10 sm:py-14 border-b border-[#E5E0D8]">
+              <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="text-center max-w-2xl mx-auto mb-8">
+                  <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#241B12] tracking-tight">
+                    How it works
+                  </h2>
+                  <p className="text-sm text-[#736B63] mt-2 font-sans leading-relaxed">
+                    TrailWhistle identifies birds by their songs using the open-source BirdNET AI —
+                    running entirely on your phone. No internet needed, no recordings uploaded anywhere.
+                  </p>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                  <div className="text-center px-4">
+                    <div className="w-12 h-12 mx-auto rounded-full bg-[#D73C30]/10 text-[#D73C30] flex items-center justify-center mb-3">
+                      <span className="font-serif font-bold text-lg">1</span>
+                    </div>
+                    <h3 className="font-serif font-bold text-base text-[#241B12] mb-1">Record 3 seconds</h3>
+                    <p className="text-xs text-[#736B63] leading-relaxed">
+                      Tap record and hold your phone toward the birdsong. Three seconds is all it takes.
+                    </p>
+                  </div>
+                  <div className="text-center px-4">
+                    <div className="w-12 h-12 mx-auto rounded-full bg-[#D73C30]/10 text-[#D73C30] flex items-center justify-center mb-3">
+                      <span className="font-serif font-bold text-lg">2</span>
+                    </div>
+                    <h3 className="font-serif font-bold text-base text-[#241B12] mb-1">AI names the bird</h3>
+                    <p className="text-xs text-[#736B63] leading-relaxed">
+                      BirdNET compares the sound against 6,522 species — on your device, in seconds.
+                      Below 25% confidence, it honestly says "Unknown" instead of guessing.
+                    </p>
+                  </div>
+                  <div className="text-center px-4">
+                    <div className="w-12 h-12 mx-auto rounded-full bg-[#D73C30]/10 text-[#D73C30] flex items-center justify-center mb-3">
+                      <span className="font-serif font-bold text-lg">3</span>
+                    </div>
+                    <h3 className="font-serif font-bold text-base text-[#241B12] mb-1">Build your field log</h3>
+                    <p className="text-xs text-[#736B63] leading-relaxed">
+                      Every identification is saved with time and location. Watch your area checklist grow visit after visit.
+                    </p>
+                  </div>
+                </div>
+                <p className="text-center text-[11px] text-[#A89B8C] mt-8 max-w-xl mx-auto leading-relaxed">
+                  The sample bird calls above are pre-recorded demos so you can try the flow without a microphone.
+                  Real recordings from your mic are analyzed on-device by the BirdNET neural network.
+                </p>
+              </div>
+            </section>
+
             {/* (4) SECTION BANDS: alternate white and warm off-white (#F7F5F2) */}
             
             {/* BAND 1: Warm off-white (#F7F5F2) - Active Survey Station & Detections */}
