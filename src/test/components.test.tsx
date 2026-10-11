@@ -213,7 +213,7 @@ describe('UI Components', () => {
     );
 
     expect(screen.getByLabelText(/Record 3 seconds of bird call/i)).toBeInTheDocument();
-    expect(screen.getByText('Acoustic Field Recorder')).toBeInTheDocument();
+    expect(screen.getByText(/Acoustic field recorder/i)).toBeInTheDocument();
     expect(screen.getByText('48kHz Worklet')).toBeInTheDocument();
     // Demo clips are no longer in AudioRecorder prime screen space
     expect(screen.queryByText(/Desktop \/ Trailhead Demo Clips/i)).not.toBeInTheDocument();
@@ -289,7 +289,7 @@ describe('UI Components', () => {
     );
 
     expect(screen.getByRole('heading', { name: 'Pine Ridge Trailhead' })).toBeInTheDocument();
-    expect(screen.getByText(/Area Biodiversity Survey Mode/i)).toBeInTheDocument();
+    expect(screen.getByText(/Area biodiversity survey/i)).toBeInTheDocument();
     expect(screen.getByText(/6,522 Species Global Taxonomy/i)).toBeInTheDocument();
 
     const newSiteBtn = screen.getByText('New Site');
@@ -314,9 +314,11 @@ describe('UI Components', () => {
     );
 
     expect(screen.getByText('Species Life Count')).toBeInTheDocument();
-    expect(screen.getByText('4 Species')).toBeInTheDocument();
+    expect(screen.getByText(/4/)).toBeInTheDocument();
+    expect(screen.getByText('species')).toBeInTheDocument();
     expect(screen.getByText('Acoustic Census')).toBeInTheDocument();
-    expect(screen.getByText('9 Recordings')).toBeInTheDocument();
+    expect(screen.getByText('9')).toBeInTheDocument();
+    expect(screen.getByText('recordings')).toBeInTheDocument();
     expect(screen.getByText('Survey Elapsed')).toBeInTheDocument();
     expect(screen.getByText('Transect Coverage')).toBeInTheDocument();
     expect(screen.getByText('±8m GPS')).toBeInTheDocument();

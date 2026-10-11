@@ -112,8 +112,10 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
             <Radio className="w-4 h-4 animate-pulse" />
           </div>
           <div>
-            <h2 className="text-xs font-black uppercase tracking-wider font-sans">Acoustic Field Recorder</h2>
-            <p className={`text-[10px] ${isSunlightMode ? 'text-neutral-500' : 'text-emerald-300/60'}`}>
+            <h2 className={`text-sm font-bold font-sans ${isSunlightMode ? 'text-neutral-900' : 'text-emerald-100'}`}>
+              Acoustic field recorder
+            </h2>
+            <p className={`text-[11px] ${isSunlightMode ? 'text-neutral-600' : 'text-emerald-300/70'}`}>
               Real-time on-device audio worklet
             </p>
           </div>
@@ -188,14 +190,14 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
             ) : isProcessing ? (
               <>
                 <Sparkles className="w-9 h-9 animate-spin text-feather-yellow mb-1" />
-                <span className="text-[11px] font-black uppercase tracking-wider text-feather-yellow">Classifying</span>
+                <span className="text-xs font-bold text-feather-yellow">Classifying...</span>
               </>
             ) : (
               <>
                 <div className="p-2.5 rounded-full bg-white/10 mb-1">
                   <Mic className="w-8 h-8" />
                 </div>
-                <span className="text-xs font-black uppercase tracking-widest">Record</span>
+                <span className="text-sm font-bold tracking-normal">Record</span>
               </>
             )}
           </button>
@@ -290,11 +292,11 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
             isSunlightMode ? 'border-neutral-200' : 'border-emerald-900/40'
           }`}>
             <div className="flex items-center justify-between mb-2.5">
-              <span className={`text-[11px] font-bold uppercase tracking-wider flex items-center gap-1.5 ${
-                isSunlightMode ? 'text-neutral-800 font-extrabold' : 'text-emerald-300/90'
+              <span className={`text-xs font-semibold flex items-center gap-1.5 ${
+                isSunlightMode ? 'text-neutral-800' : 'text-emerald-200'
               }`}>
                 <FlaskConical className="w-3.5 h-3.5 text-feather-yellow" />
-                <span>Simulate Field Call:</span>
+                <span>Simulate field call:</span>
               </span>
               <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full ${
                 isSunlightMode ? 'bg-neutral-100 text-neutral-600' : 'bg-emerald-950 text-emerald-400 border border-emerald-900'

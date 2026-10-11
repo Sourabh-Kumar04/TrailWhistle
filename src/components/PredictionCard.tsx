@@ -175,11 +175,11 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({
         <div className={`p-4 rounded-2xl border transition-all ${
           isSunlightMode ? 'bg-white border-neutral-300 shadow-sm' : 'bg-[#06140b] border-emerald-900/70 shadow-lg'
         }`}>
-          <div className={`text-[11px] font-bold uppercase tracking-wider mb-2.5 flex items-center gap-1.5 ${
-            isSunlightMode ? 'text-neutral-700' : 'text-emerald-400/80'
+          <div className={`text-xs font-semibold mb-2.5 flex items-center gap-1.5 ${
+            isSunlightMode ? 'text-neutral-700' : 'text-emerald-300'
           }`}>
             <Bird className="w-3.5 h-3.5 text-feather-yellow" />
-            <span>Alternate Probable Taxa:</span>
+            <span>Alternate probable taxa:</span>
           </div>
 
           <div className="space-y-2">

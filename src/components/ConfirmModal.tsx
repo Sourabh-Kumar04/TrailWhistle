@@ -135,10 +135,10 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
 
         {/* Alternate top predictions selector */}
         <div className="mb-4">
-          <label className={`block text-xs font-bold uppercase tracking-wider mb-2 ${
-            isSunlightMode ? 'text-neutral-700' : 'text-emerald-400/80'
+          <label className={`block text-xs font-semibold mb-2 ${
+            isSunlightMode ? 'text-neutral-700' : 'text-emerald-300'
           }`}>
-            Classified Candidates:
+            Classified candidates:
           </label>
           <div className="grid grid-cols-3 gap-2">
             {allPredictions.map((p) => {
@@ -247,10 +247,10 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
 
         {/* Field Notes */}
         <div className="mb-4">
-          <label className={`block text-xs font-bold uppercase tracking-wider mb-1.5 ${
-            isSunlightMode ? 'text-neutral-700' : 'text-emerald-400/80'
+          <label className={`block text-xs font-semibold mb-1.5 ${
+            isSunlightMode ? 'text-neutral-700' : 'text-emerald-300'
           }`}>
-            Field Notes / Trail Context:
+            Field notes / trail context:
           </label>
           <textarea
             rows={2}

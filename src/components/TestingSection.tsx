@@ -46,17 +46,17 @@ export const TestingSection: React.FC<TestingSectionProps> = ({
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold uppercase tracking-wider">
-                Field Testing & Audio Simulation
+              <span className="text-sm font-semibold tracking-tight">
+                Field testing & audio simulation
               </span>
               <span
-                className={`text-[10px] font-mono font-bold px-1.5 py-0.2 rounded ${
+                className={`text-[10px] font-mono font-medium px-2 py-0.5 rounded-full ${
                   isSunlightMode
                     ? 'bg-yellow-200 text-black border border-black'
                     : 'bg-amber-950/80 text-amber-300 border border-amber-700/60'
                 }`}
               >
-                For Testing Only
+                For testing only
               </span>
             </div>
             <p className={`text-[11px] mt-0.5 ${isSunlightMode ? 'text-gray-700' : 'text-forest-300'}`}>

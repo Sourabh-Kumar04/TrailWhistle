@@ -259,22 +259,22 @@ export const JournalList: React.FC<JournalListProps> = ({
         {/* Survey Overview Stats Bar with Distinct Icons & Micro-Hierarchy */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-3.5 border-t border-forest-800/40">
           <div className={`p-3 rounded-xl border relative overflow-hidden transition-all ${
-            isSunlightMode ? 'bg-neutral-50 border-neutral-200 text-neutral-900' : 'bg-[#06120a] border-emerald-900/60 text-white'
+            isSunlightMode ? 'bg-emerald-50/60 border-emerald-200 text-neutral-900' : 'bg-emerald-950/40 border-emerald-800/60 text-white'
           }`}>
             <div className="flex items-center justify-between mb-1">
-              <span className={`text-[10px] font-bold uppercase tracking-wider ${isSunlightMode ? 'text-neutral-600' : 'text-emerald-400/80'}`}>
+              <span className={`text-xs font-semibold ${isSunlightMode ? 'text-emerald-900' : 'text-emerald-300'}`}>
                 Survey Sites
               </span>
-              <Trees className="w-3.5 h-3.5 opacity-60 text-emerald-500" />
+              <Trees className="w-3.5 h-3.5 opacity-80 text-emerald-400" />
             </div>
             <div className="text-xl font-black">{locationGroups.length}</div>
           </div>
 
           <div className={`p-3 rounded-xl border relative overflow-hidden transition-all ${
-            isSunlightMode ? 'bg-neutral-50 border-neutral-200 text-neutral-900' : 'bg-[#06120a] border-emerald-900/60 text-white'
+            isSunlightMode ? 'bg-amber-50/60 border-amber-200 text-neutral-900' : 'bg-amber-950/30 border-amber-800/50 text-white'
           }`}>
             <div className="flex items-center justify-between mb-1">
-              <span className={`text-[10px] font-bold uppercase tracking-wider ${isSunlightMode ? 'text-neutral-600' : 'text-emerald-400/80'}`}>
+              <span className={`text-xs font-semibold ${isSunlightMode ? 'text-amber-900' : 'text-amber-300'}`}>
                 Species Life List
               </span>
               <Bird className="w-3.5 h-3.5 text-feather-yellow" />
@@ -285,10 +285,10 @@ export const JournalList: React.FC<JournalListProps> = ({
           </div>
 
           <div className={`p-3 rounded-xl border relative overflow-hidden transition-all ${
-            isSunlightMode ? 'bg-neutral-50 border-neutral-200 text-neutral-900' : 'bg-[#06120a] border-emerald-900/60 text-white'
+            isSunlightMode ? 'bg-teal-50/60 border-teal-200 text-neutral-900' : 'bg-[#081a14] border-teal-800/50 text-white'
           }`}>
             <div className="flex items-center justify-between mb-1">
-              <span className={`text-[10px] font-bold uppercase tracking-wider ${isSunlightMode ? 'text-neutral-600' : 'text-emerald-400/80'}`}>
+              <span className={`text-xs font-semibold ${isSunlightMode ? 'text-teal-900' : 'text-teal-300'}`}>
                 Total Detections
               </span>
               <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
@@ -299,15 +299,15 @@ export const JournalList: React.FC<JournalListProps> = ({
           </div>
 
           <div className={`p-3 rounded-xl border relative overflow-hidden transition-all ${
-            isSunlightMode ? 'bg-neutral-50 border-neutral-200 text-neutral-900' : 'bg-[#06120a] border-emerald-900/60 text-white'
+            isSunlightMode ? 'bg-sky-50/60 border-sky-200 text-neutral-900' : 'bg-[#051520] border-sky-800/50 text-white'
           }`}>
             <div className="flex items-center justify-between mb-1">
-              <span className={`text-[10px] font-bold uppercase tracking-wider ${isSunlightMode ? 'text-neutral-600' : 'text-emerald-400/80'}`}>
+              <span className={`text-xs font-semibold ${isSunlightMode ? 'text-sky-900' : 'text-sky-300'}`}>
                 GPS Waypoints
               </span>
-              <MapPin className="w-3.5 h-3.5 text-amber-500" />
+              <MapPin className="w-3.5 h-3.5 text-sky-400" />
             </div>
-            <div className={`text-xl font-black ${isSunlightMode ? 'text-amber-800' : 'text-sky-400'}`}>
+            <div className={`text-xl font-black ${isSunlightMode ? 'text-sky-800' : 'text-sky-400'}`}>
               {totalGpsFixed}
             </div>
           </div>

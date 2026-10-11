@@ -474,7 +474,7 @@ export const App: React.FC = () => {
           : 'border-forest-900/80 text-forest-300 bg-canopy-950/95'
       }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-1">
-          <span>TrailWhistle • Area Biodiversity Survey Tool • BirdNET v2.4 (6,522 Species)</span>
+          <span>TrailWhistle • Area Biodiversity Survey Tool • BirdNET v2.4</span>
           <span>100% On-Device Offline AI • Zero Cloud Telemetry • MIT License</span>
         </div>
       </footer>

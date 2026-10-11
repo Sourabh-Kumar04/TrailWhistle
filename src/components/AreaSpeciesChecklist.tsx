@@ -23,29 +23,34 @@ export const AreaSpeciesChecklist: React.FC<AreaSpeciesChecklistProps> = ({
   );
 
   return (
-    <div className={`p-5 sm:p-6 rounded-2xl border flex flex-col h-full transition-all duration-300 ${
+    <div className={`p-5 sm:p-6 rounded-2xl border flex flex-col h-full transition-all duration-300 relative ${
       isSunlightMode
-        ? 'bg-white border-neutral-300 text-neutral-900 shadow-md'
-        : 'bg-gradient-to-br from-[#0c1b12]/95 via-[#08150e]/95 to-[#040c07]/95 border-emerald-800/50 text-earth-50 shadow-2xl'
+        ? 'bg-amber-50/40 border-amber-200/90 text-neutral-900 shadow-sm ring-1 ring-amber-100'
+        : 'bg-[#040e08]/95 border-emerald-950/90 text-earth-50 shadow-xl ring-1 ring-emerald-500/10'
     }`}>
+      {/* Visual Accent Top Bar indicating Observation Ledger */}
+      <div className={`absolute top-0 left-6 right-6 h-0.5 rounded-full ${
+        isSunlightMode ? 'bg-amber-400' : 'bg-gradient-to-r from-feather-yellow/40 via-emerald-400/50 to-transparent'
+      }`} />
+
       {/* Header */}
       <div className={`flex items-center justify-between gap-2 pb-3.5 mb-4 border-b ${
-        isSunlightMode ? 'border-neutral-200' : 'border-emerald-900/40'
+        isSunlightMode ? 'border-amber-200/60' : 'border-emerald-900/40'
       }`}>
         <div>
           <div className="flex items-center gap-2">
             <div className={`p-1.5 rounded-lg ${
-              isSunlightMode ? 'bg-amber-100 text-amber-900' : 'bg-amber-500/10 text-feather-yellow border border-amber-500/20'
+              isSunlightMode ? 'bg-amber-200 text-amber-950' : 'bg-amber-500/15 text-feather-yellow border border-amber-500/30'
             }`}>
               <Bird className="w-4 h-4" />
             </div>
-            <h2 className="text-sm font-black tracking-tight uppercase font-sans">
-              Area Species Checklist
+            <h2 className="text-base font-bold font-sans tracking-tight">
+              Area species checklist
             </h2>
             <span className={`text-[11px] font-mono font-bold px-2.5 py-0.5 rounded-full ${
               checklist.length > 0
                 ? isSunlightMode ? 'bg-emerald-900 text-white' : 'bg-emerald-600 text-white shadow-sm'
-                : isSunlightMode ? 'bg-neutral-100 text-neutral-600' : 'bg-emerald-950 text-emerald-400 border border-emerald-800'
+                : isSunlightMode ? 'bg-neutral-200 text-neutral-700' : 'bg-emerald-950 text-emerald-400 border border-emerald-800'
             }`}>
               {checklist.length} {checklist.length === 1 ? 'species' : 'species'}
             </span>
@@ -106,9 +111,13 @@ export const AreaSpeciesChecklist: React.FC<AreaSpeciesChecklistProps> = ({
           <div className={`w-full max-w-md p-3 rounded-xl border mb-5 text-left ${
             isSunlightMode ? 'bg-white border-neutral-300' : 'bg-[#06120a] border-emerald-900/60'
           }`}>
-            <div className="flex items-center justify-between text-[10px] uppercase font-bold tracking-wider mb-2 opacity-75">
-              <span>Expected Bioacoustic Signatures:</span>
-              <span>4 Common Taxa</span>
+            <div className="flex items-center justify-between text-xs font-semibold mb-2.5">
+              <span className={isSunlightMode ? 'text-neutral-700' : 'text-emerald-300/90'}>
+                Expected bioacoustic signatures:
+              </span>
+              <span className={`text-[11px] font-normal ${isSunlightMode ? 'text-neutral-500' : 'text-emerald-400/70'}`}>
+                4 common taxa
+              </span>
             </div>
             <div className="flex flex-wrap gap-1.5">
               {[

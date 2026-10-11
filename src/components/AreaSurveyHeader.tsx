@@ -59,19 +59,19 @@ export const AreaSurveyHeader: React.FC<AreaSurveyHeaderProps> = ({
         isSunlightMode ? 'border-neutral-200' : 'border-emerald-900/40'
       }`}>
         <div className="flex items-center gap-2">
-          <span className={`text-[11px] font-black uppercase tracking-wider px-2.5 py-1 rounded-lg flex items-center gap-1.5 shadow-sm ${
+          <span className={`text-xs font-semibold px-2.5 py-1 rounded-lg flex items-center gap-1.5 shadow-sm ${
             isSunlightMode
               ? 'bg-emerald-900 text-white'
-              : 'bg-gradient-to-r from-amber-600 to-feather-yellow text-forest-950 font-black shadow-amber-950/40'
+              : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
           }`}>
-            <Sparkles className="w-3.5 h-3.5" />
-            Area Biodiversity Survey Mode
+            <Sparkles className="w-3.5 h-3.5 text-feather-yellow" />
+            <span>Area biodiversity survey</span>
           </span>
-          <span className={`text-xs font-semibold hidden md:inline-flex items-center gap-1.5 ${
-            isSunlightMode ? 'text-neutral-800 font-bold' : 'text-emerald-200'
+          <span className={`text-xs font-medium hidden md:inline-flex items-center gap-1.5 ${
+            isSunlightMode ? 'text-neutral-800' : 'text-emerald-200/90'
           }`}>
             <Database className="w-3.5 h-3.5 text-feather-yellow" />
-            <strong>BirdNET v2.4 Neural Core</strong> • 6,522 Species Global Taxonomy
+            <strong className="font-semibold">BirdNET v2.4 Neural Core</strong> • 6,522 Species Global Taxonomy
           </span>
         </div>
 
