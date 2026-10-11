@@ -322,7 +322,7 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
           <div
             className={`w-full pt-4 mt-2 border-t ${
               embeddedInHero
-                ? 'border-white/15'
+                ? 'border-white/20'
                 : isSunlightMode
                   ? 'border-[#4A3A2C]'
                   : 'border-[#E5E0D8]'

@@ -214,31 +214,52 @@ export async function getClassifier(
 
     if (typeof Worker !== 'undefined' && typeof window !== 'undefined') {
       try {
+        console.log('[Classifier] Initializing inference worker /inference-worker.js...');
         const worker = new Worker('/inference-worker.js');
         await new Promise<void>((resolve, reject) => {
+          const timeout = setTimeout(() => {
+            worker.removeEventListener('message', handler);
+            worker.removeEventListener('error', errorHandler);
+            reject(new Error('Inference worker initialization timed out after 25s'));
+          }, 25000);
+
+          const errorHandler = (err: ErrorEvent) => {
+            clearTimeout(timeout);
+            worker.removeEventListener('message', handler);
+            worker.removeEventListener('error', errorHandler);
+            reject(new Error(err.message || 'Worker initialization error'));
+          };
+
           const handler = (e: MessageEvent) => {
             if (e.data.type === 'MODEL_READY') {
+              clearTimeout(timeout);
               worker.removeEventListener('message', handler);
+              worker.removeEventListener('error', errorHandler);
+              console.log('[Classifier] Worker responded MODEL_READY');
               resolve();
             } else if (e.data.type === 'ERROR') {
+              clearTimeout(timeout);
               worker.removeEventListener('message', handler);
+              worker.removeEventListener('error', errorHandler);
               reject(new Error(e.data.error));
             }
           };
+
+          worker.addEventListener('error', errorHandler);
           worker.addEventListener('message', handler);
+          // Pass a copy so modelBuffer is never detached in the main thread
           worker.postMessage(
             {
               type: 'LOAD_MODEL',
-              payload: { modelBuffer, labels: rawLabelsList },
-            },
-            [modelBuffer]
+              payload: { modelBuffer: modelBuffer.slice(0), labels: rawLabelsList },
+            }
           );
         });
 
         cachedWorker = worker;
-      } catch {
-        // Fall back to direct session
-        initDirectSession(modelBuffer);
+      } catch (workerErr) {
+        console.warn('[Classifier] Inference worker failed, falling back to direct session:', workerErr);
+        await initDirectSession(modelBuffer);
       }
     } else {
       await initDirectSession(modelBuffer);
@@ -416,18 +437,40 @@ export async function classifyBirdAudio(
   const labels = await loadLabels();
 
   if (cachedWorker) {
+    const worker = cachedWorker;
+    console.log('[Classifier] Running inference via cachedWorker...');
     confidences = await new Promise<Float32Array>((resolve, reject) => {
+      const timeout = setTimeout(() => {
+        worker.removeEventListener('message', handler);
+        worker.removeEventListener('error', errorHandler);
+        reject(new Error('Inference worker audio processing timed out after 20s'));
+      }, 20000);
+
+      const errorHandler = (err: ErrorEvent) => {
+        clearTimeout(timeout);
+        worker.removeEventListener('message', handler);
+        worker.removeEventListener('error', errorHandler);
+        reject(new Error(err.message || 'Worker audio processing error'));
+      };
+
       const handler = (e: MessageEvent) => {
         if (e.data.type === 'CHUNK_RESULT') {
-          cachedWorker?.removeEventListener('message', handler);
+          clearTimeout(timeout);
+          worker.removeEventListener('message', handler);
+          worker.removeEventListener('error', errorHandler);
+          console.log('[Classifier] Received CHUNK_RESULT from worker, confidences:', e.data.confidences?.length);
           resolve(e.data.confidences);
         } else if (e.data.type === 'ERROR') {
-          cachedWorker?.removeEventListener('message', handler);
+          clearTimeout(timeout);
+          worker.removeEventListener('message', handler);
+          worker.removeEventListener('error', errorHandler);
           reject(new Error(e.data.error));
         }
       };
-      cachedWorker?.addEventListener('message', handler);
-      cachedWorker?.postMessage({
+
+      worker.addEventListener('error', errorHandler);
+      worker.addEventListener('message', handler);
+      worker.postMessage({
         type: 'PROCESS_AUDIO',
         payload: { chunk: windowSamples, chunkIndex: 0 },
       });
@@ -475,5 +518,7 @@ export async function classifyBirdAudio(
     rawResults.push({ label, score: maxScore });
   }
 
-  return mapRawPredictionsToSpecies(rawResults);
+  const finalPreds = mapRawPredictionsToSpecies(rawResults);
+  console.log('[Classifier] final predictions:', JSON.stringify(finalPreds));
+  return finalPreds;
 }

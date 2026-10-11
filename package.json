@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "sync-onnx": "mkdir -p public/onnx && cp node_modules/onnxruntime-web/dist/ort.min.js public/onnx/ort.min.js && cp node_modules/onnxruntime-web/dist/ort-wasm-simd-threaded.wasm node_modules/onnxruntime-web/dist/ort-wasm-simd-threaded.mjs public/onnx/",
+    "sync-onnx": "mkdir -p public/onnx && cp node_modules/onnxruntime-web/dist/*.wasm node_modules/onnxruntime-web/dist/*.mjs node_modules/onnxruntime-web/dist/ort.min.js public/onnx/",
     "build": "npm run sync-onnx && tsc && vite build",
     "preview": "vite preview",
     "test": "vitest run",

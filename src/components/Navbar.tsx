@@ -93,11 +93,24 @@ export const Navbar: React.FC<NavbarProps> = ({
         {/* (2) CENTER: Pill Search Field */}
         <div className="flex-1 max-w-md hidden md:block">
           <div className="relative flex items-center">
-            <Search className="w-4 h-4 text-[#B8ACA0] absolute left-3.5 pointer-events-none" />
+            <button
+              type="button"
+              onClick={() => onTabChange('species')}
+              className="absolute left-3.5 text-[#B8ACA0] hover:text-white cursor-pointer z-10"
+              title="Search species list"
+              aria-label="Search species list"
+            >
+              <Search className="w-4 h-4" />
+            </button>
             <input
               type="text"
               value={localSearch}
               onChange={handleSearchInput}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  onTabChange('species');
+                }
+              }}
               placeholder="Search species, calls, or surveys..."
               className="w-full bg-[#36291E] hover:bg-[#3D2E22] focus:bg-[#443326] text-white placeholder-[#B8ACA0] text-sm rounded-full pl-10 pr-4 py-2 border border-[#4E3A2B] focus:border-[#D73C30] outline-none transition-all shadow-inner"
             />
@@ -225,11 +238,24 @@ export const Navbar: React.FC<NavbarProps> = ({
       {/* Mobile Search Bar Strip */}
       <div className="md:hidden px-4 pb-2.5">
         <div className="relative flex items-center">
-          <Search className="w-3.5 h-3.5 text-[#B8ACA0] absolute left-3 pointer-events-none" />
+          <button
+            type="button"
+            onClick={() => onTabChange('species')}
+            className="absolute left-3 text-[#B8ACA0] hover:text-white cursor-pointer z-10"
+            title="Search species list"
+            aria-label="Search species list"
+          >
+            <Search className="w-3.5 h-3.5" />
+          </button>
           <input
             type="text"
             value={localSearch}
             onChange={handleSearchInput}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                onTabChange('species');
+              }
+            }}
             placeholder="Search species, calls, or surveys..."
             className="w-full bg-[#36291E] text-white placeholder-[#B8ACA0] text-xs rounded-full pl-9 pr-4 py-1.5 border border-[#4E3A2B] focus:border-[#D73C30] outline-none"
           />
