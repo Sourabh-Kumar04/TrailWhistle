@@ -464,10 +464,6 @@ export const App: React.FC = () => {
                   <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#241B12] tracking-tight">
                     How it works
                   </h2>
-                  <p className="text-sm text-[#736B63] mt-2 font-sans leading-relaxed">
-                    TrailWhistle identifies birds by their songs using the open-source BirdNET AI —
-                    running entirely on your phone. No internet needed, no recordings uploaded anywhere.
-                  </p>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                   <div className="text-center px-4">
@@ -499,10 +495,6 @@ export const App: React.FC = () => {
                     </p>
                   </div>
                 </div>
-                <p className="text-center text-[11px] text-[#A89B8C] mt-8 max-w-xl mx-auto leading-relaxed">
-                  The sample bird calls above are pre-recorded demos so you can try the flow without a microphone.
-                  Real recordings from your mic are analyzed on-device by the BirdNET neural network.
-                </p>
               </div>
             </section>
 

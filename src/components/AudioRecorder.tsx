@@ -387,6 +387,9 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
                 );
               })}
             </div>
+            <p className={`text-[10px] mt-2 text-center ${embeddedInHero ? 'text-white/60' : 'text-[#A89B8C]'}`}>
+              Demos use pre-recorded calls. Your mic recordings are analyzed live on-device.
+            </p>
           </div>
         )}
       </div>
